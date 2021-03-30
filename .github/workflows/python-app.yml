@@ -29,9 +29,9 @@ jobs:
       - name: setup_env
         run: |
           echo "${{ secrets.TOKEN }}" > .env
+          chmod +x startup.sh
           
           
       - name: run_bot
         run: |
-          chmod +x startup.sh
           ./startup.sh
