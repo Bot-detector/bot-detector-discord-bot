@@ -36,8 +36,8 @@ async def on_message(message):
         msg = "```Project Stats:\n" \
                 + "Players Analyzed: " + str(playersTracked) + "\n"\
                 + "Reports Sent to Jagex: " + str(totalReports) + "\n"\
-                + "Resultant Bans: " + str(totalBans) + \
-                + "Active Installs: " + str(activeInstalls) + \
+                + "Resultant Bans: " + str(totalBans) + "\n"\
+                + "Active Installs: " + str(activeInstalls) \
                 + "```"
 
         await message.channel.send(msg)
