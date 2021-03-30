@@ -20,8 +20,8 @@ async def on_message(message):
         await message.channel.send('Chop chop!')
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
-        playersTrackedResponse = req.get("http://osrsbot-detector.ddns.net:5000/site/dashboard/gettotaltrackedplayers")
-        otherStatsResponse = req.get("http://osrsbot-detector.ddns.net:5000/site/dashboard/getreportsstats")
+        playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
+        otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
         activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.3.1/pluginhub")
         
         playersJSON = playersTrackedResponse.json()
@@ -45,7 +45,7 @@ async def on_message(message):
     if message.content.startswith('!kc') or message.content.startswith('!KC'):
         playerName = message.content[4:16]
 
-        resp = req.get("http://osrsbot-detector.ddns.net:5000/stats/contributions/" + playerName)
+        resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
         respJSON = resp.json()
 
         reports = respJSON['reports']
@@ -60,15 +60,7 @@ async def on_message(message):
 
         await message.channel.send(msg)
             
-
-
-
-
-
-
-
-
-
+            
 @client.event
 async def on_member_join(member):
     pass
