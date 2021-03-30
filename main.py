@@ -22,18 +22,23 @@ async def on_message(message):
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("http://osrsbot-detector.ddns.net:5000/site/dashboard/gettotaltrackedplayers")
         otherStatsResponse = req.get("http://osrsbot-detector.ddns.net:5000/site/dashboard/getreportsstats")
-
+        activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.3.1/pluginhub")
+        
         playersJSON = playersTrackedResponse.json()
         otherStatsJSON= otherStatsResponse.json()
+        activeInstallsJSON = activeInstallsReponse.json()
 
         playersTracked = playersJSON['players'][0]
         totalBans = otherStatsJSON['bans']
         totalReports = otherStatsJSON['total_reports']
+        activeInstalls = activeInstallsJSON['bot-detector']
         
         msg = "```Project Stats:\n" \
                 + "Players Analyzed: " + str(playersTracked) + "\n"\
                 + "Reports Sent to Jagex: " + str(totalReports) + "\n"\
-                + "Resultant Bans: " + str(totalBans) + "```"
+                + "Resultant Bans: " + str(totalBans) + \
+                + "Active Installs: " + str(activeInstalls) + \
+                "```"
 
         await message.channel.send(msg)
 
