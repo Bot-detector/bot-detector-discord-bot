@@ -16,10 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python 3.9
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
@@ -31,3 +27,16 @@ jobs:
         flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        
+  deploy:
+    runs-on: self-hosted
+    needs: [build]
+    steps:
+      - name: setup_env
+        run: |
+          echo "${{ secrets.TOKEN }}" > .env
+          pkill -f test.py
+      - name: run_bot
+        run: |
+          nohup main.py &
+        
