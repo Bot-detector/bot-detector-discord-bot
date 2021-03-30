@@ -29,8 +29,9 @@ jobs:
       - name: setup_env
         run: |
           echo "${{ secrets.TOKEN }}" > .env
-          pkill -f test.py
+          
+          
       - name: run_bot
         run: |
-          nohup python3 main.py &
-        
+          chmod +x startup.sh
+          ./startup.sh
