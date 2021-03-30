@@ -32,5 +32,5 @@ jobs:
           pkill -f test.py
       - name: run_bot
         run: |
-          nohup main.py &
+          nohup python3 main.py &
         
