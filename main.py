@@ -18,6 +18,9 @@ async def on_message(message):
 
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
+        
+    if message.content.startswith('!rules') or message.content.startswith('!Rules'):
+        await message.channel.send('#rules-and-information')
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
