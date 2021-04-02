@@ -20,6 +20,13 @@ async def on_message(message):
         
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
+
+    
+    if message.content.startswith('!meow') or message.content.startswith('!Meow'):
+        catJSON = req.get("https://cataas.com/cat?json=true")
+        catImgURL = "https://cataas.com/" + catJSON['url']
+        await message.channel.send('catImgURL')
+
         
      # channel links
         
@@ -79,12 +86,6 @@ async def on_message(message):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
         
     # plugin and database stats
-
-
-    if message.content.startswith('!meow') or message.content.startswith('!Meow'):
-        catJSON = req.get("https://cataas.com/cat?json=true")
-        catImgURL = "https://cataas.com/" + catJSON['url']
-        await message.channel.send('catImgURL')
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
