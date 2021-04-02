@@ -50,7 +50,7 @@ async def on_message(message):
         await message.author.send(msg)
         
     if (message.channel.type == 'dm') {
-        message.reply("You are DMing me now!");
+        await message.author.send('hello!')
     }
     
     # admin commands
