@@ -15,12 +15,21 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-
+        
+    # easter eggs
+        
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
         
+     # channel links
+        
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
+        
+    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
+        await message.channel.send('<#822851862016950282>')
+        
+   # list dm process
         
     if message.content.startswith('!list') or message.content.startswith('!List'):
         msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
@@ -40,11 +49,19 @@ async def on_message(message):
         + "Paste Name / Title: {Include your Label Here}" + "\n" 
         await message.author.send(msg)
         
+    if (message.channel.type == 'dm') {
+        message.reply("You are DMing me now!");
+    }
+    
+    # admin commands
+        
     if message.content.startswith('!ban') or message.content.startswith('!Ban'):
         msg = "```diff" + "\n" \
                  + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
                  + "```\n"
         await message.channel.send(msg)
+        
+    # links
         
     if message.content.startswith('!website') or message.content.startswith('!Website'):
         await message.channel.send('https://www.osrsbotdetector.com/#/')
@@ -60,9 +77,8 @@ async def on_message(message):
 
     if message.content.startswith('!invite') or message.content.startswith('!Invite'):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
-
-    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
-        await message.channel.send('<#822851862016950282>')
+        
+    # plugin and database stats
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
@@ -86,6 +102,8 @@ async def on_message(message):
                 + "```"
 
         await message.channel.send(msg)
+        
+    # player stats
 
     if message.content.startswith('!kc') or message.content.startswith('!KC'):
         playerName = message.content[4:16]
