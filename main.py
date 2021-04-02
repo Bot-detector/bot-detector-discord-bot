@@ -20,7 +20,8 @@ async def on_message(message):
         await message.channel.send('Chop chop!')
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
-        await message.channel.send('<#${825137784112807946}>')
+        channel = discord.utils.get(ctx.guild.channels, name="rules-and-information")
+        await message.channel.send('<#${}>').format(channel.id)
         
     if message.content.startswith('!list') or message.content.startswith('!List'):
         await message.channel.send('PENDING - Will be added soon :) Stay Tuned')
