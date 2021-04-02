@@ -47,7 +47,7 @@ async def on_message(message):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
 
     if message.content.startswith('!issues') or message.content.startswith('!Issues'):
-        await message.channel.send('<#822851862016950282')
+        await message.channel.send('<#822851862016950282>')
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
