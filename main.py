@@ -56,9 +56,9 @@ async def on_message(message):
         + "Paste Name / Title: {Include your Label Here}" + "\n" 
         await message.author.send(msg)
         
-    if (message.channel.type == 'dm') {
+    if (message.channel.type == 'dm'):
         await message.author.send('hello!')
-    }
+    
     
     # admin commands
         
