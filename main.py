@@ -23,7 +23,8 @@ async def on_message(message):
 
     
     if message.content.startswith('!meow') or message.content.startswith('!Meow'):
-        catJSON = req.get("https://cataas.com/cat?json=true")
+        catResponse = req.get("https://cataas.com/cat?json=true")
+        catJSON = catResponse.json()
         catImgURL = "https://cataas.com/" + catJSON['url']
         await message.channel.send('catImgURL')
 
