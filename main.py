@@ -18,16 +18,12 @@ async def on_message(message):
 
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
-
-    if message.content.startswith("!dm"):
-        me = await client.get_user_info('178965680266149888')
-        await client.send_message(me, "#The message")
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
         
     if message.content.startswith('!list') or message.content.startswith('!List'):
-        await message.channel.send('PENDING - Will be added soon :) Stay Tuned')
+        await message.author.send("Testing 123")
         
     if message.content.startswith('!ban') or message.content.startswith('!Ban'):
         msg = "```diff" + "\n" \
