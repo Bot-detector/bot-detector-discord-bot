@@ -36,6 +36,12 @@ async def on_message(message):
         
     if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
         await message.channel.send('https://www.patreon.com/bot_detector') 
+        
+    if message.content.startswith('!github core') or message.content.startswith('!github core'):
+            await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
+            
+    if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
+            await message.channel.send('https://github.com/Ferrariic/bot-detector') 
 
     if message.content.startswith('!invite') or message.content.startswith('!Invite'):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
