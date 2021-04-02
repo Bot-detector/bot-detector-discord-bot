@@ -15,24 +15,53 @@ async def on_ready():
 async def on_message(message):
     if message.author == client.user:
         return
-
+        
+    # easter eggs
+        
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
-
-    if message.content.startswith("!dm"):
-        await client.send_message(message.author, "#The message")
+        
+     # channel links
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
         
+    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
+        await message.channel.send('<#822851862016950282>')
+        
+   # list dm process
+        
     if message.content.startswith('!list') or message.content.startswith('!List'):
-        await message.channel.send('PENDING - Will be added soon :) Stay Tuned')
+        msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
+        + "Acceptable Formatting:" + "\n" \
+        + "Player 1" + "\n" \
+        + "Player 2" + "\n" \
+        + "Player 3" + "\n" \
+        + "Player 4" + "\n" \
+        + "Player 5" + "\n" \
+        + "___________" + "\n" \
+        + "Pastebin Settings:" + "\n" \
+        + "Syntax Highlighting: None" + "\n" \
+        + "Paste Expiration: 1 Day" + "\n" \
+        + "Paste Exposure: Public" + "\n" \
+        + "Folder: No Folder Selected" + "\n" \
+        + "Password: {leave blank - no password needed}" + "\n" \
+        + "Paste Name / Title: {Include your Label Here}" + "\n" 
+        await message.author.send(msg)
+        
+    if (message.channel.type == 'dm') {
+        await message.author.send('hello!')
+    }
+    
+    # admin commands
         
     if message.content.startswith('!ban') or message.content.startswith('!Ban'):
         msg = "```diff" + "\n" \
                  + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
                  + "```\n"
         await message.channel.send(msg)
+        
+    # links
         
     if message.content.startswith('!website') or message.content.startswith('!Website'):
         await message.channel.send('https://www.osrsbotdetector.com/#/')
@@ -48,9 +77,8 @@ async def on_message(message):
 
     if message.content.startswith('!invite') or message.content.startswith('!Invite'):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
-
-    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
-        await message.channel.send('<#822851862016950282>')
+        
+    # plugin and database stats
 
 
     if message.content.startswith('!meow') or message.content.startswith('!Meow'):
@@ -80,6 +108,8 @@ async def on_message(message):
                 + "```"
 
         await message.channel.send(msg)
+        
+    # player stats
 
     if message.content.startswith('!kc') or message.content.startswith('!KC'):
         playerName = message.content[4:16]
