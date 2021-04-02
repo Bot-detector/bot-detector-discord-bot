@@ -18,6 +18,9 @@ async def on_message(message):
 
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
+
+    if message.content.startswith("!dm")
+        await client.send_message(message.author, "#The message")
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
