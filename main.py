@@ -20,7 +20,8 @@ async def on_message(message):
         await message.channel.send('Chop chop!')
 
     if message.content.startswith("!dm"):
-        await client.send_message(message.author, "#The message")
+        me = await client.get_user_info('178965680266149888')
+        await client.send_message(me, "#The message")
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
