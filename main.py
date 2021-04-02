@@ -21,6 +21,27 @@ async def on_message(message):
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('#rules-and-information')
+        
+    if message.content.startswith('!list') or message.content.startswith('!List'):
+        await message.channel.send('PENDING - Will be added soon :) Stay Tuned')
+        
+    if message.content.startswith('!ban') or message.content.startswith('!Ban'):
+        msg = "```diff" + "\n" \
+                 + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+                 + "```\n"
+        await message.channel.send(msg)
+        
+    if message.content.startswith('!website') or message.content.startswith('!Website'):
+        await message.channel.send('https://www.osrsbotdetector.com/#/')
+        
+    if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
+        await message.channel.send('https://www.patreon.com/bot_detector') 
+
+    if message.content.startswith('!invite') or message.content.startswith('!Invite'):
+        await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
+
+    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
+        await message.channel.send('#issues')
 
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
