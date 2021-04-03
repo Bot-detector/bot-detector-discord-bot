@@ -93,9 +93,8 @@ async def on_message(message):
         + "_____________________" + "\n" \
         + "Number of Names: " + str(len(newlines)) + "\n" \
         + "Label: " + str(label) + "\n" \
-        + "Samples: " + str(newlines[0:10]) + "\n" \
-        + "JSON: " + str(json_object) + "\n" 
-        
+        + "Samples: " + str(newlines[0:10]) + "\n"
+  
         await message.channel.send(msg)
     
     # admin commands
