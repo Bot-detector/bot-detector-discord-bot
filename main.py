@@ -62,22 +62,31 @@ async def on_message(message):
         await message.author.send(msg)
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
+        # get url and raw dataform
         newlines = list()
+        res = {}
         paste_url = message.content[8:100]
-  
         data = req.get(paste_url)
+        
+        # use beautiful soup and other methods to clean the data
         soup = BeautifulSoup(data.content, 'html.parser')
         output = soup.findAll('textarea')
         lines = str(output[0]).strip('<textarea class="textarea">').strip('<"/"').replace('\r','').splitlines()
         
+        outputLabel = soup.findAll('title')
+        label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
+        
+        # regex only confirms lines that are RSN-like
         for line in lines:
             L = re.fullmatch('[\w\d _-]{0,12}', line)
             if L:
                 if line != '':
                     newlines.append(line)
-        
-        outputLabel = soup.findAll('title')
-        label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
+                    
+        # convert cleaned lines into dict : label, into json
+        for key in newlines:
+            res[key] = label
+        json_object = json.dumps(res, indent = 4)
         
         msg = "Paste Information" + "\n" \
         + "_____________________" + "\n" \
