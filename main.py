@@ -71,12 +71,13 @@ async def on_message(message):
         outputLabel = soup.findAll('title')
         label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
         
-        msg = "Paste Information:" + "\n" \
-        + "Number of Names in Paste:" + str(len(lines)) + "\n" \
-        + "Names Labeled As:" + str(label) + "\n" \
-        + "Name Samples:" + str(lines[0:3]) + "\n"
+        msg = "Paste Information: " + "\n" \
+        + "Number of Names in Paste: " + str(len(lines)) + "\n" \
+        + "Names Labeled As: " + str(label) + "\n" \
+        + "Name Samples: " + str(lines[0:3]) + "\n" \
+        + "Is this correct? Y/N" + "\n" 
         
-        await message.author.send(msg)
+        await message.channel.send(msg)
     
     # admin commands
         
