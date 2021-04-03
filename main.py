@@ -61,6 +61,7 @@ async def on_message(message):
         await message.author.send(msg)
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
+        newlines = list()
         paste_url = message.content[8:100]
   
         data = req.get(paste_url)
@@ -68,14 +69,19 @@ async def on_message(message):
         output = soup.findAll('textarea')
         lines = str(output[0]).strip('<textarea class="textarea">').strip('<"/"').replace('\r','').splitlines()
         
+        for line in lines:
+            L = re.fullmatch('[\w\d _-]{0,12}', line)
+            if L:
+                newlines.append(line)
+        
         outputLabel = soup.findAll('title')
         label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
         
-        msg = "Paste Information: " + "\n" \
-        + "Number of Names in Paste: " + str(len(lines)) + "\n" \
-        + "Names Labeled As: " + str(label) + "\n" \
-        + "Name Samples: " + str(lines[0:3]) + "\n" \
-        + "Is this correct? Y/N" + "\n" 
+        msg = "Paste Information" + "\n" \
+        + "_____________________" + "\n" \
+        + "Number of Names: " + str(len(newlines)) + "\n" \
+        + "Label: " + str(label) + "\n" \
+        + "Samples: " + str(newlines[0:3]) + "\n"
         
         await message.channel.send(msg)
     
