@@ -57,9 +57,9 @@ async def on_message(message):
         + "Paste Name / Title: {Include your Label Here}" + "\n" 
         await message.author.send(msg)
         
-    if message.channel.type === 'dm':
-        await message.author.send('hello!')
-    
+    if message.content.startswith('!submit') or message.content.startswith('!Submit'):
+        paste_code = message.content[9:100]
+        await message.author.send(paste_code)
     
     # admin commands
         
