@@ -73,7 +73,8 @@ async def on_message(message):
         for line in lines:
             L = re.fullmatch('[\w\d _-]{0,12}', line)
             if L:
-                newlines.append(line)
+                if line != '':
+                    newlines.append(line)
         
         outputLabel = soup.findAll('title')
         label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
@@ -82,7 +83,7 @@ async def on_message(message):
         + "_____________________" + "\n" \
         + "Number of Names: " + str(len(newlines)) + "\n" \
         + "Label: " + str(label) + "\n" \
-        + "Samples: " + str(newlines[0:3]) + "\n"
+        + "Samples: " + str(newlines[0:10]) + "\n"
         
         await message.channel.send(msg)
     
