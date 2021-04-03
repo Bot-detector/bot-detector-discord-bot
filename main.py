@@ -2,6 +2,7 @@ import discord
 import os
 from dotenv import load_dotenv
 import requests as req
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -60,8 +61,14 @@ async def on_message(message):
         await message.author.send(msg)
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
-        paste_code = message.content[8:100]
-        await message.author.send(paste_code)
+        paste_url = message.content[8:100]
+        data = req.get(paste_url)
+        
+        soup = BeautifulSoup(data.content, 'html.parser')
+        output = soup.findAll('textarea')
+        lines = str(output[0]).strip('<textarea class="textarea">').strip('<"/"').replace('\r','').splitlines()
+        
+        await message.author.send(lines[0:5])
     
     # admin commands
         
