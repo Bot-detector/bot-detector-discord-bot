@@ -62,13 +62,23 @@ async def on_message(message):
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
         paste_url = message.content[8:100]
-        data = req.get(paste_url)
         
+        message.author.send('Url Received, Processing...')
+        
+        data = req.get(paste_url)
         soup = BeautifulSoup(data.content, 'html.parser')
         output = soup.findAll('textarea')
         lines = str(output[0]).strip('<textarea class="textarea">').strip('<"/"').replace('\r','').splitlines()
         
-        await message.author.send(lines[0:5])
+        outputLabel = soup.findAll('title')
+        label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
+        
+        msg = "Paste Information:" + "\n" \
+        + "Number of Names in Paste:" + len(lines) + "\n" \
+        + "Names Labeled As:" + label + "\n" \
+        + "Name Samples:" + lines[0:3] + "\n"
+        
+        await message.author.send(msg)
     
     # admin commands
         
