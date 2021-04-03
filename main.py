@@ -41,6 +41,8 @@ async def on_message(message):
         
     if message.content.startswith('!list') or message.content.startswith('!List'):
         msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
+        + "Example: !submit https://pastebin.com/iw8MmUzg" + "\n" \
+        + "___________" + "\n" \
         + "Acceptable Formatting:" + "\n" \
         + "Player 1" + "\n" \
         + "Player 2" + "\n" \
@@ -58,7 +60,7 @@ async def on_message(message):
         await message.author.send(msg)
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
-        paste_code = message.content[9:100]
+        paste_code = message.content[8:100]
         await message.author.send(paste_code)
     
     # admin commands
