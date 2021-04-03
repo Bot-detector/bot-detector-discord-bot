@@ -149,14 +149,6 @@ async def on_message(message):
         await message.channel.send(msg)
         
     # player stats
-    
-    if message.content.startswith('!rsn') or message.content.startswith('!RSN'):
-        discordRSN = message.content[5:17]
-        msg = "```diff" + "\n" \
-                 + "+ RSN set to: " + str(discordRSN) + "\n" \
-                 + "Linked to Discord: " str(message.author.id) + "\n" \
-                 + "```\n"
-        await message.channel.send(msg)
 
     if message.content.startswith('!kc') or message.content.startswith('!KC'):
         playerName = message.content[4:16]
