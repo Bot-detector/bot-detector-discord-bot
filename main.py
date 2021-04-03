@@ -62,9 +62,7 @@ async def on_message(message):
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
         paste_url = message.content[8:100]
-        
-        message.author.send('Url Received, Processing...')
-        
+  
         data = req.get(paste_url)
         soup = BeautifulSoup(data.content, 'html.parser')
         output = soup.findAll('textarea')
