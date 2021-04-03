@@ -72,9 +72,9 @@ async def on_message(message):
         label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
         
         msg = "Paste Information:" + "\n" \
-        + "Number of Names in Paste:" + len(lines) + "\n" \
-        + "Names Labeled As:" + label + "\n" \
-        + "Name Samples:" + lines[0:3] + "\n"
+        + "Number of Names in Paste:" + str(len(lines)) + "\n" \
+        + "Names Labeled As:" + str(label) + "\n" \
+        + "Name Samples:" + str(lines[0:3]) + "\n"
         
         await message.author.send(msg)
     
