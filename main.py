@@ -94,6 +94,7 @@ async def on_message(message):
         + "Number of Names: " + str(len(newlines)) + "\n" \
         + "Label: " + str(label) + "\n" \
         + "Samples: " + str(newlines[0:10]) + "\n"
+        + "JSON: " + str(json_object) + "\n" \
         
         await message.channel.send(msg)
     
