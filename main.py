@@ -150,7 +150,7 @@ async def on_message(message):
         
     # player stats
     
-    if message.content.startswith('!rsn') or message.content.startswith('!RSN') or message.content.startswith('!Rsn'):
+    if message.content.startswith('!rsn') or message.content.startswith('!RSN'):
         discordRSN = message.content[5:17]
         msg = "```diff" + "\n" \
                  + "+ RSN set to: " + str(discordRSN) + "\n" \
