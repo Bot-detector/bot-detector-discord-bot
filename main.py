@@ -31,6 +31,9 @@ async def on_message(message):
         catImgURL = "https://cataas.com" + catJSON['url']
         await message.channel.send(catImgURL)
 
+    if message.content.startswith('!poke') or message.content.startswith('!poke'):
+        await message.channel.send('Teehee! :3')
+
         
      # channel links
         
