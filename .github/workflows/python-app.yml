@@ -16,12 +16,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    
-    
-    
     - name: Install dependencies
       run: |
+        python3 -m pip install --upgrade pip
         (test -d env && echo env already exists || python3 -m venv env)
         source ./env/bin/activate
         pip3 install flake8 pytest
@@ -34,7 +31,6 @@ jobs:
       - name: setup_env_vars
         run: |
           echo "${{ secrets.TOKEN }}" > .env
-          
           
       - name: run_bot
         run: |
