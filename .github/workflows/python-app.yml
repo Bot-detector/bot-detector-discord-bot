@@ -31,11 +31,11 @@ jobs:
     steps:
       - name: setup_env_vars
         run: |
-          echo "${{ secrets.TOKEN }}" > .env
-          echo "${{ secrets.DB_HOST }}" > .env
-          echo "${{ secrets.DB_USER }}" > .env
-          echo "${{ secrets.DB_PASS }}" > .env
-          echo "${{ secrets.DB_NAME }}" > .env
+          echo "${{ secrets.TOKEN }}" >> .env
+          echo "${{ secrets.DB_HOST }}" >> .env
+          echo "${{ secrets.DB_USER }}" >> .env
+          echo "${{ secrets.DB_PASS }}" >> .env
+          echo "${{ secrets.DB_NAME }}" >> .env
           
       - name: run_bot
         run: |
