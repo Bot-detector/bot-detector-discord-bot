@@ -5,10 +5,110 @@ from dotenv import load_dotenv
 import re
 import requests as req
 from bs4 import BeautifulSoup
+import mysql.connector
 
 load_dotenv()
 
 client = discord.Client()
+
+host_ip = os.getenv('DB_HOST')
+user_id = os.getenv('DB_USER')
+password_id = os.getenv('DB_PASS')
+database_id = os.getenv('DB_NAME')
+
+mydb = mysql.connector.connect(
+  host=host_ip,
+  user=user_id,
+  password=password_id,
+  database=database_id
+)
+
+# sql functions
+
+def line_clean(newlines):
+    line_set = list()
+    for line in newlines:
+        str_line = '"' + str(line) + '"'
+        line_set.append(str_line)
+        
+    return line_set
+
+
+def label_clean(label):
+    label_string = '"' + str(label) + '"'
+    return label_string
+
+
+def label_insert(label):
+    label_string = label_clean(label)
+    
+    mycursor = mydb.cursor(buffered=True)
+    sql = "INSERT INTO labels_submitted (label) VALUES (%s)" % label_string
+    try: 
+        mycursor.execute(sql)
+    except:
+        mydb.rollback()
+    
+    mydb.commit()
+    return
+
+
+def name_insert(newlines):
+    line_set = line_clean(newlines)
+    mycursor = mydb.cursor(buffered=True)
+    
+    for i in range(0,len(line_set)):
+        sql = "INSERT IGNORE players_submitted (Players) VALUES (%s)" % line_set[i]
+        mycursor.execute(sql)
+        
+    mydb.commit()
+    return
+
+
+def label_id(label):
+    label_string = label_clean(label)
+    
+    mycursor = mydb.cursor(buffered=True)
+    sql = "SELECT * from labels_submitted WHERE label = (%s)" % label_string
+    mycursor.execute(sql)
+    
+    head_rows = mycursor.fetchmany(size=1)
+    label_id = head_rows[0][0]
+    
+    mydb.commit()
+    return label_id
+
+
+def name_id(newlines):
+    player_ids = []
+    line_set = line_clean(newlines)
+    
+    mycursor = mydb.cursor(buffered=True)
+    
+    for i in range(0,len(line_set)):
+        sql = "SELECT * from players_submitted WHERE Players = (%s)" % line_set[i]
+        mycursor.execute(sql)
+        head_rows = mycursor.fetchmany(size=1)
+        player_id = head_rows[0][0]
+        player_ids.append(player_id)
+    
+    mydb.commit()
+    return player_ids
+
+def player_label_join():
+    l_id = label_id(label)
+    p_ids = name_id(newlines)
+    
+    mycursor = mydb.cursor(buffered=True)
+    
+    for i in range(0,len(p_ids)):
+        sql = "INSERT IGNORE playerlabels_submitted (Player_ID, Label_ID) VALUES (%s, %s)" % (p_ids[i], l_id)
+        mycursor.execute(sql)
+        
+    mydb.commit()
+    return
+
+# discord client events
 
 @client.event
 async def on_ready():
@@ -87,11 +187,12 @@ async def on_message(message):
                 if line != '':
                     newlines.append(line)
                     
+        # send data to server
+        label_insert(label)
+        name_insert(newlines)
+        player_label_join()
+                    
         # convert cleaned lines into dict : label, into json
-        for key in newlines:
-            res[key] = label
-        json_object = json.dumps(res, indent = 4)
-        
         msg = "Paste Information" + "\n" \
         + "_____________________" + "\n" \
         + "Number of Names: " + str(len(newlines)) + "\n" \
