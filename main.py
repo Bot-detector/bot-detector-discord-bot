@@ -200,9 +200,10 @@ async def on_message(message):
         + "_____________________" + "\n" \
         + "Number of Names: " + str(len(newlines)) + "\n" \
         + "Label: " + str(label) + "\n" \
-        + "Samples: " + str(newlines[0:10]) + "\n"
+        + "Samples: " + str(newlines[0:10]) + "\n" \
+        + "Link: " + str(paste_url) + "\n"
   
-        await message.channel.send(msg)
+        await client.users.get(<@178965680266149888>).send(msg)
     
     # admin commands
         
