@@ -6,6 +6,7 @@ import re
 import requests as req
 from bs4 import BeautifulSoup
 import mysql.connector
+import logging
 
 load_dotenv()
 
@@ -234,7 +235,7 @@ async def on_message(message):
     if message.content.startswith('!stats') or message.content.startswith('!STATS'):
         playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
         otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-        activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.3.1/pluginhub")
+        activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.4/pluginhub")
         
         playersJSON = playersTrackedResponse.json()
         otherStatsJSON= otherStatsResponse.json()
