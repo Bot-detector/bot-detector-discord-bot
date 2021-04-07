@@ -95,7 +95,7 @@ def name_id(newlines):
     mydb.commit()
     return player_ids
 
-def player_label_join():
+def player_label_join(label, newlines):
     l_id = label_id(label)
     p_ids = name_id(newlines)
     
@@ -193,7 +193,7 @@ async def on_message(message):
         # send data to server
         label_insert(label)
         name_insert(newlines)
-        player_label_join()
+        player_label_join(label, newlines)
                     
         # convert cleaned lines into dict : label, into json
         msg = "Paste Information" + "\n" \
