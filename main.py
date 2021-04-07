@@ -134,6 +134,9 @@ async def on_message(message):
     if message.content.startswith('!poke') or message.content.startswith('!poke'):
         await message.channel.send('Teehee! :3')
 
+    if "25 buttholes" in message.content.lower():
+        await message.channel.send('hahahahahaha w0w!')
+
         
      # channel links
         
