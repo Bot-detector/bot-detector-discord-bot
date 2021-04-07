@@ -204,8 +204,9 @@ async def on_message(message):
         + "Samples: " + str(newlines[0:10]) + "\n" \
         + "Link: " + str(paste_url) + "\n"
   
-        await client.get_user('178965680266149888').send(msg)
-    
+        #await client.get_user('178965680266149888').send(msg)
+        await message.channel.send(msg)
+      
     # admin commands
         
     if message.content.startswith('!ban') or message.content.startswith('!Ban'):
