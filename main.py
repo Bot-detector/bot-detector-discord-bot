@@ -284,9 +284,11 @@ async def on_message(message):
     
     if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
           playerName = message.content[9:21]
+        
           resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
           respJSON = resp.json()
-          
+          respJSON = respJSON[-1]
+
           name = respJSON['name']
           prediction = respJSON['prediction']
           player_id = respJSON['id']
