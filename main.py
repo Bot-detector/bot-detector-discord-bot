@@ -111,6 +111,19 @@ def player_label_join(label, newlines):
         
     mydb.commit()
     return
+  
+  
+# !predict command color changer 
+
+def plus_minus(var, compare):
+    diff_control = '-'
+    if(isinstance(var, float)):
+        if(var > compare):
+            diff_control = '+'
+    if(isinstance(var, str)):
+        if(str(var)==str(compare)):
+            diff_control = '+'
+    return diff_control
 
 # discord client events
 
@@ -294,21 +307,12 @@ async def on_message(message):
           player_id = respJSON['id']
           confidence = respJSON['Predicted confidence']
           
-          if(prediction != 'Real_Player'):
-            msg = "```diff" + "\n" \
-                 + "+ Name: " + str(name) + "\n" \
-                 + "+ Prediction: " + str(prediction) + "\n" \
-                 + "+ Confidence: " + str(confidence) + "\n" \
-                 + "+ ID: " + str(player_id) + "\n" \
-                 + "```\n"
-    
-          if(prediction != 'Real_Player'):
-              msg = "```diff" + "\n" \
-                   + "- Name: " + str(name) + "\n" \
-                   + "- Prediction: " + str(prediction) + "\n" \
-                   + "- Confidence: " + str(confidence) + "\n" \
-                   + "- ID: " + str(player_id) + "\n" \
-                   + "```\n"
+          msg = "```diff" + "\n" \
+            + "+" + " Name: " + str(name) + "\n" \
+            + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
+            + str(plus_minus(confidence, 0.9)) + " Confidence: " + str(confidence) + "\n" \
+            + "+" + " ID: " + str(player_id) + "\n" \
+            + "```\n"
             
           await message.channel.send(msg)
           
