@@ -142,7 +142,7 @@ async def on_message(message):
         await message.channel.send('hahahahahaha w0w!')
 
         
-     # channel links
+   # channel links
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
@@ -273,15 +273,43 @@ async def on_message(message):
         bans = respJSON['bans']
         possible_bans = respJSON['possible_bans']
 
-
         msg = "```" + playerName + "'s Stats: \n" \
                  + "Reports Submitted: " + str(reports) + "\n" \
                  + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
                  + "Confirmed Bans: " + str(bans) + "```\n"
 
         await message.channel.send(msg)
+        
+    #predict method
+    
+    if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
+          playerName = message.content[9:21]
+          resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
+          respJSON = resp.json()
+          
+          name = respJSON['name']
+          prediction = respJSON['prediction']
+          player_id = respJSON['id']
+          confidence = respJSON['Predicted confidence']
+          
+          if(prediction == 'Real_Player'):
+            msg = "```diff" + "\n" \
+                   + "+ Name:" + str(name) + "\n" \
+                   + "+ Prediction: " + str(prediction) + "\n" \
+                   + "+ Confidence: " + str(confidence) + "\n" \
+                   + "+ ID: " + str(player_id) + "\n" \
+                   + "```\n"
             
-            
+          if(prediction != 'Real_Player'):
+            msg = "```diff" + "\n" \
+                   + "- Name:" + str(name) + "\n" \
+                   + "- Prediction: " + str(prediction) + "\n" \
+                   + "- Confidence: " + str(confidence) + "\n" \
+                   + "- ID: " + str(player_id) + "\n" \
+                   + "```\n"
+
+          await message.channel.send(msg)
+          
 @client.event
 async def on_member_join(member):
     pass
