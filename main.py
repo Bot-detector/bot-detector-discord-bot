@@ -1,4 +1,5 @@
 import discord
+print(discord.__version__)
 import os
 import json
 from dotenv import load_dotenv
@@ -10,7 +11,9 @@ import logging
 
 load_dotenv()
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.members = True
+client = discord.Client(intents=intents)
 
 host_ip = os.getenv('DB_HOST')
 user_id = os.getenv('DB_USER')
@@ -203,9 +206,10 @@ async def on_message(message):
         + "Label: " + str(label) + "\n" \
         + "Samples: " + str(newlines[0:10]) + "\n" \
         + "Link: " + str(paste_url) + "\n"
-  
-        #await client.get_user('178965680266149888').send(msg)
-        await message.channel.send(msg)
+
+        user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
+
+        await user.send(msg)
       
     # admin commands
         
