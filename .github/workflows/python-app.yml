@@ -36,6 +36,7 @@ jobs:
           echo "${{ secrets.DB_USER }}" >> .env
           echo "${{ secrets.DB_PASS }}" >> .env
           echo "${{ secrets.DB_NAME }}" >> .env
+          echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
           
       - name: run_bot
         run: |
