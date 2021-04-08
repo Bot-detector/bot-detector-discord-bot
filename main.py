@@ -292,22 +292,13 @@ async def on_message(message):
           player_id = respJSON['id']
           confidence = respJSON['Predicted confidence']
           
-          if(prediction == 'Real_Player'):
-            msg = "```diff" + "\n" \
-                   + "+ Name:" + str(name) + "\n" \
-                   + "+ Prediction: " + str(prediction) + "\n" \
-                   + "+ Confidence: " + str(confidence) + "\n" \
-                   + "+ ID: " + str(player_id) + "\n" \
-                   + "```\n"
+          msg = "```diff" + "\n" \
+                 + "+ Name:" + str(name) + "\n" \
+                 + "+ Prediction: " + str(prediction) + "\n" \
+                 + "+ Confidence: " + str(confidence) + "\n" \
+                 + "+ ID: " + str(player_id) + "\n" \
+                 + "```\n"
             
-          if(prediction != 'Real_Player'):
-            msg = "```diff" + "\n" \
-                   + "- Name:" + str(name) + "\n" \
-                   + "- Prediction: " + str(prediction) + "\n" \
-                   + "- Confidence: " + str(confidence) + "\n" \
-                   + "- ID: " + str(player_id) + "\n" \
-                   + "```\n"
-
           await message.channel.send(msg)
           
 @client.event
