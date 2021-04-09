@@ -232,10 +232,10 @@ async def on_message(message):
         user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
 
         await user.send(msg)
-      
+   
     # admin commands
         
-    if message.content.startswith('!ban') or message.content.startswith('!Ban'):
+    if message.content.lower() == "!ban":
         msg = "```diff" + "\n" \
                  + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
                  + "```\n"
