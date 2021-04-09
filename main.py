@@ -31,7 +31,7 @@ mydb = mysql.connector.connect(
 
 def get_paste_names(paste_url):
     newlines = list()
-    data = requests.get(paste_url)
+    data = req.get(paste_url)
     soup = BeautifulSoup(data.content, 'html.parser')
     
     lines = soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
