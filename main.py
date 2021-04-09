@@ -27,15 +27,34 @@ mydb = mysql.connector.connect(
   database=database_id
 )
 
-# sql functions
+# sql functions #########################################################################################################################################################
 
-def line_clean(newlines):
-    line_set = list()
-    for line in newlines:
-        str_line = '"' + str(line) + '"'
-        line_set.append(str_line)
-        
-    return line_set
+def get_paste_names(paste_url):
+    newlines = list()
+    data = requests.get(paste_url)
+    soup = BeautifulSoup(data.content, 'html.parser')
+    
+    lines = soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
+    lines = lines.splitlines()
+    
+    label = soup.findAll('title')[0].decode_contents()
+    label = label[:-15]
+    
+    for line in lines:
+        L = re.fullmatch('[\w\d _-]{1,12}', line)
+        if L:
+            newlines.append(line)
+            
+    return newlines, label
+
+# pre-processing 
+
+def convert(list):
+    return (list, )
+
+
+def convert_names(list):
+    return (*list,)
 
 
 def label_clean(label):
@@ -43,38 +62,48 @@ def label_clean(label):
     return label_string
 
 
+def name_clean(newlines):
+    line_set = list()
+    for line in newlines:
+        str_line = '"' + str(line) + '"'
+        line_set.append(str_line)
+    return line_set
+
+# insert functions
+
 def label_insert(label):
-    label_string = label_clean(label)
-    
     mycursor = mydb.cursor(buffered=True)
-    sql = "INSERT INTO labels_submitted (label) VALUES (%s)" % label_string
-    try: 
-        mycursor.execute(sql)
+    label_string = convert(label)
+    sql = "INSERT INTO labels_submitted (Label) VALUES (%s)"
+    try:
+        mycursor.execute(sql, label_string)
     except:
-        mydb.rollback()
-    
+        pass
     mydb.commit()
     return
 
 
 def name_insert(newlines):
-    line_set = line_clean(newlines)
     mycursor = mydb.cursor(buffered=True)
-    
-    for i in range(0,len(line_set)):
-        sql = "INSERT IGNORE players_submitted (Players) VALUES (%s)" % line_set[i]
-        mycursor.execute(sql)
-        
+    line_set = convert_names(newlines)
+    sql = "INSERT INTO players_submitted (Players) VALUES (%s)"
+    for i in line_set:
+        try:
+            i_c = convert(i)
+            mycursor.execute(sql, i_c)
+        except:
+            pass
     mydb.commit()
     return
 
+# recall functions 
 
 def label_id(label):
     label_string = label_clean(label)
     
     mycursor = mydb.cursor(buffered=True)
-    sql = "SELECT * from labels_submitted WHERE label = (%s)" % label_string
-    mycursor.execute(sql)
+    sql = "SELECT * from labels_submitted WHERE label = %s" % str(label_string)
+    mycursor.execute(sql, label_string)
     
     head_rows = mycursor.fetchmany(size=1)
     label_id = head_rows[0][0]
@@ -85,7 +114,7 @@ def label_id(label):
 
 def name_id(newlines):
     player_ids = []
-    line_set = line_clean(newlines)
+    line_set = name_clean(newlines)
     
     mycursor = mydb.cursor(buffered=True)
     
@@ -99,20 +128,20 @@ def name_id(newlines):
     mydb.commit()
     return player_ids
 
+# final join functions
+
 def player_label_join(label, newlines):
     l_id = label_id(label)
     p_ids = name_id(newlines)
-    
     mycursor = mydb.cursor(buffered=True)
-    
     for i in range(0,len(p_ids)):
         sql = "INSERT IGNORE playerlabels_submitted (Player_ID, Label_ID) VALUES (%s, %s)" % (p_ids[i], l_id)
         mycursor.execute(sql)
-        
     mydb.commit()
     return
-  
-  
+
+################################################################################################################################################################
+
 # !predict command color changer 
 
 def plus_minus(var, compare):
@@ -186,33 +215,13 @@ async def on_message(message):
         await message.author.send(msg)
         
     if message.content.startswith('!submit') or message.content.startswith('!Submit'):
-        # get url and raw dataform
-        newlines = list()
-        res = {}
         paste_url = message.content[8:100]
-        data = req.get(paste_url)
         
-        # use beautiful soup and other methods to clean the data
-        soup = BeautifulSoup(data.content, 'html.parser')
-        output = soup.findAll('textarea')
-        lines = str(output[0]).strip('<textarea class="textarea">').strip('<"/"').replace('\r','').splitlines()
-        
-        outputLabel = soup.findAll('title')
-        label = str(outputLabel[0]).replace('<title>',"").replace(' - Pastebin.com</title>','')
-        
-        # regex only confirms lines that are RSN-like
-        for line in lines:
-            L = re.fullmatch('[\w\d _-]{0,12}', line)
-            if L:
-                if line != '':
-                    newlines.append(line)
-                    
-        # send data to server
+        newlines, label = get_paste_names(paste_url)
         label_insert(label)
         name_insert(newlines)
         player_label_join(label, newlines)
                     
-        # convert cleaned lines into dict : label, into json
         msg = "Paste Information" + "\n" \
         + "_____________________" + "\n" \
         + "Number of Names: " + str(len(newlines)) + "\n" \
