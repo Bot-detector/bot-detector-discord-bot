@@ -312,9 +312,9 @@ async def on_message(message):
           respJSON = respJSON[-1]
 
           name = respJSON['name']
-          prediction = respJSON['prediction']
+          prediction = respJSON['prediction_label']
           player_id = respJSON['id']
-          confidence = respJSON['Predicted confidence']
+          confidence = respJSON['prediction_confidence']
           
           msg = "```diff" + "\n" \
             + "+" + " Name: " + str(name) + "\n" \
