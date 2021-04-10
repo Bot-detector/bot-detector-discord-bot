@@ -319,7 +319,7 @@ async def on_message(message):
           msg = "```diff" + "\n" \
             + "+" + " Name: " + str(name) + "\n" \
             + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-            + str(plus_minus(confidence, 0.9)) + " Confidence: " + str(confidence) + "\n" \
+            + str(plus_minus(confidence, 0.75)) + " Confidence: " + str(confidence) + "\n" \
             + "+" + " ID: " + str(player_id) + "\n" \
             + "```\n"
             
