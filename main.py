@@ -309,11 +309,11 @@ async def on_message(message):
         
           resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
           respJSON = resp.json()
-          respJSON = respJSON[-1]
+          #respJSON = respJSON[-1]
 
-          name = respJSON['name']
+          name = respJSON['player_name']
           prediction = respJSON['prediction_label']
-          player_id = respJSON['id']
+          player_id = respJSON['player_id']
           confidence = respJSON['prediction_confidence']
           
           msg = "```diff" + "\n" \
