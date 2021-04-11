@@ -306,35 +306,36 @@ async def on_message(message):
 
       #predict method
 
-    if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
-        playerName = message.content[9:21]
+        if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
+            playerName = message.content[9:21]
         
-        resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
-        respJSON = resp.json()
-        #respJSON = respJSON[-1]
+            resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
+            respJSON = resp.json()
+            #respJSON = respJSON[-1]
 
-        name = respJSON['player_name']
-        prediction = respJSON['prediction_label']
-        player_id = respJSON['player_id']
-        confidence = respJSON['prediction_confidence']
-        secondaries = respJSON['secondary_predictions']
+            name = respJSON['player_name']
+            prediction = respJSON['prediction_label']
+            player_id = respJSON['player_id']
+            confidence = respJSON['prediction_confidence']
+            secondaries = respJSON['secondary_predictions']
           
-        msg = "```diff" + "\n" \
-            + "+" + " Name: " + str(name) + "\n" \
-            + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-            + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence))+ "\n" \
-            + "+" + " ID: " + str(player_id) + "\n" \
-            + "============\n" \
-            + "Prediction Breakdown \n\n"
+            msg = "```diff" + "\n" \
+                + "+" + " Name: " + str(name) + "\n" \
+                + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
+                + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence))+ "\n" \
+                + "+" + " ID: " + str(player_id) + "\n" \
+                + "============\n" \
+                + "Prediction Breakdown \n\n"
             
-        for predict in secondaries:
-            msg += str(plus_minus(predict[0],'Real_Player')) + " " + str(predict[0]) + ": " \
-            + str(predict[1])
-            msg += "\n" 
+            for predict in secondaries:
+                msg += str(plus_minus(predict[0],'Real_Player')) + " " + str(predict[0]) + ": " \
+                + str(predict[1])
+                msg += "\n" 
 
-        msg += "```\n"
+            msg += "```\n"
+
         
-        await message.channel.send(msg)
+            await message.channel.send(msg)
           
 @client.event
 async def on_member_join(member):
