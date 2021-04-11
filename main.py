@@ -184,9 +184,11 @@ async def on_message(message):
         
     # admin commands
 
-    if message.content.lower() == "!ban":
+    if message.content.lower() == "!warn":
+        
         msg = "```diff" + "\n" \
                  + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+                 + "- **This is your only warning.**" + "\n" \
                  + "```\n"
         await message.channel.send(msg)
 
