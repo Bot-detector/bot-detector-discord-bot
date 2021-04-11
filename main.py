@@ -169,9 +169,6 @@ async def on_message(message):
         
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
-        
-    if message.channel.id == 825189024074563614 and message.content.startswith('!hello'):
-        await message.channel.send('Yay, right channel!')
     
     if message.content.startswith('!meow') or message.content.startswith('!Meow'):
         catResponse = req.get("https://cataas.com/cat?json=true")
@@ -194,138 +191,141 @@ async def on_message(message):
     if message.content.startswith('!issues') or message.content.startswith('!Issues'):
         await message.channel.send('<#822851862016950282>')
         
-   # list dm process
         
-    if message.content.startswith('!list') or message.content.startswith('!List'):
-        msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
-        + "Example: !submit https://pastebin.com/iw8MmUzg" + "\n" \
-        + "___________" + "\n" \
-        + "Acceptable Formatting:" + "\n" \
-        + "Player 1" + "\n" \
-        + "Player 2" + "\n" \
-        + "Player 3" + "\n" \
-        + "Player 4" + "\n" \
-        + "Player 5" + "\n" \
-        + "___________" + "\n" \
-        + "Pastebin Settings:" + "\n" \
-        + "Syntax Highlighting: None" + "\n" \
-        + "Paste Expiration: 1 Day" + "\n" \
-        + "Paste Exposure: Public" + "\n" \
-        + "Folder: No Folder Selected" + "\n" \
-        + "Password: {leave blank - no password needed}" + "\n" \
-        + "Paste Name / Title: {Include your Label Here}" + "\n" 
-        await message.author.send(msg)
-        
-    if message.content.startswith('!submit') or message.content.startswith('!Submit'):
-        paste_url = message.content[8:100]
-        
-        newlines, label = get_paste_names(paste_url)
-        label_insert(label)
-        name_insert(newlines)
-        player_label_join(label, newlines)
-                    
-        msg = "Paste Information" + "\n" \
-        + "_____________________" + "\n" \
-        + "Number of Names: " + str(len(newlines)) + "\n" \
-        + "Label: " + str(label) + "\n" \
-        + "Samples: " + str(newlines[0:10]) + "\n" \
-        + "Link: " + str(paste_url) + "\n"
+    if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
+      
+     # list dm process
 
-        user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
+      if message.content.startswith('!list') or message.content.startswith('!List'):
+          msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
+          + "Example: !submit https://pastebin.com/iw8MmUzg" + "\n" \
+          + "___________" + "\n" \
+          + "Acceptable Formatting:" + "\n" \
+          + "Player 1" + "\n" \
+          + "Player 2" + "\n" \
+          + "Player 3" + "\n" \
+          + "Player 4" + "\n" \
+          + "Player 5" + "\n" \
+          + "___________" + "\n" \
+          + "Pastebin Settings:" + "\n" \
+          + "Syntax Highlighting: None" + "\n" \
+          + "Paste Expiration: 1 Day" + "\n" \
+          + "Paste Exposure: Public" + "\n" \
+          + "Folder: No Folder Selected" + "\n" \
+          + "Password: {leave blank - no password needed}" + "\n" \
+          + "Paste Name / Title: {Include your Label Here}" + "\n" 
+          await message.author.send(msg)
 
-        await user.send(msg)
-   
-    # admin commands
-        
-    if message.content.lower() == "!ban":
-        msg = "```diff" + "\n" \
-                 + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
-                 + "```\n"
-        await message.channel.send(msg)
-        
-    # links
-        
-    if message.content.startswith('!website') or message.content.startswith('!Website'):
-        await message.channel.send('https://www.osrsbotdetector.com/#/')
-        
-    if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
-        await message.channel.send('https://www.patreon.com/bot_detector') 
-        
-    if message.content.startswith('!github core') or message.content.startswith('!github core'):
-            await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
-            
-    if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
-            await message.channel.send('https://github.com/Ferrariic/bot-detector') 
+      if message.content.startswith('!submit') or message.content.startswith('!Submit'):
+          paste_url = message.content[8:100]
 
-    if message.content.startswith('!invite') or message.content.startswith('!Invite'):
-        await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
-        
-    # plugin and database stats
+          newlines, label = get_paste_names(paste_url)
+          label_insert(label)
+          name_insert(newlines)
+          player_label_join(label, newlines)
 
-    if message.content.startswith('!stats') or message.content.startswith('!STATS'):
-        playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
-        otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-        activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.4/pluginhub")
-        
-        playersJSON = playersTrackedResponse.json()
-        otherStatsJSON= otherStatsResponse.json()
-        activeInstallsJSON = activeInstallsReponse.json()
+          msg = "Paste Information" + "\n" \
+          + "_____________________" + "\n" \
+          + "Number of Names: " + str(len(newlines)) + "\n" \
+          + "Label: " + str(label) + "\n" \
+          + "Samples: " + str(newlines[0:10]) + "\n" \
+          + "Link: " + str(paste_url) + "\n"
 
-        playersTracked = playersJSON['players'][0]
-        totalBans = otherStatsJSON['bans']
-        totalReports = otherStatsJSON['total_reports']
-        activeInstalls = activeInstallsJSON['bot-detector']
-        
-        msg = "```Project Stats:\n" \
-                + "Players Analyzed: " + str(playersTracked) + "\n"\
-                + "Reports Sent to Jagex: " + str(totalReports) + "\n"\
-                + "Resultant Bans: " + str(totalBans) + "\n"\
-                + "Active Installs: " + str(activeInstalls) \
-                + "```"
+          user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
 
-        await message.channel.send(msg)
-        
-    # player stats
+          await user.send(msg)
 
-    if message.content.startswith('!kc') or message.content.startswith('!KC'):
-        playerName = message.content[4:16]
+      # admin commands
 
-        resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
-        respJSON = resp.json()
-
-        reports = respJSON['reports']
-        bans = respJSON['bans']
-        possible_bans = respJSON['possible_bans']
-
-        msg = "```" + playerName + "'s Stats: \n" \
-                 + "Reports Submitted: " + str(reports) + "\n" \
-                 + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
-                 + "Confirmed Bans: " + str(bans) + "```\n"
-
-        await message.channel.send(msg)
-        
-    #predict method
-    
-    if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
-          playerName = message.content[9:21]
-        
-          resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
-          respJSON = resp.json()
-          #respJSON = respJSON[-1]
-
-          name = respJSON['player_name']
-          prediction = respJSON['prediction_label']
-          player_id = respJSON['player_id']
-          confidence = respJSON['prediction_confidence']
-          
+      if message.content.lower() == "!ban":
           msg = "```diff" + "\n" \
-            + "+" + " Name: " + str(name) + "\n" \
-            + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-            + str(plus_minus(confidence, 0.75)) + " Confidence: " + str(confidence) + "\n" \
-            + "+" + " ID: " + str(player_id) + "\n" \
-            + "```\n"
-            
+                   + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+                   + "```\n"
           await message.channel.send(msg)
+
+      # links
+
+      if message.content.startswith('!website') or message.content.startswith('!Website'):
+          await message.channel.send('https://www.osrsbotdetector.com/#/')
+
+      if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
+          await message.channel.send('https://www.patreon.com/bot_detector') 
+
+      if message.content.startswith('!github core') or message.content.startswith('!github core'):
+              await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
+
+      if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
+              await message.channel.send('https://github.com/Ferrariic/bot-detector') 
+
+      if message.content.startswith('!invite') or message.content.startswith('!Invite'):
+          await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
+
+      # plugin and database stats
+
+      if message.content.startswith('!stats') or message.content.startswith('!STATS'):
+          playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
+          otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
+          activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.4/pluginhub")
+
+          playersJSON = playersTrackedResponse.json()
+          otherStatsJSON= otherStatsResponse.json()
+          activeInstallsJSON = activeInstallsReponse.json()
+
+          playersTracked = playersJSON['players'][0]
+          totalBans = otherStatsJSON['bans']
+          totalReports = otherStatsJSON['total_reports']
+          activeInstalls = activeInstallsJSON['bot-detector']
+
+          msg = "```Project Stats:\n" \
+                  + "Players Analyzed: " + str(playersTracked) + "\n"\
+                  + "Reports Sent to Jagex: " + str(totalReports) + "\n"\
+                  + "Resultant Bans: " + str(totalBans) + "\n"\
+                  + "Active Installs: " + str(activeInstalls) \
+                  + "```"
+
+          await message.channel.send(msg)
+
+      # player stats
+
+      if message.content.startswith('!kc') or message.content.startswith('!KC'):
+          playerName = message.content[4:16]
+
+          resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
+          respJSON = resp.json()
+
+          reports = respJSON['reports']
+          bans = respJSON['bans']
+          possible_bans = respJSON['possible_bans']
+
+          msg = "```" + playerName + "'s Stats: \n" \
+                   + "Reports Submitted: " + str(reports) + "\n" \
+                   + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
+                   + "Confirmed Bans: " + str(bans) + "```\n"
+
+          await message.channel.send(msg)
+
+      #predict method
+
+      if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
+            playerName = message.content[9:21]
+
+            resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
+            respJSON = resp.json()
+            #respJSON = respJSON[-1]
+
+            name = respJSON['player_name']
+            prediction = respJSON['prediction_label']
+            player_id = respJSON['player_id']
+            confidence = respJSON['prediction_confidence']
+
+            msg = "```diff" + "\n" \
+              + "+" + " Name: " + str(name) + "\n" \
+              + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
+              + str(plus_minus(confidence, 0.75)) + " Confidence: " + str(confidence) + "\n" \
+              + "+" + " ID: " + str(player_id) + "\n" \
+              + "```\n"
+
+            await message.channel.send(msg)
           
 @client.event
 async def on_member_join(member):
