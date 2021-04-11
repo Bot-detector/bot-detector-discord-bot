@@ -169,6 +169,9 @@ async def on_message(message):
         
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
+        
+    if message.channel.id == '830914667710513214' and message.content.startswith('!hello'):
+        await message.channel.send('Yay, right channel!')
 
     
     if message.content.startswith('!meow') or message.content.startswith('!Meow'):
