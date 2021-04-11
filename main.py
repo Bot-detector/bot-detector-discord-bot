@@ -181,9 +181,16 @@ async def on_message(message):
 
     if "25 buttholes" in message.content.lower():
         await message.channel.send('hahahahahaha w0w!')
-
         
-   # channel links
+    # admin commands
+
+    if message.content.lower() == "!ban":
+        msg = "```diff" + "\n" \
+                 + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+                 + "```\n"
+        await message.channel.send(msg)
+
+    # channel links
         
     if message.content.startswith('!rules') or message.content.startswith('!Rules'):
         await message.channel.send('<#825137784112807946>')
@@ -191,10 +198,9 @@ async def on_message(message):
     if message.content.startswith('!issues') or message.content.startswith('!Issues'):
         await message.channel.send('<#822851862016950282>')
         
-        
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
       
-     # list dm process
+      # list dm process
 
       if message.content.startswith('!list') or message.content.startswith('!List'):
           msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
@@ -234,14 +240,6 @@ async def on_message(message):
           user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
 
           await user.send(msg)
-
-      # admin commands
-
-      if message.content.lower() == "!ban":
-          msg = "```diff" + "\n" \
-                   + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
-                   + "```\n"
-          await message.channel.send(msg)
 
       # links
 
