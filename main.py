@@ -26,7 +26,14 @@ mydb = mysql.connector.connect(
   host=host_ip,
   user=user_id,
   password=password_id,
-  database=database_id
+  database=DB_NAME_SUBMISSIONS
+)
+
+mydb_verification = mysql.connector.connect(
+  host=host_ip,
+  user=user_id,
+  password=password_id,
+  database=DB_NAME_PLAYERS
 )
 
 # sql functions #########################################################################################################################################################
