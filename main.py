@@ -350,10 +350,8 @@ async def on_message(message):
                       if discord_id in owner_list:
                           verificationInsert(discord_id, player_id, code)
                           msg = msgPassed
-                          print(msgPassed)
                       else:
                           msg = msgInUse
-                          print(msgInUse)
                   else:
                       verificationInsert(discord_id, player_id, code)
                       msg = msgPassed
