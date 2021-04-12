@@ -170,6 +170,24 @@ def plus_minus(var, compare):
 
 def id_generator(size=10, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+  
+# Verification sql statements
+  
+def verificationPull(playerName):
+  mycursor = mydb_players.cursor(buffered=True)
+  sql = "SELECT * FROM Players WHERE name = %s"
+  mycursor.execute(sql,convert(playerName))
+  data = mycursor.fetchmany(size=1)
+  player_id = data[0][0]
+  return player_id
+
+def verificationInsert(discord_id, player_id, code):
+  mycursor = mydb.cursor(buffered=True)
+  sql = "INSERT INTO discordVerification (Discord_id, Player_id, Code) VALUES (%s, %s, %s)"
+  query = ((discord_id),(player_id),(code))
+  mycursor.execute(sql,query)
+  mydb.commit()
+  return
 
 # discord client events
 
@@ -239,27 +257,45 @@ async def on_message(message):
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
       
         if message.content.startswith('!link') or message.content.startswith('!Link'):
+          
             playerName = message.content[6:18]
             code = id_generator()
             discord_id = message.author.id
             
-            msg = "```diff" + "\n" \
-            + "====== INFO ======\n" \
-            + "Request to link: " + str(playerName) + "\n" \
-            + "Your discord ID is: " + str(discord_id) + "\n" \
-            + "====== SETUP ======\n" \
-            + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
-            + "+ Access Code: " + str(code)+ "\n" \
-            + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
-            + "====== NOTICE ======\n" \
-            + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
-            + "- This code will expire in 24 hours." + "\n" \
-            + "- Do not share this code with anyone." + "\n" \
-            + "```"
+            try:
+              player_id = verificationPull(playerName)
+              
+              try:
+                verificationInsert(discord_id, player_id, code)
+                msg = "```diff" + "\n" \
+                + "====== INFO ======\n" \
+                + "Request to link: " + str(playerName) + "\n" \
+                + "Your discord ID is: " + str(discord_id) + "\n" \
+                + "====== SETUP ======\n" \
+                + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
+                + "+ Access Code: " + str(code)+ "\n" \
+                + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
+                + "====== NOTICE ======\n" \
+                + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
+                + "- This code will expire in 24 hours." + "\n" \
+                + "- Do not share this code with anyone." + "\n" \
+                + "```"
+                
+              except: 
+                msg = "```diff" + "\n" \
+                + "- RSN is currently in use. Please contact an Administrator" + "\n" \
+                + "```"
+                pass
+              
+            except:
+              msg = "```diff" + "\n" \
+              + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
+              + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
+              + "```"
+              pass
+            
             await message.author.send(msg)
             
-            #todo add `players` table confirmation
-            #todo add method for failed `players` confirmation
 
         if message.content.startswith('!list') or message.content.startswith('!List'):
             msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
