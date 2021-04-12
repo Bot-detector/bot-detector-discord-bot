@@ -193,6 +193,8 @@ def verificationPull(playerName):
 def verification_check(player_id):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
+    verified = 0
+    owner_id = 0
     
     sql = "SELECT * from discordVerification WHERE Player_id = %s"
     mycursor.execute(sql,convert(player_id))
@@ -290,6 +292,7 @@ async def on_message(message):
       
         if message.content.startswith('!link') or message.content.startswith('!Link'):
           playerName = message.content[6:18]
+          owner_id = 0
           code = id_generator()
           discord_id = message.author.id
 
@@ -347,6 +350,7 @@ async def on_message(message):
 
         if message.content.startswith('!verify') or message.content.startswith('!Verify'):
             playerName = message.content[8:20]
+            owner_id = 0
             
             msgVerified = "```diff" + "\n" \
             + "+ Player: " + str(playerName) + "\n" \
