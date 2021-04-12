@@ -174,6 +174,7 @@ def id_generator(size=10, chars=string.digits):
 # Verification sql statements
   
 def verificationPull(playerName):
+    
     mycursor = mydb_players.cursor(buffered=True)
     sql = "SELECT * FROM Players WHERE name = %s"
     mycursor.execute(sql,convert(playerName))
@@ -184,14 +185,13 @@ def verificationPull(playerName):
         pass
     return player_id
 
-
 def verificationInsert(discord_id, player_id, code):
-  mycursor = mydb.cursor(buffered=True)
-  sql = "INSERT INTO discordVerification (Discord_id, Player_id, Code) VALUES (%s, %s, %s)"
-  query = ((discord_id),(player_id),(code))
-  mycursor.execute(sql,query)
-  mydb.commit()
-  return
+    mycursor = mydb.cursor(buffered=True)
+    sql = "INSERT INTO discordVerification (Discord_id, Player_id, Code) VALUES (%s, %s, %s)"
+    query = ((discord_id),(player_id),(code))
+    mycursor.execute(sql,query)
+    mydb.commit()
+    return
 
 # discord client events
 
@@ -261,11 +261,15 @@ async def on_message(message):
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
       
         if message.content.startswith('!linr') or message.content.startswith('!Linr'):
-            playerName = message.content[6:18]
-            code = id_generator()
-            discord_id = message.author.id
-            player_id = verificationPull(playerName)
-            verificationInsert(discord_id, player_id, code)
+            try: 
+              playerName = message.content[6:18]
+              code = id_generator()
+              discord_id = message.author.id
+              player_id = verificationPull(playerName)
+              verificationInsert(discord_id, player_id, code)
+            except Exception as e:
+                msg = str(e)
+                pass
             await message.author.send("test complete, please check error logs")
       
         if message.content.startswith('!link') or message.content.startswith('!Link'):
@@ -292,10 +296,11 @@ async def on_message(message):
                     + "- Do not share this code with anyone." + "\n" \
                     + "```"
 
-                except: 
-                    msg = "```diff" + "\n" \
-                    + "- RSN is currently in use. Please contact an Administrator" + "\n" \
-                    + "```"
+                except Exception as e:
+                    msg = str(e)
+                    #msg = "```diff" + "\n" \
+                    #+ "- RSN is currently in use. Please contact an Administrator" + "\n" \
+                    #+ "```"
                     pass
 
             except:
