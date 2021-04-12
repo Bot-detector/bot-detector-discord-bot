@@ -244,13 +244,12 @@ async def on_message(message):
             discord_id = message.author.id
             
             msg = "```diff" + "\n" \
-            + "====== ID ======\n" \
+            + "====== INFO ======\n" \
             + "Request to link: " + str(playerName) + "\n" \
             + "Your discord ID is: " + str(discord_id) + "\n" \
+            + "====== SETUP ======\n" \
             + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
             + "+ Access Code: " + str(code)+ "\n" \
-            + "If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
-            + "- This code will expire in 24 hours." + "\n" \
             + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
             + "====== NOTICE ======\n" \
             + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
