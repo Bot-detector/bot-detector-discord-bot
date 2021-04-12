@@ -213,9 +213,6 @@ async def on_message(message):
 
     if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
         await message.channel.send('https://github.com/Ferrariic/bot-detector') 
-        
-    if message.content.startswith('!github plugin') or message.content.startswith('!github discord'):
-        await message.channel.send('https://github.com/ThorntonMatthewD/bot-detector-discord-bot') 
 
     if message.content.startswith('!invite') or message.content.startswith('!Invite'):
         await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
