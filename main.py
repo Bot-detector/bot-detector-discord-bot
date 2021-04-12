@@ -260,6 +260,14 @@ async def on_message(message):
         
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
       
+        if message.content.startswith('!linr') or message.content.startswith('!Linr'):
+            playerName = message.content[6:18]
+            code = id_generator()
+            discord_id = message.author.id
+            player_id = verificationPull(playerName)
+            verificationInsert(discord_id, player_id, code)
+            await message.author.send("test complete, please check error logs")
+      
         if message.content.startswith('!link') or message.content.startswith('!Link'):
           
             playerName = message.content[6:18]
