@@ -323,7 +323,6 @@ async def on_message(message):
           + "+ Player: " + str(playerName) + "\n" \
           + "====== Verification Information ======\n" \
           + "+ Player is: Verified." + "\n" \
-          + "+ Discord Verified Under: " + "<@" + str(owner_id) + ">" + "\n" \
           + "```"
 
           msgUnverified = "```diff" + "\n" \
@@ -356,7 +355,6 @@ async def on_message(message):
             + "+ Player: " + str(playerName) + "\n" \
             + "====== Verification Information ======\n" \
             + "+ Player is: Verified." + "\n" \
-            + "+ Discord Verified Under: " + "<@" + str(owner_id) + ">" + "\n" \
             + "```"
 
             msgUnverified = "```diff" + "\n" \
