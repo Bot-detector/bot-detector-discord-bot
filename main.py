@@ -347,7 +347,7 @@ async def on_message(message):
                   msg = msgVerified
               else:
                   if check:
-                      if discord_id in owner_list:
+                      if int(discord_id) not in owner_list:
                           verificationInsert(discord_id, player_id, code)
                           msg = msgPassed
                       else:
