@@ -29,7 +29,7 @@ mydb = mysql.connector.connect(
   database=DB_NAME_SUBMISSIONS
 )
 
-mydb_verification = mysql.connector.connect(
+mydb_players = mysql.connector.connect(
   host=host_ip,
   user=user_id,
   password=password_id,
@@ -238,11 +238,14 @@ async def on_message(message):
         if message.content.startswith('!link') or message.content.startswith('!Link'):
             playerName = message.content[6:18]
             code = id_generator()
+            discord_id = message.author.id
             
             msg = "```diff" + "\n" \
             + "Request to link: " + str(playerName) + "\n" \
+            + "Your discord ID is: " + str(discord_id) + "\n" \ 
             + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
             + "+ Access Code: " + str(code)+ "\n" \
+            + "If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \ 
             + "- This code will expire in 24 hours." + "\n" \
             + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
             + "```"
