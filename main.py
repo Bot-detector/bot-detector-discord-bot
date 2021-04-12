@@ -8,6 +8,8 @@ import requests as req
 from bs4 import BeautifulSoup
 import mysql.connector
 import logging
+import string
+import random
 
 load_dotenv()
 
@@ -154,6 +156,11 @@ def plus_minus(var, compare):
             diff_control = '+'
     return diff_control
 
+# ID Generator command
+
+def id_generator(size=5, chars=string.ascii_uppercase + string.digits):
+  return ''.join(random.choice(chars) for _ in range(size))
+
 # discord client events
 
 @client.event
@@ -220,6 +227,24 @@ async def on_message(message):
     # Locked-Channel commands
         
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
+      
+        if message.content.startswith('!link') or message.content.startswith('!Link'):
+            playerName = message.content[6:18]
+            code = id_generator()
+            
+            msg = "```diff" + "\n" \
+            + "Request to link: " + str(playerName) + "\n" \
+            + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
+            + "+ Access Code: " + str(code)+ "\n" \
+            + "- Notice: This code will expire in 24 hours." + "\n" \
+            + "- In the event that this code expires, please redo this process." + "\n" \
+            + "+ If you are having trouble setting up your pairing, please message @Ferrariic#0001 on Discord." + "\n" \
+            + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
+            + "```"
+            await message.author.send(msg)
+            
+            #todo add `players` table confirmation
+            #todo add method for failed `players` confirmation
 
         if message.content.startswith('!list') or message.content.startswith('!List'):
             msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
