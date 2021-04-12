@@ -13,6 +13,9 @@ import random
 
 load_dotenv()
 
+VALID_COMMANDS = ['!poke', '!meow', '!warn', '!rules', '!website', '!patreon',
+'!github', '!invite!', '!link']
+
 intents = discord.Intents.default()
 intents.members = True
 client = discord.Client(intents=intents)
@@ -26,14 +29,14 @@ mydb = mysql.connector.connect(
   host=host_ip,
   user=user_id,
   password=password_id,
-  database=DB_NAME_SUBMISSIONS
+  database=os.getenv('DB_NAME_SUBMISSIONS')
 )
 
 mydb_players = mysql.connector.connect(
   host=host_ip,
   user=user_id,
   password=password_id,
-  database=DB_NAME_PLAYERS
+  database=os.getenv('DB_NAME_PLAYERS')
 )
 
 # sql functions #########################################################################################################################################################
@@ -242,10 +245,10 @@ async def on_message(message):
             
             msg = "```diff" + "\n" \
             + "Request to link: " + str(playerName) + "\n" \
-            + "Your discord ID is: " + str(discord_id) + "\n" \ 
+            + "Your discord ID is: " + str(discord_id) + "\n" \
             + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
             + "+ Access Code: " + str(code)+ "\n" \
-            + "If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \ 
+            + "If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
             + "- This code will expire in 24 hours." + "\n" \
             + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
             + "```"
