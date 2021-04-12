@@ -10,6 +10,7 @@ import mysql.connector
 import logging
 import string
 import random
+import numpy as np
 
 load_dotenv()
 
