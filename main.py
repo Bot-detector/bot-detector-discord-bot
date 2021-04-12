@@ -196,20 +196,28 @@ def verification_check(player_id):
     mycursor = mydb.cursor(buffered=True)
     verified = 0
     owner_id = 0
+    verified_list = []
+    owner_list = []
     
     sql = "SELECT * from discordVerification WHERE Player_id = %s"
     mycursor.execute(sql,convert(player_id))
-    data = mycursor.fetchmany(size=1)
+    data = mycursor.fetchall()
+    print(len(data))
+    
     if len(data)>0:
         check = True
-        verified = data[0][-1]
-        owner_id = data[0][1]
+        for i in range(0,len(data)):
+            verified_list = np.append(verified_list, data[i][-1])
+            print(data[i][1])
+            owner_list = np.append(owner_list, data[i][1])
+        verified = np.max(verified_list)
+        owner_list = np.unique(owner_list)
     else:
         check = False
 
     mycursor.close()
     mydb.close()
-    return check, verified, owner_id
+    return check, verified, owner_list
 
 def verificationInsert(discord_id, player_id, code):
     mydb = mysql.connector.connect(**config_submissions)
@@ -334,16 +342,18 @@ async def on_message(message):
 
           player_id, exists = verificationPull(playerName)
           if exists:
-              check, verified, owner_id = verification_check(player_id)
+              check, verified, owner_list = verification_check(player_id)
               if verified:
                   msg = msgVerified
               else:
                   if check:
-                      if owner_id != discord_id:
+                      if discord_id in owner_list:
                           verificationInsert(discord_id, player_id, code)
                           msg = msgPassed
+                          print(msgPassed)
                       else:
                           msg = msgInUse
+                          print(msgInUse)
                   else:
                       verificationInsert(discord_id, player_id, code)
                       msg = msgPassed
@@ -370,7 +380,7 @@ async def on_message(message):
             
             player_id, exists = verificationPull(playerName)
             if exists:
-                check, verified, owner_id = verification_check(player_id)
+                check, verified, owner_list = verification_check(player_id)
                 if verified:
                     msg = msgVerified
                 else:
