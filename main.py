@@ -200,9 +200,29 @@ async def on_message(message):
     if message.content.startswith('!issues') or message.content.startswith('!Issues'):
         await message.channel.send('<#822851862016950282>')
         
+    # Web links
+
+    if message.content.startswith('!website') or message.content.startswith('!Website'):
+        await message.channel.send('https://www.osrsbotdetector.com/#/')
+
+    if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
+        await message.channel.send('https://www.patreon.com/bot_detector') 
+
+    if message.content.startswith('!github core') or message.content.startswith('!github core'):
+        await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
+
+    if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
+        await message.channel.send('https://github.com/Ferrariic/bot-detector') 
+        
+    if message.content.startswith('!github plugin') or message.content.startswith('!github discord'):
+        await message.channel.send('https://github.com/ThorntonMatthewD/bot-detector-discord-bot') 
+
+    if message.content.startswith('!invite') or message.content.startswith('!Invite'):
+        await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
+        
+    # Locked-Channel commands
+        
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
-      
-      # list dm process
 
         if message.content.startswith('!list') or message.content.startswith('!List'):
             msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
@@ -242,23 +262,6 @@ async def on_message(message):
             user = client.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
 
             await user.send(msg)
-
-      # links
-
-        if message.content.startswith('!website') or message.content.startswith('!Website'):
-            await message.channel.send('https://www.osrsbotdetector.com/#/')
-
-        if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
-            await message.channel.send('https://www.patreon.com/bot_detector') 
-
-        if message.content.startswith('!github core') or message.content.startswith('!github core'):
-            await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
-
-        if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
-            await message.channel.send('https://github.com/Ferrariic/bot-detector') 
-
-        if message.content.startswith('!invite') or message.content.startswith('!Invite'):
-            await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
 
       # plugin and database stats
 
