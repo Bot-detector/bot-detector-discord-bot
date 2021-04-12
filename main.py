@@ -158,8 +158,8 @@ def plus_minus(var, compare):
 
 # ID Generator command
 
-def id_generator(size=5, chars=string.ascii_uppercase + string.digits):
-  return ''.join(random.choice(chars) for _ in range(size))
+def id_generator(size=10, chars=string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
 
 # discord client events
 
@@ -236,9 +236,7 @@ async def on_message(message):
             + "Request to link: " + str(playerName) + "\n" \
             + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
             + "+ Access Code: " + str(code)+ "\n" \
-            + "- Notice: This code will expire in 24 hours." + "\n" \
-            + "- In the event that this code expires, please redo this process." + "\n" \
-            + "+ If you are having trouble setting up your pairing, please message @Ferrariic#0001 on Discord." + "\n" \
+            + "- This code will expire in 24 hours." + "\n" \
             + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
             + "```"
             await message.author.send(msg)
