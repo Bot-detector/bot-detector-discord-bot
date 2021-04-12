@@ -25,19 +25,19 @@ user_id = os.getenv('DB_USER')
 password_id = os.getenv('DB_PASS')
 database_id = os.getenv('DB_NAME')
 
-mydb = mysql.connector.connect(
-  host=host_ip,
-  user=user_id,
-  password=password_id,
-  database=os.getenv('DB_NAME_SUBMISSIONS')
-)
+config_submissions = {
+  'user': user_id,
+  'password': password_id,
+  'host': host_ip,
+  'database': os.getenv('DB_NAME_SUBMISSIONS'),
+}
 
-mydb_players = mysql.connector.connect(
-  host=host_ip,
-  user=user_id,
-  password=password_id,
-  database=os.getenv('DB_NAME_PLAYERS')
-)
+config_players = {
+  'user': user_id,
+  'password': password_id,
+  'host': host_ip,
+  'database': os.getenv('DB_NAME_PLAYERS'),
+}
 
 # sql functions #########################################################################################################################################################
 
@@ -174,23 +174,49 @@ def id_generator(size=10, chars=string.digits):
 # Verification sql statements
   
 def verificationPull(playerName):
-    
+    mydb_players = mysql.connector.connect(**config_players)
     mycursor = mydb_players.cursor(buffered=True)
+    
     sql = "SELECT * FROM Players WHERE name = %s"
     mycursor.execute(sql,convert(playerName))
     data = mycursor.fetchmany(size=1)
-    try:
+    if len(data)>0:
+        exists = True
         player_id = data[0][0]
-    except:
-        pass
-    return player_id
+    else:
+        exists = False
+    
+    mycursor.close()
+    mydb_players.close()
+    return player_id, exists
+
+def verification_check(player_id):
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+    
+    sql = "SELECT * from discordVerification WHERE Player_id = %s"
+    mycursor.execute(sql,convert(player_id))
+    data = mycursor.fetchmany(size=1)
+    if len(data)>0:
+        check = True
+    else:
+        check = False
+
+    mycursor.close()
+    mydb.close()
+    return check
 
 def verificationInsert(discord_id, player_id, code):
+    mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
+    
     sql = "INSERT INTO discordVerification (Discord_id, Player_id, Code) VALUES (%s, %s, %s)"
     query = ((discord_id),(player_id),(code))
     mycursor.execute(sql,query)
     mydb.commit()
+    
+    mycursor.close()
+    mydb.close()
     return
 
 # discord client events
@@ -260,55 +286,45 @@ async def on_message(message):
         
     if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
       
-        if message.content.startswith('!linr') or message.content.startswith('!Linr'):
-            try: 
-              playerName = message.content[6:18]
-              code = id_generator()
-              discord_id = message.author.id
-              player_id = verificationPull(playerName)
-              verificationInsert(discord_id, player_id, code)
-            except Exception as e:
-                msg = str(e)
-                pass
-            await message.author.send("test complete, please check error logs")
-      
         if message.content.startswith('!link') or message.content.startswith('!Link'):
-          
             playerName = message.content[6:18]
             code = id_generator()
             discord_id = message.author.id
-            try:
-                player_id = verificationPull(playerName)
-
-                try:
-                    verificationInsert(discord_id, player_id, code)
-                    msg = "```diff" + "\n" \
-                    + "====== INFO ======\n" \
-                    + "Request to link: " + str(playerName) + "\n" \
-                    + "Your discord ID is: " + str(discord_id) + "\n" \
-                    + "====== SETUP ======\n" \
-                    + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
-                    + "+ Access Code: " + str(code)+ "\n" \
-                    + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
-                    + "====== NOTICE ======\n" \
-                    + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
-                    + "- This code will expire in 24 hours." + "\n" \
-                    + "- Do not share this code with anyone." + "\n" \
-                    + "```"
-
-                except Exception as e:
-                    msg = str(e)
-                    #msg = "```diff" + "\n" \
-                    #+ "- RSN is currently in use. Please contact an Administrator" + "\n" \
-                    #+ "```"
-                    pass
-
-            except:
-              msg = "```diff" + "\n" \
+            
+            msgPassed = "```diff" + "\n" \
+                + "====== INFO ======\n" \
+                + "Request to link: " + str(playerName) + "\n" \
+                + "Your discord ID is: " + str(discord_id) + "\n" \
+                + "====== SETUP ======\n" \
+                + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
+                + "+ Access Code: " + str(code)+ "\n" \
+                + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
+                + "====== NOTICE ======\n" \
+                + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
+                + "- This code will expire in 24 hours." + "\n" \
+                + "- Do not share this code with anyone." + "\n" \
+                + "```"
+            
+            msgInUse = "```diff" + "\n" \
+              + "- RSN is currently in use. Please contact an Administrator" + "\n" \
+              + "```"
+            
+            msgInstallPlugin = "```diff" + "\n" \
               + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
               + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
               + "```"
-              pass            
+            
+            player_id, exists = verificationPull(playerName)
+            if exists:
+                check = verification_check(player_id)
+                if check:
+                    msg = msgInUse
+                else:
+                    verificationInsert(discord_id, player_id, code)
+                    msg = msgPassed
+            else:
+                msg = msgInstallPlugin
+    
             await message.author.send(msg)
             
 
