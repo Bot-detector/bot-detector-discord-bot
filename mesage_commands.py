@@ -296,7 +296,7 @@ def is_valid_rsn(rsn):
 
 # ID Generator command
 
-def id_generator(size=10, chars=string.digits):
+def id_generator(size=4, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
 
