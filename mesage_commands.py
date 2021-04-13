@@ -1,5 +1,11 @@
 import re
+import json
 import requests as req
+from dotenv import load_dotenv
+
+from sql import *
+
+load_dotenv()
 
 VALID_COMMANDS = ['!poke', '!meow', '!warn', 
 '!rules', '!website', '!patreon',
@@ -158,14 +164,121 @@ async def predict_command(message, params):
 
 # Database Commands
 
-async def submit_command(message, params):
-    pass
+async def submit_command(message, params, user):
+    paste_url = params
+
+    newlines, label = get_paste_names(paste_url)
+    label_insert(label)
+    name_insert(newlines)
+    player_label_join(label, newlines)
+
+    msg = "Paste Information" + "\n" \
+        + "_____________________" + "\n" \
+        + "Number of Names: " + str(len(newlines)) + "\n" \
+        + "Label: " + str(label) + "\n" \
+        + "Samples: " + str(newlines[0:10]) + "\n" \
+        + "Link: " + str(paste_url) + "\n"
+        
+    await user.send(msg)
 
 async def link_command(message, params):
-    pass
+    playerName = params
+
+    if not is_valid_rsn(playerName):
+        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    owner_id = 0
+    code = id_generator()
+    discord_id = message.author.id
+
+    msgPassed = "```diff" + "\n" \
+            + "====== INFO ======\n" \
+            + "Request to link: " + str(playerName) + "\n" \
+            + "Your discord ID is: " + str(discord_id) + "\n" \
+            + "====== SETUP ======\n" \
+            + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
+            + "+ Access Code: " + str(code)+ "\n" \
+            + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
+            + "====== NOTICE ======\n" \
+            + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
+            + "- This code will expire in 24 hours." + "\n" \
+            + "- Do not share this code with anyone." + "\n" \
+            + "```"
+
+    msgInUse = "```diff" + "\n" \
+            + "- RSN is currently in use. Please contact an Administrator" + "\n" \
+            + "```"
+
+    msgInstallPlugin = "```diff" + "\n" \
+            + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
+            + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
+            + "```"
+
+    msgVerified = "```diff" + "\n" \
+            + "+ Player: " + str(playerName) + "\n" \
+            + "====== Verification Information ======\n" \
+            + "+ Player is: Verified." + "\n" \
+            + "```"
+
+    msgUnverified = "```diff" + "\n" \
+            + "+ Player: " + str(playerName) + "\n" \
+            + "====== Verification Information ======\n" \
+            + "- Player is: Unverified." + "\n" \
+            + "```"
+
+    player_id, exists = verificationPull(playerName)
+    if exists:
+        check, verified, owner_list = verification_check(player_id)
+        if verified:
+            msg = msgVerified
+        else:
+            if check:
+                if int(discord_id) not in owner_list:
+                    verificationInsert(discord_id, player_id, code)
+                    msg = msgPassed
+                else:
+                    msg = msgInUse
+            else:
+                verificationInsert(discord_id, player_id, code)
+                msg = msgPassed
+    else:
+        msg = msgInstallPlugin
+
+    await message.author.send(msg)
 
 async def verify_comand(message, params):
-    pass
+    playerName = params
+
+    if not is_valid_rsn(playerName):
+        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    owner_id = 0
+            
+    msgVerified = "```diff" + "\n" \
+            + "+ Player: " + str(playerName) + "\n" \
+            + "====== Verification Information ======\n" \
+            + "+ Player is: Verified." + "\n" \
+            + "```"
+
+    msgUnverified = "```diff" + "\n" \
+            + "+ Player: " + str(playerName) + "\n" \
+            + "====== Verification Information ======\n" \
+            + "- Player is: Unverified." + "\n" \
+            + "```"
+            
+    player_id, exists = verificationPull(playerName)
+    if exists:
+        check, verified, owner_list = verification_check(player_id)
+        if verified:
+            msg = msgVerified
+        else:
+            msg = msgUnverified
+    else:
+        msg = msgUnverified
+            
+    await message.channel.send(msg)
 
 # String Operations
 def is_valid_rsn(rsn):
