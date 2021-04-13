@@ -28,7 +28,6 @@ async def on_message(message):
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
     
-
     if "25 buttholes" in message.content.lower():
         await message.channel.send('hahahahahaha w0w!')
 
@@ -58,7 +57,6 @@ async def on_message(message):
     if message.content.lower() == "!warn":
         await warn_command(message)
         
-
     # channel links
         
     if command['name'].lower() == "!rules":
@@ -108,7 +106,6 @@ async def on_message(message):
         if command['name'].lower() == "!kc":
             await kc_command(message, command['params'])
             
-
       #predict method
 
         if command['name'].lower() == "!predict":

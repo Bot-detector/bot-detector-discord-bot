@@ -1,11 +1,8 @@
 import re
 import json
 import requests as req
-from dotenv import load_dotenv
 
 from sql import *
-
-load_dotenv()
 
 VALID_COMMANDS = ['!poke', '!meow', '!warn', 
 '!rules', '!website', '!patreon',
@@ -158,13 +155,13 @@ async def predict_command(message, params):
     await message.channel.send(msg)
             
     if message.content.startswith('+ Name') or message.author.id == 825139932817129613:
-        message.react('✔️')
-        message.react('❌')
+        message.add_reaction('✔️')
+        message.add_reaction('❌')
 
 
 # Database Commands
 
-async def submit_command(message, params, user):
+async def submit_command(message, params, recipient):
     paste_url = params
 
     newlines, label = get_paste_names(paste_url)
@@ -178,8 +175,8 @@ async def submit_command(message, params, user):
         + "Label: " + str(label) + "\n" \
         + "Samples: " + str(newlines[0:10]) + "\n" \
         + "Link: " + str(paste_url) + "\n"
-        
-    await user.send(msg)
+
+    await recipient.send(msg)
 
 async def link_command(message, params):
     playerName = params
@@ -283,6 +280,12 @@ async def verify_comand(message, params):
 # String Operations
 def is_valid_rsn(rsn):
     return re.fullmatch('[\w\d _-]{1,12}', rsn)
+
+# ID Generator command
+
+def id_generator(size=10, chars=string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
 
 # !predict command color changer 
 def plus_minus(var, compare):
