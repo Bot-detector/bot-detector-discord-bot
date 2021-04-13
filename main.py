@@ -504,12 +504,11 @@ async def on_message(message):
                 msg += "\n" 
 
             msg += "```\n"
-
             await message.channel.send(msg)
             
-            if message.content.startswith('+ Name') or message.author.id == 825139932817129613:
-              message.react('✔️')
-              message.react('❌')
+        if message.content.startswith('+ Name') or message.author.id == 825139932817129613:
+            message.react('✔️')
+            message.react('❌')
        
           
 @client.event
