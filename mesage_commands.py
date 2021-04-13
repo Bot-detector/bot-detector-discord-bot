@@ -190,21 +190,34 @@ async def link_command(message, params):
     discord_id = message.author.id
 
     msgPassed = "```diff" + "\n" \
-            + "====== INFO ======\n" \
-            + "Request to link: " + str(playerName) + "\n" \
+            + "====== STATUS ======\n" \
+            + "Request to link RSN: " + str(playerName) + "\n" \
             + "Your discord ID is: " + str(discord_id) + "\n" \
+            + "Access Code: " + str(code) + "\n" \
             + "====== SETUP ======\n" \
-            + "+ Please submit the access code below in the form of a DM in-game to 'Ferrariic' or in the clan chat 'Bot Detector'." + "\n" \
-            + "+ Access Code: " + str(code)+ "\n" \
-            + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
+            + "+ Please follow the directions found below EXACTLY as instructed." + "\n" \
+            + "+ 1. Open Old School Runescape through RuneLite." + "\n" \
+            + "+ 2. Login as: '" + str(playerName) + "'." + "\n" \
+            + "+ 3. Navigate to the Clan Channel Menu and join the channel: 'Ferrariic'." + "\n" \
+            + "+ 4. Verify that a Plugin Admin (Gold Star) or Plugin Moderator (Silver Star) is present in the channel." + "\n" \
+            + "+ 5. Type into the Clan Chat: '!Code:" + str(code) + "'." + "\n" \
+            + "+ 6. Check your Discord DMs for a 'Verification' message." + "\n" \
+            + "+ 7. Verification Process Complete." + "\n" \
+            + "+ 8. You can now access additional features in the Discord and Plugin." + "\n" \
+            + "====== INFO ======\n" \
+            + "+ You may link multiple Runescape accounts via this method." + "\n" \
+            + "+ If you change the name of your account(s) you must repeat this process with the new RSN(s)." + "\n" \
+            + "+ In the event of a name change please allow some time for your data to be transferred over." + "\n" \
             + "====== NOTICE ======\n" \
-            + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
+            + "- If this RSN was submitted in error, please type '!link <Your Correct RSN>'." + "\n" \
             + "- This code will not expire. Please enter this code exactly as shown." + "\n" \
+            + "- Do not resubmit the !link request if this RSN is correct - Do not delete this message." + "\n" \
             + "- Do not share this code with anyone." + "\n" \
+            + "- If you are unable to become 'Verified' through this process, please contact an administrator for assistance." + "\n" \
             + "```"
 
     msgInUse = "```diff" + "\n" \
-            + "- RSN is currently in use. Please contact an Administrator" + "\n" \
+            + "- RSN is currently in use. Please contact an Administrator." + "\n" \
             + "```"
 
     msgInstallPlugin = "```diff" + "\n" \
