@@ -152,11 +152,11 @@ async def predict_command(message, params):
         msg += "\n" 
 
     msg += "```\n"
-    await message.channel.send(msg)
+    my_msg = await message.channel.send(msg)
             
-    if message.content.startswith('+ Name') or message.author.id == 825139932817129613:
-        message.add_reaction('✔️')
-        message.add_reaction('❌')
+    #if my_msg.content.startswith('+ Name') or message.author.id == 825139932817129613:
+    await my_msg.add_reaction('✔️')
+    await my_msg.add_reaction('❌')
 
 
 # Database Commands

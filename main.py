@@ -10,6 +10,7 @@ load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
+intents.reactions = True
 client = discord.Client(intents=intents)
 
 # discord client events
