@@ -178,6 +178,9 @@ def verificationPull(playerName):
     mydb_players = mysql.connector.connect(**config_players)
     mycursor = mydb_players.cursor(buffered=True)
     
+    player_id = 0
+    exists = False
+    
     sql = "SELECT * FROM Players WHERE name = %s"
     mycursor.execute(sql,convert(playerName))
     data = mycursor.fetchmany(size=1)
@@ -194,6 +197,7 @@ def verificationPull(playerName):
 def verification_check(player_id):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
+    
     verified = 0
     owner_id = 0
     verified_list = []
