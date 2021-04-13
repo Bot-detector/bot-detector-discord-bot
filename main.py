@@ -12,10 +12,9 @@ import string
 import random
 import numpy as np
 
-load_dotenv()
+from mesage_commands import *
 
-VALID_COMMANDS = ['!poke', '!meow', '!warn', '!rules', '!website', '!patreon',
-'!github', '!invite!', '!link']
+load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -252,6 +251,25 @@ async def on_message(message):
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
     
+
+    if "25 buttholes" in message.content.lower():
+        await message.channel.send('hahahahahaha w0w!')
+
+    #########################
+    # ALL COMMANDS GO BELOW #
+    #########################
+
+    if(message.content[0] != '!'):
+        return
+
+    command = parse_command(message.content)
+
+    if(command['name'] not in VALID_COMMANDS):
+        await message.channel.send(command['name'] + " is not a valid command.")
+        return
+
+    #fun commands
+
     if message.content.startswith('!meow') or message.content.startswith('!Meow'):
         catResponse = req.get("https://cataas.com/cat?json=true")
         catJSON = catResponse.json()
@@ -260,9 +278,6 @@ async def on_message(message):
 
     if message.content.startswith('!poke') or message.content.startswith('!poke'):
         await message.channel.send('Teehee! :3')
-
-    if "25 buttholes" in message.content.lower():
-        await message.channel.send('hahahahahaha w0w!')
         
     # admin commands
 
@@ -511,5 +526,18 @@ async def on_message(message):
 @client.event
 async def on_member_join(member):
     pass
+
+def parse_command(cmd):
+    cmd_split = cmd.split(" ", 1)
+
+    command = {
+        "name": cmd_split[0],
+        "params": None
+    }
+
+    if(len(cmd_split) > 1):
+        command['params']= cmd_split[1]
+
+    return command
 
 client.run(os.getenv('TOKEN'))
