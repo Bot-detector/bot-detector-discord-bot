@@ -195,24 +195,22 @@ async def link_command(message, params):
             + "Your discord ID is: " + str(discord_id) + "\n" \
             + "Access Code: " + str(code) + "\n" \
             + "====== SETUP ======\n" \
-            + "+ Please follow the directions found below EXACTLY as instructed." + "\n" \
+            + "+ Please read through these instructions." + "\n" \
             + "+ 1. Open Old School Runescape through RuneLite." + "\n" \
             + "+ 2. Login as: '" + str(playerName) + "'." + "\n" \
-            + "+ 3. Navigate to the Clan Channel Menu and join the channel: 'Ferrariic'." + "\n" \
-            + "+ 4. Verify that a Plugin Admin (Gold Star) or Plugin Moderator (Silver Star) is present in the channel." + "\n" \
+            + "+ 3. Join the clan channel: 'Ferrariic'." + "\n" \
+            + "+ 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
             + "+ 5. Type into the Clan Chat: '!Code:" + str(code) + "'." + "\n" \
             + "+ 6. Check your Discord DMs for a 'Verification' message." + "\n" \
             + "+ 7. Verification Process Complete." + "\n" \
-            + "+ 8. You can now access additional features in the Discord and Plugin." + "\n" \
             + "====== INFO ======\n" \
             + "+ You may link multiple Runescape accounts via this method." + "\n" \
-            + "+ If you change the name of your account(s) you must repeat this process with the new RSN(s)." + "\n" \
+            + "+ If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
             + "+ In the event of a name change please allow some time for your data to be transferred over." + "\n" \
             + "====== NOTICE ======\n" \
+            + "- Do not delete this message." + "\n" \
             + "- If this RSN was submitted in error, please type '!link <Your Correct RSN>'." + "\n" \
-            + "- This code will not expire. Please enter this code exactly as shown." + "\n" \
-            + "- Do not resubmit the !link request if this RSN is correct - Do not delete this message." + "\n" \
-            + "- Do not share this code with anyone." + "\n" \
+            + "- This code will not expire, it is tied to your unique RSN:Discord Pair." + "\n" \
             + "- If you are unable to become 'Verified' through this process, please contact an administrator for assistance." + "\n" \
             + "```"
 
