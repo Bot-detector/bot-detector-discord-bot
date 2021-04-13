@@ -270,49 +270,39 @@ async def on_message(message):
 
     #fun commands
 
-    if message.content.startswith('!meow') or message.content.startswith('!Meow'):
-        catResponse = req.get("https://cataas.com/cat?json=true")
-        catJSON = catResponse.json()
-        catImgURL = "https://cataas.com" + catJSON['url']
-        await message.channel.send(catImgURL)
+    if command['name'].lower() == "!meow":
+        await meow_command(message)
 
-    if message.content.startswith('!poke') or message.content.startswith('!poke'):
-        await message.channel.send('Teehee! :3')
+    if command['name'].lower() == "!poke":
+        await poke_command(message)
         
     # admin commands
 
     if message.content.lower() == "!warn":
+        await warn_command(message)
         
-        msg = "```diff" + "\n" \
-                 + "- **Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
-                 + "- **This is your only warning.**" + "\n" \
-                 + "```\n"
-        await message.channel.send(msg)
 
     # channel links
         
-    if message.content.startswith('!rules') or message.content.startswith('!Rules'):
-        await message.channel.send('<#825137784112807946>')
+    if command['name'].lower() == "!rules":
+        await rules_command(message)
         
-    if message.content.startswith('!issues') or message.content.startswith('!Issues'):
-        await message.channel.send('<#822851862016950282>')
+    if command['name'].lower() == "!issues":
+        await issues_command(message)
         
     # Web links
 
-    if message.content.startswith('!website') or message.content.startswith('!Website'):
-        await message.channel.send('https://www.osrsbotdetector.com/#/')
+    if command['name'].lower() == "!website":
+        await website_command(message)
 
-    if message.content.startswith('!patreon') or message.content.startswith('!Patreon'):
-        await message.channel.send('https://www.patreon.com/bot_detector') 
+    if command['name'].lower() == "!patreon":
+        await patreon_command(message)
 
-    if message.content.startswith('!github core') or message.content.startswith('!github core'):
-        await message.channel.send('https://github.com/Ferrariic/Bot-Detector-Core-Files') 
+    if command['name'].lower() == "!github":
+        await github_command(message, command['params'])
 
-    if message.content.startswith('!github plugin') or message.content.startswith('!github plugin'):
-        await message.channel.send('https://github.com/Ferrariic/bot-detector') 
-
-    if message.content.startswith('!invite') or message.content.startswith('!Invite'):
-        await message.channel.send('https://discord.com/invite/JCAGpcjbfP')
+    if command['name'].lower() == "!invite":
+        await invite_command(message)
         
     # Locked-Channel commands
         
@@ -448,82 +438,19 @@ async def on_message(message):
 
       # plugin and database stats
 
-        if message.content.startswith('!stats') or message.content.startswith('!STATS'):
-            playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
-            otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-            activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.4/pluginhub")
-
-            playersJSON = playersTrackedResponse.json()
-            otherStatsJSON= otherStatsResponse.json()
-            activeInstallsJSON = activeInstallsReponse.json()
-
-            playersTracked = playersJSON['players'][0]
-            totalBans = otherStatsJSON['bans']
-            totalReports = otherStatsJSON['total_reports']
-            activeInstalls = activeInstallsJSON['bot-detector']
-
-            msg = "```Project Stats:\n" \
-                + "Players Analyzed: " + str(playersTracked) + "\n"\
-                + "Reports Sent to Jagex: " + str(totalReports) + "\n"\
-                + "Resultant Bans: " + str(totalBans) + "\n"\
-                + "Active Installs: " + str(activeInstalls) \
-                + "```"
-
-            await message.channel.send(msg)
+        if command['name'].lower() == "!stats":
+            await stats_command(message)
 
       # player stats
 
-        if message.content.startswith('!kc') or message.content.startswith('!KC'):
-            playerName = message.content[4:16]
-
-            resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
-            respJSON = resp.json()
-
-            reports = respJSON['reports']
-            bans = respJSON['bans']
-            possible_bans = respJSON['possible_bans']
-
-            msg = "```" + playerName + "'s Stats: \n" \
-                + "Reports Submitted: " + str(reports) + "\n" \
-                + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
-                + "Confirmed Bans: " + str(bans) + "```\n"
-
-            await message.channel.send(msg)
+        if command['name'].lower() == "!kc":
+            await kc_command(message, command['params'])
+            
 
       #predict method
 
-        if message.content.startswith('!predict') or message.content.startswith('!PREDICT'):
-            playerName = message.content[9:21]
-        
-            resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
-            respJSON = resp.json()
-            #respJSON = respJSON[-1]
-
-            name = respJSON['player_name']
-            prediction = respJSON['prediction_label']
-            player_id = respJSON['player_id']
-            confidence = respJSON['prediction_confidence']
-            secondaries = respJSON['secondary_predictions']
-          
-            msg = "```diff" + "\n" \
-                + "+" + " Name: " + str(name) + "\n" \
-                + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-                + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence))+ "\n" \
-                + "+" + " ID: " + str(player_id) + "\n" \
-                + "============\n" \
-                + "Prediction Breakdown \n\n"
-            
-            for predict in secondaries:
-                msg += str(plus_minus(predict[0],'Real_Player')) + " " + str(predict[0]) + ": " \
-                + str(predict[1])
-                msg += "\n" 
-
-            msg += "```\n"
-            await message.channel.send(msg)
-            
-        if message.content.startswith('+ Name') or message.author.id == 825139932817129613:
-            message.react('✔️')
-            message.react('❌')
+        if command['name'].lower() == "!predict":
+            await predict_command(message, command['params'])
        
           
 @client.event
@@ -534,7 +461,7 @@ def parse_command(cmd):
     cmd_split = cmd.split(" ", 1)
 
     command = {
-        "name": cmd_split[0],
+        "name": cmd_split[0].lower(),
         "params": None
     }
 
