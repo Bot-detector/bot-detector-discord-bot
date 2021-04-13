@@ -157,11 +157,7 @@ def player_label_join(label, newlines):
 
 ################################################################################################################################################################
 
-# ID Generator command
 
-def id_generator(size=10, chars=string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
-  
 # Verification sql statements
   
 def verificationPull(playerName):
