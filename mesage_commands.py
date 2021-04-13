@@ -53,7 +53,25 @@ async def issues_command(message):
     await message.channel.send('<#822851862016950282>')
 
 async def list_command(message):
-    pass
+    msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
+        + "Example: !submit https://pastebin.com/iw8MmUzg" + "\n" \
+        + "___________" + "\n" \
+        + "Acceptable Formatting:" + "\n" \
+        + "Player 1" + "\n" \
+        + "Player 2" + "\n" \
+        + "Player 3" + "\n" \
+        + "Player 4" + "\n" \
+        + "Player 5" + "\n" \
+        + "___________" + "\n" \
+        + "Pastebin Settings:" + "\n" \
+        + "Syntax Highlighting: None" + "\n" \
+        + "Paste Expiration: 1 Day" + "\n" \
+        + "Paste Exposure: Public" + "\n" \
+        + "Folder: No Folder Selected" + "\n" \
+        + "Password: {leave blank - no password needed}" + "\n" \
+        + "Paste Name / Title: {Include your Label Here}" + "\n" 
+
+    await message.author.send(msg)
 
 # Project Stats Commands
 
@@ -144,6 +162,9 @@ async def submit_command(message, params):
     pass
 
 async def link_command(message, params):
+    pass
+
+async def verify_comand(message, params):
     pass
 
 # String Operations

@@ -397,25 +397,8 @@ async def on_message(message):
             
             await message.channel.send(msg)
      
-        if message.content.startswith('!list') or message.content.startswith('!List'):
-            msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
-            + "Example: !submit https://pastebin.com/iw8MmUzg" + "\n" \
-            + "___________" + "\n" \
-            + "Acceptable Formatting:" + "\n" \
-            + "Player 1" + "\n" \
-            + "Player 2" + "\n" \
-            + "Player 3" + "\n" \
-            + "Player 4" + "\n" \
-            + "Player 5" + "\n" \
-            + "___________" + "\n" \
-            + "Pastebin Settings:" + "\n" \
-            + "Syntax Highlighting: None" + "\n" \
-            + "Paste Expiration: 1 Day" + "\n" \
-            + "Paste Exposure: Public" + "\n" \
-            + "Folder: No Folder Selected" + "\n" \
-            + "Password: {leave blank - no password needed}" + "\n" \
-            + "Paste Name / Title: {Include your Label Here}" + "\n" 
-            await message.author.send(msg)
+        if command['name'].lower() == "!list":
+            await list_command(message)
 
         if message.content.startswith('!submit') or message.content.startswith('!Submit'):
             paste_url = message.content[8:100]
