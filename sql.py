@@ -198,7 +198,6 @@ def verification_check(player_id):
         check = True
         for i in range(0,len(data)):
             verified_list = np.append(verified_list, data[i][-1])
-            print(data[i][1])
             owner_list = np.append(owner_list, data[i][1])
         verified = np.max(verified_list)
         owner_list = np.unique(owner_list)
