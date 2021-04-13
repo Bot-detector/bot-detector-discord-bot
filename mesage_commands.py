@@ -199,7 +199,7 @@ async def link_command(message, params):
             + "+ A message will be sent to you on Discord when your account has been successfully paired." + "\n" \
             + "====== NOTICE ======\n" \
             + "- If this RSN was submitted in error, please type !link <Your Correct RSN>" + "\n" \
-            + "- This code will expire in 24 hours." + "\n" \
+            + "- This code will not expire. Please enter this code exactly as shown." + "\n" \
             + "- Do not share this code with anyone." + "\n" \
             + "```"
 
