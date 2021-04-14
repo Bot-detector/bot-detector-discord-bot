@@ -41,7 +41,7 @@ def extract_prediction(message):
     prediction_line = [i for i in message_lines if prediction_substring in i]
     confidence_line = [i for i in message_lines if confidence_substring in i]
 
-    name = name_line[0].split(name_substring)[1]]
+    name = name_line[0].split(name_substring)[1]
     prediction = prediction_line[0].split(prediction_substring)[1]
     confidence = confidence_line[0].split(confidence_substring)[1]
 
