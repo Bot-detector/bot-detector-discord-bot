@@ -82,7 +82,7 @@ async def list_command(message):
 async def stats_command(message):
     playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
     otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.4/pluginhub")
+    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.5/pluginhub")
 
     playersJSON = playersTrackedResponse.json()
     otherStatsJSON= otherStatsResponse.json()
