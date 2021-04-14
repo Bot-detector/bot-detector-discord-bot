@@ -8,7 +8,8 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!rules', '!website', '!patreon',
 '!github', '!invite', '!link',
 '!issues', '!list', '!submit',
-'!stats', '!kc', '!predict', '!verify']
+'!stats', '!kc', '!predict', '!verify',
+'!primary']
 
 # Fun Commands
 
@@ -178,6 +179,70 @@ async def submit_command(message, params, recipient):
 
     await recipient.send(msg)
 
+async def primary_command(message, params):
+    playerName = params
+    discord_id = message.author.id
+
+    if not is_valid_rsn(playerName):
+        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    msgDoesNotExist = "```diff" + "\n" \
+            + "- Player does not exist. Please verify that you have typed in the username correctly." + "\n" \
+            + "```"
+    msgNotConnected = "```diff" + "\n" \
+            + "- You are not connected to this player. You must verify your link to this player with !link <RSN>." + "\n" \
+            + "```"
+    msgPendingVerification = "```diff" + "\n" \
+            + "- You are pending verification on this player. Please verify this account with !link <RSN>" + "\n" \
+            + "```"
+    msgPlayerUnverified = "```diff" + "\n" \
+            + "- The account you are attempting to link is Unverified. Please !link <RSN> and verify this account." + "\n" \
+            + "```"
+    msgNULLError = "```diff" + "\n" \
+            + "- Primary values could not be reset to NULL. Please contact an Administrator." + "\n" \
+            + "```"
+    msgPrimarySetError = "```diff" + "\n" \
+        + "- Your player could not be assigned a Primary value. Please contact an Administrator." + "\n" \
+        + "```"
+    msgConfirmedPrimary = "```diff" + "\n" \
+        + "+ Player has been successfully updated as Primary." + "\n" \
+        + "```"
+
+    player_id, exists = verificationPull(playerName)
+    if exists:
+        check, verified = discord_verification_check(discord_id, player_id)
+        if check:
+            if verified:
+                data, verified_account = VerifyRSNs(discord_id, player_id)
+                if verified_account:
+                    PrimaryNULL = insertPrimaryNULL(discord_id)
+                    if PrimaryNULL:
+                        PrimaryTRUE = insertPrimaryTRUE(discord_id, player_id)
+                        if PrimaryTRUE:
+                            print("Player has been successfully updated as Primary.")
+                            msg = msgConfirmedPrimary
+                        else:
+                            print("Your player could not be assigned a Primary value. Please contact an Administrator.")
+                            msg = msgPrimarySetError
+                    else:
+                        print("Primary values could not be reset to NULL. Please contact an Administrator.")
+                        msg = msgNULLError
+                else:
+                    print("The account you are attempting to link is Unverified. Please !link <RSN> and verify this account.")
+                    msg = msgPlayerUnverified
+            else:
+                print("You are pending verification on this player. Please verify this account with !link <RSN>")
+                msg = msgPendingVerification
+        else:
+            print("You are not connected to this player. You must verify your link to this player with !link <RSN>.")
+            msg = msgNotConnected
+    else:
+        print("Player does not exist. Please verify that you have typed in the username correctly.")
+        msg = msgDoesNotExist
+
+    await message.author.send(msg)
+    
 async def link_command(message, params):
     playerName = params
 
