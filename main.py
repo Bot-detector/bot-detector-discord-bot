@@ -89,6 +89,9 @@ async def on_message(message):
 
         if command['name'].lower() == "!verify":
             await verify_comand(message, command['params'])
+            
+        if command['name'].lower() == "!primary":
+            await primary_command(message, command['params'])
      
         if command['name'].lower() == "!list":
             await list_command(message)
