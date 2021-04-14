@@ -220,3 +220,84 @@ def verificationInsert(discord_id, player_id, code):
     mycursor.close()
     mydb.close()
     return
+  
+  
+################################################################################################################################################################
+
+# !Primary sql statements
+
+def discord_verification_check(discord_id, player_id): #custom
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+    verified = 0
+    owner_id = 0
+    verified_list = []
+    
+    sql = "SELECT * from discordVerification WHERE Discord_id = %s and Player_id = %s"
+    query = ((discord_id),(player_id))
+    mycursor.execute(sql,query)
+    data = mycursor.fetchall()
+    
+    if len(data)>0:
+        check = True
+        for i in range(0,len(data)):
+            verified_list = np.append(verified_list, data[i][-1])
+        verified = np.max(verified_list)
+    else:
+        check = False
+
+    mycursor.close()
+    mydb.close()
+    return check, verified
+
+def VerifyRSNs(discord_id, player_id): #custom
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+    verified_account = 0
+    
+    sql = "Select * from discordVerification WHERE discord_id = %s and Player_id = %s"
+    query = ((discord_id),(player_id))
+    mycursor.execute(sql,query)
+    data = mycursor.fetchall()
+    if len(data)>0:
+        verified_account = data[0][-1]
+    else:
+        pass
+    mycursor.close()
+    mydb.close()
+    
+    return data, verified_account
+
+def insertPrimaryNULL(discord_id):
+    PrimaryNULL = False
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+
+    sql = "UPDATE discordVerification SET primary_rsn = %s WHERE Discord_id = %s"
+    query = ((0),(discord_id))
+    mycursor.execute(sql,query)
+    mydb.commit()
+
+    mycursor.close()
+    mydb.close()
+    
+    PrimaryNULL = True
+    return PrimaryNULL
+
+def insertPrimaryTRUE(discord_id, player_id):
+    
+    PrimaryTRUE = False
+    
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+
+    sql = "UPDATE discordVerification SET primary_rsn = %s WHERE Discord_id = %s and Player_id = %s"
+    query = ((1),(discord_id),(player_id))
+    mycursor.execute(sql,query)
+    mydb.commit()
+
+    mycursor.close()
+    mydb.close()
+    
+    PrimaryTRUE = True
+    return PrimaryTRUE
