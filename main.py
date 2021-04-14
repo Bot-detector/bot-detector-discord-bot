@@ -3,6 +3,7 @@ print(discord.__version__)
 from dotenv import load_dotenv
 import logging
 
+from reaction_commands import *
 from mesage_commands import *
 from sql import *
 
@@ -11,6 +12,7 @@ load_dotenv()
 intents = discord.Intents.default()
 intents.members = True
 intents.reactions = True
+intents.messages = True
 client = discord.Client(intents=intents)
 
 # discord client events
@@ -114,6 +116,17 @@ async def on_message(message):
 
         if command['name'].lower() == "!predict":
             await predict_command(message, command['params'])
+
+@client.event
+async def on_raw_reaction_add(payload):
+    
+    await add_prediction_feedback(payload,
+        await get_reaction_message(payload))
+
+@client.event
+async def on_raw_reaction_removed(payload):
+    print("REMOVED")
+    print(payload)
        
           
 @client.event
@@ -132,5 +145,12 @@ def parse_command(cmd):
         command['params']= cmd_split[1]
 
     return command
+
+async def get_reaction_message(reaction_payload):
+    guild = client.get_guild(reaction_payload.guild_id)
+    channel = guild.get_channel(reaction_payload.channel_id)
+    message = await channel.fetch_message(reaction_payload.message_id)
+
+    return message
 
 client.run(os.getenv('TOKEN'))
