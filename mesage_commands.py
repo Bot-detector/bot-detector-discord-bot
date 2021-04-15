@@ -1,5 +1,6 @@
 import re
 import json
+from random import randint
 import requests as req
 
 from sql import *
@@ -17,7 +18,13 @@ async def poke_command(message):
     await message.channel.send('Teehee! :3')
 
 async def meow_command(message):
-    catResponse = req.get("https://cataas.com/cat?json=true")
+
+    if(randint(0,1) == 1):
+        url = "https://cataas.com/cat/gif?json=true"
+    else:
+        url = "https://cataas.com/cat?json=true"
+
+    catResponse = req.get(url)
     catJSON = catResponse.json()
     catImgURL = "https://cataas.com" + catJSON['url']
     await message.channel.send(catImgURL)
