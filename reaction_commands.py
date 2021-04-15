@@ -23,7 +23,8 @@ async def add_prediction_feedback(payload, message):
         "vote":         vote
     }
 
-    endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
+    #endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
+    endpoint = "http://localhost:5000/discord/predictionfeedback/"
 
     request = req.post(endpoint, json=prediction)
 
@@ -44,5 +45,7 @@ def extract_prediction(message):
     name = name_line[0].split(name_substring)[1]
     prediction = prediction_line[0].split(prediction_substring)[1]
     confidence = confidence_line[0].split(confidence_substring)[1]
+
+    print(name)
 
     return name, prediction, float(confidence)

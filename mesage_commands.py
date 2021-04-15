@@ -153,6 +153,8 @@ async def predict_command(message, params):
         msg += "\n" 
 
     msg += "```\n"
+
+    msg += "Click the reactions below to give feedback on the above prediction:"
     my_msg = await message.channel.send(msg)
             
     #if my_msg.content.startswith('+ Name') or message.author.id == 825139932817129613:
