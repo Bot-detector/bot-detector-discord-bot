@@ -301,3 +301,31 @@ def insertPrimaryTRUE(discord_id, player_id):
     
     PrimaryTRUE = True
     return PrimaryTRUE
+  
+################################################################################################################################################################
+
+# Heatmap Statements
+def getHeatmapRegion(regionName):
+    mydb_players = mysql.connector.connect(**config_players)
+    mycursor = mydb_players.cursor(buffered=True)
+
+    sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
+    regionName = regionName + "%"
+    query = convert(regionName) 
+    print(query)
+    mycursor.execute(sql,query)
+    data = mycursor.fetchall()
+    
+    mycursor.close()
+    mydb_players.close()
+    return data
+
+def displayDuplicates(data):
+    df = pd.DataFrame(columns=['region_ID','region_name'])
+    region_name = list()
+    regionIDs = list()
+    for i in data:
+        regionIDs.append(i[1])
+        region_name.append(i[2])
+    removedDuplicates = list(set(region_name))
+    return removedDuplicates, regionIDs, region_name
