@@ -23,8 +23,7 @@ async def add_prediction_feedback(payload, message):
         "vote":         vote
     }
 
-    #endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
-    endpoint = "http://localhost:5000/discord/predictionfeedback/"
+    endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
 
     request = req.post(endpoint, json=prediction)
 
