@@ -54,6 +54,10 @@ async def on_message(message):
 
     if command['name'].lower() == "!poke":
         await poke_command(message)
+
+    if command['name'].lower() == "!utc":
+        await utc_time_command(message)
+        
         
     # admin commands
 

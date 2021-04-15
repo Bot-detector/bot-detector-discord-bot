@@ -1,6 +1,7 @@
 import re
 import json
 from random import randint
+from datetime import datetime, timezone
 import requests as req
 
 from sql import *
@@ -10,7 +11,7 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!github', '!invite', '!link',
 '!issues', '!list', '!submit',
 '!stats', '!kc', '!predict', '!verify',
-'!primary','!heatmap']
+'!primary','!heatmap', '!utc']
 
 # Fun Commands
 
@@ -28,6 +29,9 @@ async def meow_command(message):
     catJSON = catResponse.json()
     catImgURL = "https://cataas.com" + catJSON['url']
     await message.channel.send(catImgURL)
+
+async def utc_time_command(message):
+    await message.channel.send(datetime.now(timezone.utc))
 
 # Informational Commands
 
