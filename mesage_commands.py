@@ -164,7 +164,8 @@ async def predict_command(message, params):
 # Heatmap Commands
 
 async def heatmap_command(message):
-    msg = 'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Heat_Maps/HM12342.png'
+    # Note: ?flush_cache=True is necessary in order to get the latest image.
+    msg = 'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Heat_Maps/HM12342.png?flush_cache=True'
     await message.channel.send(msg)
     
 # Database Commands
