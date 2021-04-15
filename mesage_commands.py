@@ -9,7 +9,7 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!github', '!invite', '!link',
 '!issues', '!list', '!submit',
 '!stats', '!kc', '!predict', '!verify',
-'!primary']
+'!primary','!heatmap']
 
 # Fun Commands
 
@@ -161,7 +161,12 @@ async def predict_command(message, params):
     await my_msg.add_reaction('✔️')
     await my_msg.add_reaction('❌')
 
+# Heatmap Commands
 
+async def heatmap_command(message):
+    msg = 'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Heat_Maps/HM12342.png'
+    await message.channel.send(msg)
+    
 # Database Commands
 
 async def submit_command(message, params, recipient):
