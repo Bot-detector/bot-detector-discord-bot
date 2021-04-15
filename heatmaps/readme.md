@@ -1,1 +1,0 @@
-Monthly-Generated Heatmap Files
