@@ -8,7 +8,7 @@ async def add_prediction_feedback(payload, message):
     if payload.emoji.name == '✔️':
         vote = 1
     elif payload.emoji.name == '❌':
-        vote = 0
+        vote = -1
     else:
         #Thanks for the enthusiasm, but not what we're looking for.
         return
