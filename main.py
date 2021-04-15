@@ -101,7 +101,12 @@ async def on_message(message):
         if command['name'].lower() == "!submit":
             await submit_command(message, command['params'], 
                 client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
-
+            
+      # heatmap link
+    
+        if command['name'].lower() == "!heatmap":
+            await heatmap_command(message)
+    
       # plugin and database stats
 
         if command['name'].lower() == "!stats":
