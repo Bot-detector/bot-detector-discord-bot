@@ -109,7 +109,7 @@ async def on_message(message):
       # heatmap link
     
         if command['name'].lower() == "!heatmap":
-            await heatmap_command(message)
+            await heatmap_command(message, command['params'])
     
       # plugin and database stats
 
