@@ -192,7 +192,8 @@ async def heatmap_command(message, params):
             + "+ Input: " + str(regionName) + "\n" \
             + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
             + "+ Selected: " + str(regionTrueName) + "\n" \
-            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" 
+            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
+            + "```"
 
         else:
             regionTrueName = Autofill(removedDuplicates, regionName)
@@ -205,11 +206,13 @@ async def heatmap_command(message, params):
             + "+ Input: " + str(regionName) + "\n" \
             + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
             + "+ Selected: " + str(regionTrueName) + "\n" \
-            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" 
-            
+            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
+            + "```"
     else:
         
-        msg = ">10 Regions selected. Please refine your search."
+        msg = "```diff" + "\n" \
+        + "- More than 10 Regions selected. Please refine your search." + "\n" \
+        + "```"
         
     await message.channel.send(msg)
     
