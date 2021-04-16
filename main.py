@@ -110,6 +110,8 @@ async def on_message(message):
                 client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
             
       # heatmap link
+        if command['name'].lower() == "!region":
+            await region_command(message, command['params'])
     
         if command['name'].lower() == "!heatmap":
             await heatmap_command(message, command['params'])
