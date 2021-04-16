@@ -182,7 +182,7 @@ async def heatmap_command(message, params):
     if len(removedDuplicates)<10:    
         if len(removedDuplicates)<2:
 
-            regionTrueName = regionName
+            regionTrueName = Autofill(removedDuplicates, regionName)
             regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
             print(removedDuplicates)
             print(regionTrueName)
