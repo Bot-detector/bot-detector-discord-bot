@@ -11,7 +11,8 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!github', '!invite', '!link',
 '!issues', '!list', '!submit',
 '!stats', '!kc', '!predict', '!verify',
-'!primary','!heatmap', '!utc']
+'!primary','!heatmap', '!utc',
+'!woof']
 
 # Fun Commands
 
@@ -29,6 +30,15 @@ async def meow_command(message):
     catJSON = catResponse.json()
     catImgURL = "https://cataas.com" + catJSON['url']
     await message.channel.send(catImgURL)
+
+async def woof_command(message):
+    url = "https://some-random-api.ml/img/dog"
+
+    dogResponse - req.get(url)
+    dogJSON = dogResponse.json()
+    dogImgURL = dogJSON['link']
+    await message.channel.send(dogImgURL)
+
 
 async def utc_time_command(message):
     await message.channel.send(datetime.now(timezone.utc))

@@ -52,6 +52,9 @@ async def on_message(message):
     if command['name'].lower() == "!meow":
         await meow_command(message)
 
+    if command['name'].lower() == "!woof":
+        await woof_command(message)
+
     if command['name'].lower() == "!poke":
         await poke_command(message)
 
