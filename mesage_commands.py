@@ -12,7 +12,7 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!issues', '!list', '!submit',
 '!stats', '!kc', '!predict', '!verify',
 '!primary','!heatmap', '!utc',
-'!woof']
+'!woof', '!region']
 
 # Fun Commands
 
