@@ -188,7 +188,7 @@ async def region_command(message, params):
     regionName = params
     data = getHeatmapRegion(regionName)
     removedDuplicates, regionIDs, region_name = displayDuplicates(data)
-    if len(removedDuplicates)<10:    
+    if len(removedDuplicates)<30:    
         if len(removedDuplicates)<2:
             regionTrueName = Autofill(removedDuplicates, regionName)
             regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
@@ -209,7 +209,7 @@ async def region_command(message, params):
             + "```"
     else:
         msg = "```diff" + "\n" \
-        + "- More than 10 Regions selected. Please refine your search." + "\n" \
+        + "- More than 30 Regions selected. Please refine your search." + "\n" \
         + "```"
     await message.channel.send(msg)
     
