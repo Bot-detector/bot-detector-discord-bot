@@ -321,11 +321,26 @@ def getHeatmapRegion(regionName):
     return data
 
 def displayDuplicates(data):
-    df = pd.DataFrame(columns=['region_ID','region_name'])
     region_name = list()
     regionIDs = list()
+    removedDuplicates = list()
     for i in data:
         regionIDs.append(i[1])
         region_name.append(i[2])
     removedDuplicates = list(set(region_name))
     return removedDuplicates, regionIDs, region_name
+
+def allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates):
+    regionSelections = list()
+    regionIDindices = [i for i, x in enumerate(region_name) if x == str(regionTrueName)]
+    for i in regionIDindices:
+        regionSelections.append(regionIDs[i])
+    return regionSelections
+
+def Autofill(removedDuplicates, regionName):
+    regionShort = []
+    for i in removedDuplicates:
+        regionShort.append(len(i)-len(regionName))
+    index = regionShort.index(np.min(regionShort))
+    regionTrueName = removedDuplicates[index]
+    return regionTrueName
