@@ -91,7 +91,7 @@ async def on_message(message):
         
     # Locked-Channel commands
         
-    if message.channel.id == 825189024074563614 or message.channel.type == 'dm':
+    if message.channel.id == 825189024074563614 or message.channel.id == 830783778325528626 or  message.channel.type == 'dm':
       
         if command['name'].lower() == "!link":
             await link_command(message, command['params'])
