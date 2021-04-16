@@ -34,7 +34,7 @@ async def meow_command(message):
 async def woof_command(message):
     url = "https://some-random-api.ml/img/dog"
 
-    dogResponse - req.get(url)
+    dogResponse = req.get(url)
     dogJSON = dogResponse.json()
     dogImgURL = dogJSON['link']
     await message.channel.send(dogImgURL)
