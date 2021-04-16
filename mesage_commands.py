@@ -174,9 +174,43 @@ async def predict_command(message, params):
 
 # Heatmap Commands
 
-async def heatmap_command(message):
-    # Note: ?flush_cache=True is necessary in order to get the latest image.
-    msg = 'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Heat_Maps/HM12342.png?flush_cache=True'
+async def heatmap_command(message, params):
+    regionName = params
+    data = getHeatmapRegion(regionName)
+    removedDuplicates, regionIDs, region_name = displayDuplicates(data)
+
+    if len(removedDuplicates)<10:    
+        if len(removedDuplicates)<2:
+
+            regionTrueName = regionName
+            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+            print(removedDuplicates)
+            print(regionTrueName)
+            print(regionSelections)
+            
+            msg = "```diff" + "\n" \
+            + "+ Input: " + str(regionName) + "\n" \
+            + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
+            + "+ Selected: " + str(regionTrueName) + "\n" \
+            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" 
+
+        else:
+            regionTrueName = Autofill(removedDuplicates, regionName)
+            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+            print(removedDuplicates)
+            print(regionTrueName)
+            print(regionSelections)
+            
+            msg = "```diff" + "\n" \
+            + "+ Input: " + str(regionName) + "\n" \
+            + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
+            + "+ Selected: " + str(regionTrueName) + "\n" \
+            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" 
+            
+    else:
+        
+        msg = ">10 Regions selected. Please refine your search."
+        
     await message.channel.send(msg)
     
 # Database Commands
