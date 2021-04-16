@@ -194,7 +194,7 @@ async def heatmap_command(message, params):
             #+ "+ Selected: " + str(regionTrueName) + "\n" \
             #+ "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
             #+ "```"
-            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[1]))
+            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
 
         else:
             regionTrueName = Autofill(removedDuplicates, regionName)
@@ -209,7 +209,7 @@ async def heatmap_command(message, params):
             #+ "+ Selected: " + str(regionTrueName) + "\n" \
             #+ "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
             #+ "```"
-            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[1]))
+            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
     else:
         
         msg = "```diff" + "\n" \
