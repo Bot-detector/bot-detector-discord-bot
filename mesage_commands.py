@@ -188,12 +188,13 @@ async def heatmap_command(message, params):
             print(regionTrueName)
             print(regionSelections)
             
-            msg = "```diff" + "\n" \
-            + "+ Input: " + str(regionName) + "\n" \
-            + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
-            + "+ Selected: " + str(regionTrueName) + "\n" \
-            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
-            + "```"
+            #msg = "```diff" + "\n" \
+            #+ "+ Input: " + str(regionName) + "\n" \
+            #+ "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
+            #+ "+ Selected: " + str(regionTrueName) + "\n" \
+            #+ "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
+            #+ "```"
+            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[1]))
 
         else:
             regionTrueName = Autofill(removedDuplicates, regionName)
@@ -202,12 +203,13 @@ async def heatmap_command(message, params):
             print(regionTrueName)
             print(regionSelections)
             
-            msg = "```diff" + "\n" \
-            + "+ Input: " + str(regionName) + "\n" \
-            + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
-            + "+ Selected: " + str(regionTrueName) + "\n" \
-            + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
-            + "```"
+            #msg = "```diff" + "\n" \
+            #+ "+ Input: " + str(regionName) + "\n" \
+            #+ "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
+            #+ "+ Selected: " + str(regionTrueName) + "\n" \
+            #+ "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
+            #+ "```"
+            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[1]))
     else:
         
         msg = "```diff" + "\n" \
