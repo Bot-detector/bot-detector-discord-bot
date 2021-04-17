@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import requests as req
 
 from sql import *
+from patron import *
 
 VALID_COMMANDS = ['!poke', '!meow', '!warn', 
 '!rules', '!website', '!patreon',
@@ -212,21 +213,63 @@ async def region_command(message, params):
         + "- More than 30 Regions selected. Please refine your search." + "\n" \
         + "```"
     await message.channel.send(msg)
+
+# Patron Heatmap command
+
+async def heatmap_command(message, params):
+    regionName = params
+    sql = ('''
+    SELECT DISTINCT
+        rpts2.*,
+        rpts.x_coord,
+        rpts.y_coord,
+        rpts.region_id
+    FROM Reports rpts
+        INNER JOIN (
+            SELECT 
+                max(rp.id) id,
+                pl.name,
+                pl.confirmed_player,
+                pl.confirmed_ban
+            FROM Players pl
+            inner join Reports rp on (pl.id = rp.reportedID)
+            WHERE 1
+                and (pl.confirmed_ban = 1 or pl.confirmed_player = 1)
+                and rp.region_id = %s
+            GROUP BY
+                pl.name,
+                pl.confirmed_player,
+                pl.confirmed_ban
+        ) rpts2
+    ON (rpts.id = rpts2.id)
+    ''')
     
+    data = getHeatmapRegion(regionName)
+    removedDuplicates, regionIDs, region_name = displayDuplicates(data)
+
+    if len(removedDuplicates)<30:    
+        regionTrueName = Autofill(removedDuplicates, regionName)
+        regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+        try:
+            runAnalysis(regionSelections, regionTrueName)
+        except: 
+            msg = "Image could not be rendered due to Low Data Pool size, or another error. Please select a new Region."
+    else:
+        msg = ">30 Regions selected. Please refine your search."
+        
+    msg = "successful test"
+    
+    patron.CleanupImages(regionSelections)
+    await message.channel.send(msg)
 
 async def map_command(message, params):
     regionName = params
     data = getHeatmapRegion(regionName)
     removedDuplicates, regionIDs, region_name = displayDuplicates(data)
     if len(removedDuplicates)<10:    
-        if len(removedDuplicates)<2:
-            regionTrueName = Autofill(removedDuplicates, regionName)
-            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
-            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
-        else:
-            regionTrueName = Autofill(removedDuplicates, regionName)
-            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
-            msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
+        regionTrueName = Autofill(removedDuplicates, regionName)
+        regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+        msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
     else:
         msg = "```diff" + "\n" \
         + "- More than 10 Regions selected. Please refine your search." + "\n" \
@@ -446,3 +489,20 @@ def plus_minus(var, compare):
         if(str(var)==str(compare)):
             diff_control = '+'
     return diff_control
+
+# Analysis run for Patron Heatmap
+def runAnalysis(regionSelections, regionTrueName):
+    region_id = regionSelections[0]
+    data = execute_sql(sql, param=[region_id])
+    df = pd.DataFrame(data)
+    
+    ban_mask = (df['confirmed_ban'] == 1)
+    player_mask = (df['confirmed_player'] == 1)
+    df_ban = df[ban_mask].copy()
+    df_player = df[player_mask].copy()
+
+    regionImage(region_id)
+    dfLocalBan = convertGlobaltoLocal(region_id, df_ban)
+    dfLocalReal = convertGlobaltoLocal(region_id, df_player)
+    plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
+    return
