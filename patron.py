@@ -32,14 +32,6 @@ config_players = {
 }
 ###
 
-def regionImage(regionid): 
-    url = f'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png'
-    response = requests.get(url, stream=True)
-    with open(f'{regionid}.png', 'wb') as out_file:
-        shutil.copyfileobj(response.raw, out_file)
-    del response
-    return
-
 def execute_sql(sql, insert=False, param=None):
     conn = mysql.connector.connect(**config_players)
     mycursor = conn.cursor(buffered=True, dictionary=True)
