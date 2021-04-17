@@ -6,6 +6,7 @@ import logging
 from reaction_commands import *
 from mesage_commands import *
 from sql import *
+from patron import *
 
 load_dotenv()
 
