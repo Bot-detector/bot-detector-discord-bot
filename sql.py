@@ -344,3 +344,44 @@ def Autofill(removedDuplicates, regionName):
     index = regionShort.index(np.min(regionShort))
     regionTrueName = removedDuplicates[index]
     return regionTrueName
+
+# Last Seen Location used in Predict
+
+def LocationgetPlayerID(playerName):
+    mydb_players = mysql.connector.connect(**config_players)
+    mycursor = mydb_players.cursor(buffered=True)
+
+    sql = "SELECT id FROM Players WHERE name = %s ORDER BY id DESC LIMIT 1"
+    query = convert(playerName) 
+    mycursor.execute(sql,query)
+    playerID = mycursor.fetchall()
+    
+    mycursor.close()
+    mydb_players.close()
+    return playerID
+
+def LocationgetReportLocation(playerID):
+    mydb_players = mysql.connector.connect(**config_players)
+    mycursor = mydb_players.cursor(buffered=True)
+
+    sql = "SELECT region_id FROM Reports WHERE reportedID = %s ORDER BY ID DESC LIMIT 1"
+    query = convert(playerID[0][0]) 
+    mycursor.execute(sql,query)
+    reportLocation = mycursor.fetchall()
+    
+    mycursor.close()
+    mydb_players.close()
+    return reportLocation
+
+def LocationgetReportLocationName(reportLocation):
+    mydb_players = mysql.connector.connect(**config_players)
+    mycursor = mydb_players.cursor(buffered=True)
+
+    sql = "SELECT region_name FROM regionIDNames WHERE region_ID = %s ORDER BY entry_ID DESC LIMIT 1"
+    query = convert(reportLocation[0][0]) 
+    mycursor.execute(sql,query)
+    reportLocationName = mycursor.fetchall()
+    reportLocationName = reportLocationName[0][0]
+    mycursor.close()
+    mydb_players.close()
+    return reportLocationName
