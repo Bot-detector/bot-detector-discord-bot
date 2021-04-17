@@ -172,7 +172,7 @@ async def predict_command(message, params):
         + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
         + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence))+ "\n" \
         + "+" + " ID: " + str(player_id) + "\n" \
-        + "+" + " Last Seen: " str(location) + "\n" \
+        + "+" + " Last Seen: " + str(location) + "\n" \
         + "============\n" \
         + "Prediction Breakdown \n\n"
             
