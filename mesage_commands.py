@@ -12,7 +12,7 @@ VALID_COMMANDS = ['!poke', '!meow', '!warn',
 '!issues', '!list', '!submit',
 '!stats', '!kc', '!predict', '!verify',
 '!primary','!heatmap', '!utc',
-'!woof', '!region']
+'!woof', '!region', '!map']
 
 # Fun Commands
 
@@ -214,7 +214,7 @@ async def region_command(message, params):
     await message.channel.send(msg)
     
 
-async def heatmap_command(message, params):
+async def map_command(message, params):
     regionName = params
     data = getHeatmapRegion(regionName)
     removedDuplicates, regionIDs, region_name = displayDuplicates(data)
