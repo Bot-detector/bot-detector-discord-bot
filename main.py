@@ -109,7 +109,7 @@ async def on_message(message):
             await submit_command(message, command['params'], 
                 client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
             
-      # heatmap link
+      # map command
         if command['name'].lower() == "!region":
             await region_command(message, command['params'])
     
@@ -130,7 +130,12 @@ async def on_message(message):
 
         if command['name'].lower() == "!predict":
             await predict_command(message, command['params'])
-
+            
+    if message.channel.id == 830783778325528626 or  message.channel.type == 'dm':
+        
+        if command['name'].lower() == "!heatmap":
+            await heatmap_command(message, command['params'])
+    
 @client.event
 async def on_raw_reaction_add(payload):
     
