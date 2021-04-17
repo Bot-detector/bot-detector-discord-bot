@@ -252,9 +252,7 @@ async def heatmap_command(message, params):
         regionTrueName = patron.Autofill(removedDuplicates, regionName)
         regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
         try:
-            print("before my await")
             await runAnalysis(regionSelections, regionTrueName, sql)
-            print("after my await")
         except Exception as e:
             print(e) 
             msg = "Image could not be rendered due to Low Data Pool size, or another error. Please select a new Region."

@@ -78,26 +78,28 @@ def convertGlobaltoLocal(regionid, df):
 def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     sns.set(style="ticks", context="notebook")
     plt.style.use("seaborn-white")
+    plt.figure(figsize = (5,5))
+    
     map_img = mpimg.imread(f'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
 
-    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, legend=True,cbar=True, cbar_kws={'label': 'Player Density', 'orientation' : 'vertical' ,'pad': 0.10},alpha=.7, cmap="winter_r", shade=True, bw=.07)
-    hmax.collections[0].set_alpha(0)
+    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.7, cmap="winter_r", shade=True, bw=.07)
     hmax.set(xlabel='Local X', ylabel='Local Y')
     
-    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, legend=True,cbar=True, cbar_kws={'label': 'Bot Density', 'orientation' : 'vertical', 'pad': .05}, alpha=.7, cmap="autumn_r", shade=True, bw=.07)
-    hmax.collections[0].set_alpha(0)
-    hmax.set(xlabel='', ylabel='',title=f'{regionname}')
+    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.7, cmap="autumn_r", shade=True, bw=.07)
+    hmax.set(xlabel='', ylabel='',title='')
     
-    hmax.legend([f'Bot Detector Plugin: {date.today()}'],loc='lower right')
+    hmax.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
     
     hmax.tick_params(axis='x', which='both', bottom='off',top='off',labelbottom='off')
     hmax.set_xticklabels([''])
     hmax.set_yticklabels([''])
     
     plt.imshow(map_img, zorder=0, extent=[0.0, 64.0, 0.0, 64.0])
-    plt.savefig(f'{os.getcwd()}/{regionid}.png')
-
-    return 
+    plt.axis('off')
+    plt.savefig(f'{os.getcwd()}/{regionid}.png', bbox_inches='tight',pad_inches = 0)
+    plt.figure().clear()
+    plt.close("all")
+    return
 
 def CleanupImages(regionSelections):
     regionid = regionSelections[0]
