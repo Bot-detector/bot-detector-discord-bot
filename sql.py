@@ -326,7 +326,7 @@ def displayDuplicates(data):
     removedDuplicates = list()
     for i in data:
         regionIDs.append(i[1])
-        region_name.append(i[2])
+        region_name.append(i[3])
     removedDuplicates = list(set(region_name))
     return removedDuplicates, regionIDs, region_name
 
