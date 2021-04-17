@@ -244,12 +244,12 @@ async def heatmap_command(message, params):
     ON (rpts.id = rpts2.id)
     ''')
     
-    data = getHeatmapRegion(regionName)
-    removedDuplicates, regionIDs, region_name = displayDuplicates(data)
-
+    data = patron.getHeatmapRegion(regionName)
+    removedDuplicates, regionIDs, region_name = patron.displayDuplicates(data)
+    
     if len(removedDuplicates)<30:    
-        regionTrueName = Autofill(removedDuplicates, regionName)
-        regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+        regionTrueName = patron.Autofill(removedDuplicates, regionName)
+        regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
         try:
             runAnalysis(regionSelections, regionTrueName)
         except: 
