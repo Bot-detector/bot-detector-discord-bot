@@ -95,8 +95,8 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     hmax.set_yticklabels([''])
     
     plt.imshow(map_img, zorder=0, extent=[0.0, 64.0, 0.0, 64.0])
-    plt.savefig(f'{regionid}.png')
-    plt.show()
+    plt.savefig(f'{os.getcwd()}/{regionid}.png')
+
     return 
 
 def CleanupImages(regionSelections):

@@ -1,5 +1,6 @@
 import re
 import json
+import discord
 from random import randint
 from datetime import datetime, timezone
 import requests as req
@@ -251,15 +252,20 @@ async def heatmap_command(message, params):
         regionTrueName = patron.Autofill(removedDuplicates, regionName)
         regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
         try:
-            runAnalysis(regionSelections, regionTrueName)
-        except: 
+            print("before my await")
+            await runAnalysis(regionSelections, regionTrueName, sql)
+            print("after my await")
+        except Exception as e:
+            print(e) 
             msg = "Image could not be rendered due to Low Data Pool size, or another error. Please select a new Region."
     else:
         msg = ">30 Regions selected. Please refine your search."
         
-    msg = "successful test"
+    msg = "successful test, but now even more successful"
 
-    await message.channel.send(msg)
+
+    regionid = regionSelections[0]
+    await message.channel.send(file=discord.File(f'{os.getcwd()}/{regionid}.png'))
     
     patron.CleanupImages(regionSelections)
     
@@ -493,7 +499,7 @@ def plus_minus(var, compare):
     return diff_control
 
 # Analysis run for Patron Heatmap
-def runAnalysis(regionSelections, regionTrueName):
+async def runAnalysis(regionSelections, regionTrueName, sql):
     region_id = regionSelections[0]
     data = patron.execute_sql(sql, param=[region_id])
     df = pd.DataFrame(data)
@@ -503,7 +509,6 @@ def runAnalysis(regionSelections, regionTrueName):
     df_ban = df[ban_mask].copy()
     df_player = df[player_mask].copy()
 
-    regionImage(region_id)
     dfLocalBan = patron.convertGlobaltoLocal(region_id, df_ban)
     dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
     patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
