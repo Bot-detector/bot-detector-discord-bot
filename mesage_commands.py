@@ -251,8 +251,11 @@ async def heatmap_command(message, params):
     if len(removedDuplicates)<30:    
         regionTrueName = patron.Autofill(removedDuplicates, regionName)
         regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+        regionid = regionSelections[0]
         try:
             await runAnalysis(regionSelections, regionTrueName, sql)
+        except IndexError as i:
+            await message.channel.send(f'Not enough data for {params}, sorry!')
         except Exception as e:
             print(e) 
             msg = "Image could not be rendered due to Low Data Pool size, or another error. Please select a new Region."
@@ -262,7 +265,7 @@ async def heatmap_command(message, params):
     msg = "successful test, but now even more successful"
 
 
-    regionid = regionSelections[0]
+    
     await message.channel.send(file=discord.File(f'{os.getcwd()}/{regionid}.png'))
     
     patron.CleanupImages(regionSelections)
