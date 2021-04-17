@@ -161,12 +161,18 @@ async def predict_command(message, params):
     player_id = respJSON['player_id']
     confidence = respJSON['prediction_confidence']
     secondaries = respJSON['secondary_predictions']
-          
+    
+    try:
+        location = LocationgetReportLocationName(LocationgetReportLocation(LocationgetPlayerID(playerName)))
+    except:
+        location = "Unknown"
+    
     msg = "```diff" + "\n" \
         + "+" + " Name: " + str(name) + "\n" \
         + str(plus_minus(prediction,'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
         + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence))+ "\n" \
         + "+" + " ID: " + str(player_id) + "\n" \
+        + "+" + " Last Seen: " str(location) + "\n" \
         + "============\n" \
         + "Prediction Breakdown \n\n"
             
