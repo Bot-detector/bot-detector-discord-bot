@@ -493,7 +493,7 @@ def plus_minus(var, compare):
 # Analysis run for Patron Heatmap
 def runAnalysis(regionSelections, regionTrueName):
     region_id = regionSelections[0]
-    data = execute_sql(sql, param=[region_id])
+    data = patron.execute_sql(sql, param=[region_id])
     df = pd.DataFrame(data)
     
     ban_mask = (df['confirmed_ban'] == 1)
@@ -502,7 +502,7 @@ def runAnalysis(regionSelections, regionTrueName):
     df_player = df[player_mask].copy()
 
     regionImage(region_id)
-    dfLocalBan = convertGlobaltoLocal(region_id, df_ban)
-    dfLocalReal = convertGlobaltoLocal(region_id, df_player)
-    plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
+    dfLocalBan = patron.convertGlobaltoLocal(region_id, df_ban)
+    dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
+    patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
     return
