@@ -258,9 +258,11 @@ async def heatmap_command(message, params):
         msg = ">30 Regions selected. Please refine your search."
         
     msg = "successful test"
+
+    await message.channel.send(msg)
     
     patron.CleanupImages(regionSelections)
-    await message.channel.send(msg)
+    
 
 async def map_command(message, params):
     regionName = params

@@ -5,6 +5,7 @@ from os import path
 import shutil
 import pandas as pd
 import numpy as np
+import patron
 from IPython.display import Image, display
 import mysql.connector
 import matplotlib
@@ -100,7 +101,7 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
 
 def CleanupImages(regionSelections):
     regionid = regionSelections[0]
-    os.remove(f'{regionid}.png')
+    os.remove(f'{os.getcwd()}/{regionid}.png')
     return
 
 ###

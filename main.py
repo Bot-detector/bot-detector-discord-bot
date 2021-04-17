@@ -39,6 +39,9 @@ async def on_message(message):
     # ALL COMMANDS GO BELOW #
     #########################
 
+    if(len(message.content) <= 0):
+        return
+
     if(message.content[0] != '!'):
         return
 
