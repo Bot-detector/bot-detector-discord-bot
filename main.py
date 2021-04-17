@@ -113,8 +113,8 @@ async def on_message(message):
         if command['name'].lower() == "!region":
             await region_command(message, command['params'])
     
-        if command['name'].lower() == "!heatmap":
-            await heatmap_command(message, command['params'])
+        if command['name'].lower() == "!map":
+            await map_command(message, command['params'])
     
       # plugin and database stats
 
