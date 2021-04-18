@@ -82,10 +82,10 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     
     map_img = mpimg.imread(f'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
 
-    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.7, cmap="winter_r", shade=True, bw=.07)
+    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.7, cmap="winter_r", shade=True, bw=.1)
     hmax.set(xlabel='Local X', ylabel='Local Y')
     
-    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.7, cmap="autumn_r", shade=True, bw=.07)
+    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.7, cmap="autumn_r", shade=True, bw=.1)
     hmax.set(xlabel='', ylabel='',title='')
     
     hmax.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
@@ -116,7 +116,7 @@ def getHeatmapRegion(regionName):
     mycursor = mydb_players.cursor(buffered=True)
 
     sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
-    regionName = regionName + "%"
+    regionName = "%" + regionName + "%"
     query = convert(regionName) 
     print(query)
     mycursor.execute(sql,query)
