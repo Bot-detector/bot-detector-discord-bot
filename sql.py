@@ -310,7 +310,7 @@ def getHeatmapRegion(regionName):
     mycursor = mydb_players.cursor(buffered=True)
 
     sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
-    regionName = regionName + "%"
+    regionName = "%" + regionName + "%"
     query = convert(regionName) 
     print(query)
     mycursor.execute(sql,query)
