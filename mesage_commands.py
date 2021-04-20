@@ -337,7 +337,7 @@ async def submit_command(message, params, recipient):
         print(e)
         pass
     
-    msg = "```diff" + "\n" \ 
+    msg = "```diff" + "\n" \
         + "Paste Information Submitted" + "\n" \
         + "_____________________" + "\n" \
         + "+ Link: " + str(paste_url) + "\n" \
