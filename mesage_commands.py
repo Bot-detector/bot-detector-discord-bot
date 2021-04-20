@@ -1,12 +1,16 @@
+import os
 import re
 import json
+import string
 import discord
+import random
+import pandas as pd
 from random import randint
 from datetime import datetime, timezone
 import requests as req
 
-from sql import *
-from patron import *
+import sql
+import patron
 
 VALID_COMMANDS = ['!poke', '!meow', '!warn', 
 '!rules', '!website', '!patreon',
@@ -188,12 +192,12 @@ async def predict_command(message, params):
 
 async def region_command(message, params):
     regionName = params
-    data = getHeatmapRegion(regionName)
-    removedDuplicates, regionIDs, region_name = displayDuplicates(data)
+    data = patron.getHeatmapRegion(regionName)
+    removedDuplicates, regionIDs, region_name = patron.displayDuplicates(data)
     if len(removedDuplicates)<30:    
         if len(removedDuplicates)<2:
-            regionTrueName = Autofill(removedDuplicates, regionName)
-            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+            regionTrueName = patron.Autofill(removedDuplicates, regionName)
+            regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
             msg = "```diff" + "\n" \
             + "+ Input: " + str(regionName) + "\n" \
             + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
@@ -201,8 +205,8 @@ async def region_command(message, params):
             + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
             + "```"
         else:
-            regionTrueName = Autofill(removedDuplicates, regionName)
-            regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+            regionTrueName = patron.Autofill(removedDuplicates, regionName)
+            regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
             msg = "```diff" + "\n" \
             + "+ Input: " + str(regionName) + "\n" \
             + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
@@ -246,7 +250,11 @@ async def heatmap_command(message, params):
     ''')
     
     data = patron.getHeatmapRegion(regionName)
+    print(data)
     removedDuplicates, regionIDs, region_name = patron.displayDuplicates(data)
+    print(removedDuplicates)
+    print(regionIDs)
+    print(region_name)
     
     if len(removedDuplicates)<30:    
         regionTrueName = patron.Autofill(removedDuplicates, regionName)
@@ -255,6 +263,7 @@ async def heatmap_command(message, params):
         try:
             await runAnalysis(regionSelections, regionTrueName, sql)
         except IndexError as i:
+            print(e)
             await message.channel.send(f'Not enough data for {params}, sorry!')
         except Exception as e:
             print(e) 
@@ -262,10 +271,7 @@ async def heatmap_command(message, params):
     else:
         msg = ">30 Regions selected. Please refine your search."
         
-    msg = "successful test, but now even more successful"
 
-
-    
     await message.channel.send(file=discord.File(f'{os.getcwd()}/{regionid}.png'))
     
     patron.CleanupImages(regionSelections)
@@ -273,11 +279,11 @@ async def heatmap_command(message, params):
 
 async def map_command(message, params):
     regionName = params
-    data = getHeatmapRegion(regionName)
-    removedDuplicates, regionIDs, region_name = displayDuplicates(data)
+    data = sql.getHeatmapRegion(regionName)
+    removedDuplicates, regionIDs, region_name = sql.displayDuplicates(data)
     if len(removedDuplicates)<10:    
-        regionTrueName = Autofill(removedDuplicates, regionName)
-        regionSelections = allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+        regionTrueName = sql.Autofill(removedDuplicates, regionName)
+        regionSelections = sql.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
         msg = str('https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(regionSelections[0]))
     else:
         msg = "```diff" + "\n" \
@@ -288,6 +294,7 @@ async def map_command(message, params):
 # Database Commands
 
 async def submit_command(message, params, recipient):
+    errors = "No Errors"
     paste_url = params
 
     sqlLabelInsert = ('''
@@ -310,38 +317,36 @@ async def submit_command(message, params, recipient):
     INSERT INTO `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
     ''')
     
-    paste_soup = get_paste_data(paste_url)
-    List = get_paste_names(paste_soup)
-    labelCheck = get_paste_label(paste_soup)
+    paste_soup = sql.get_paste_data(paste_url)
+    List = sql.get_paste_names(paste_soup)
+    labelCheck = sql.get_paste_label(paste_soup)
 
     try:
-        execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
-        e = 'No Errors'
+        sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+        
     except Exception as e: #common exception is duplicate label entry, will be pulled later down the line
-        print(e)
+        errors = e
         pass
 
     try:
-        InsertPlayers(sqlPlayersInsert, List)
-        e = 'No Errors'
+        sql.InsertPlayers(sqlPlayersInsert, List)
     except Exception as e: #common exception is duplicate player entry, will be pulled later down the line
-        print(e)
+        errors = e
         pass
 
     try: 
-        dfLabelID = pd.DataFrame(execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
-        playerID = PlayerID(sqlPlayerID, List)
-        InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
-        e = 'No Errors'
-    except Exception as e: #attempts to insert the player IDs and player labels if pulled, will not pull if these values do not exist. 
-        print(e)
+        dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+        playerID = sql.PlayerID(sqlPlayerID, List)
+        sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+    except Exception as e: #attempts to insert the player IDs and player labels if pulled, will not pull if these values do not exist.
+        errors = e
         pass
     
     msg = "```diff" + "\n" \
         + "Paste Information Submitted" + "\n" \
         + "_____________________" + "\n" \
         + "+ Link: " + str(paste_url) + "\n" \
-        + "+ Errors: " + str(e) + "\n" \
+        + "+ Errors: " + str(errors) + "\n" \
         + "```"
 
     await recipient.send(msg)
@@ -376,16 +381,16 @@ async def primary_command(message, params):
         + "+ Player has been successfully updated as Primary." + "\n" \
         + "```"
 
-    player_id, exists = verificationPull(playerName)
+    player_id, exists = sql.verificationPull(playerName)
     if exists:
-        check, verified = discord_verification_check(discord_id, player_id)
+        check, verified = sql.discord_verification_check(discord_id, player_id)
         if check:
             if verified:
-                data, verified_account = VerifyRSNs(discord_id, player_id)
+                data, verified_account = sql.VerifyRSNs(discord_id, player_id)
                 if verified_account:
-                    PrimaryNULL = insertPrimaryNULL(discord_id)
+                    PrimaryNULL = sql.insertPrimaryNULL(discord_id)
                     if PrimaryNULL:
-                        PrimaryTRUE = insertPrimaryTRUE(discord_id, player_id)
+                        PrimaryTRUE = sql.insertPrimaryTRUE(discord_id, player_id)
                         if PrimaryTRUE:
                             print("Player has been successfully updated as Primary.")
                             msg = msgConfirmedPrimary
@@ -467,20 +472,20 @@ async def link_command(message, params):
             + "- Player is: Unverified." + "\n" \
             + "```"
 
-    player_id, exists = verificationPull(playerName)
+    player_id, exists = sql.verificationPull(playerName)
     if exists:
-        check, verified, owner_list = verification_check(player_id)
+        check, verified, owner_list = sql.verification_check(player_id)
         if verified:
             msg = msgVerified
         else:
             if check:
                 if int(discord_id) not in owner_list:
-                    verificationInsert(discord_id, player_id, code)
+                    sql.verificationInsert(discord_id, player_id, code)
                     msg = msgPassed
                 else:
                     msg = msgInUse
             else:
-                verificationInsert(discord_id, player_id, code)
+                sql.verificationInsert(discord_id, player_id, code)
                 msg = msgPassed
     else:
         msg = msgInstallPlugin
@@ -508,9 +513,9 @@ async def verify_comand(message, params):
             + "- Player is: Unverified." + "\n" \
             + "```"
             
-    player_id, exists = verificationPull(playerName)
+    player_id, exists = sql.verificationPull(playerName)
     if exists:
-        check, verified, owner_list = verification_check(player_id)
+        check, verified, owner_list = sql.verification_check(player_id)
         if verified:
             msg = msgVerified
         else:
