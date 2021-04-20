@@ -95,7 +95,9 @@ async def on_message(message):
         
     # Locked-Channel commands
         
-    if message.channel.id == 825189024074563614 or message.channel.id == 833479046821052436 or message.channel.id == 822589004028444712 or message.channel.id == 830783778325528626 or  message.channel.type == 'dm':
+    if message.channel.id == 825189024074563614 or message.channel.id == 833479046821052436 \
+        or message.channel.id == 822589004028444712 or message.channel.id == 830783778325528626 \
+        or message.channel.id == 834028368147775488 or  message.channel.type == 'dm':
       
         if command['name'].lower() == "!link":
             await link_command(message, command['params'])
@@ -135,7 +137,9 @@ async def on_message(message):
         if command['name'].lower() == "!predict":
             await predict_command(message, command['params'])
             
-    if message.channel.id == 830783778325528626 or message.channel.id == 833479046821052436 or message.channel.id == 822589004028444712 or message.channel.type == 'dm':
+    if message.channel.id == 830783778325528626 or message.channel.id == 833479046821052436 \
+        or message.channel.id == 822589004028444712 or message.channel.id == 834028368147775488 \
+        or message.channel.type == 'dm':
         
         if command['name'].lower() == "!heatmap":
             await heatmap_command(message, command['params'])
