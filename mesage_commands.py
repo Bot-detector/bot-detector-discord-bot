@@ -290,17 +290,59 @@ async def map_command(message, params):
 async def submit_command(message, params, recipient):
     paste_url = params
 
-    newlines, label = get_paste_names(paste_url)
-    label_insert(label)
-    name_insert(newlines)
-    player_label_join(label, newlines)
+    sqlLabelInsert = ('''
+    INSERT INTO `labels_submitted`(`Label`) VALUES (%s)
+    ''')
 
-    msg = "Paste Information" + "\n" \
+    sqlPlayersInsert = ('''
+    INSERT INTO `players_submitted`(`Players`) VALUES (%s)
+    ''')
+
+    sqlLabelID = ('''
+    SELECT ID FROM `labels_submitted` WHERE Label = %s
+    ''')
+
+    sqlPlayerID = ('''
+    SELECT ID FROM `players_submitted` WHERE Players = %s
+    ''')
+
+    sqlInsertPlayerLabel = ('''
+    INSERT INTO `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
+    ''')
+    
+    paste_soup = get_paste_data(paste_url)
+    List = get_paste_names(paste_soup)
+    labelCheck = get_paste_label(paste_soup)
+
+    try:
+        execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+        e = 'No Errors'
+    except Exception as e: #common exception is duplicate label entry, will be pulled later down the line
+        print(e)
+        pass
+
+    try:
+        InsertPlayers(sqlPlayersInsert, List)
+        e = 'No Errors'
+    except Exception as e: #common exception is duplicate player entry, will be pulled later down the line
+        print(e)
+        pass
+
+    try: 
+        dfLabelID = pd.DataFrame(execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+        playerID = PlayerID(sqlPlayerID, List)
+        InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+        e = 'No Errors'
+    except Exception as e: #attempts to insert the player IDs and player labels if pulled, will not pull if these values do not exist. 
+        print(e)
+        pass
+    
+    msg = "```diff" + "\n" \ 
+        + "Paste Information Submitted" + "\n" \
         + "_____________________" + "\n" \
-        + "Number of Names: " + str(len(newlines)) + "\n" \
-        + "Label: " + str(label) + "\n" \
-        + "Samples: " + str(newlines[0:10]) + "\n" \
-        + "Link: " + str(paste_url) + "\n"
+        + "+ Link: " + str(paste_url) + "\n" \
+        + "+ Errors: " + str(e) + "\n" \
+        + "```"
 
     await recipient.send(msg)
 
