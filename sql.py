@@ -7,6 +7,7 @@ import numpy as np
 import requests as req
 from dotenv import load_dotenv
 from bs4 import BeautifulSoup
+from collections import namedtuple
 
 load_dotenv()
 
@@ -24,136 +25,110 @@ config_players = {
   'database': os.getenv('DB_NAME_PLAYERS'),
 }
 
-def get_paste_names(paste_url):
-    newlines = list()
-    data = req.get(paste_url)
-    soup = BeautifulSoup(data.content, 'html.parser')
-    
-    lines = soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
-    lines = lines.splitlines()
-    
-    label = soup.findAll('title')[0].decode_contents()
-    label = label[:-15]
-    
-    for line in lines:
-        L = re.fullmatch('[\w\d _-]{1,12}', line)
-        if L:
-            newlines.append(line)
-            
-    return newlines, label
-
-# pre-processing 
+def convert_names(list):
+    return (*list,)
 
 def convert(list):
     return (list, )
 
+def execute_sql(sql, insert=False, param=None):
+    conn = mysql.connector.connect(**config_submissions)
+    mycursor = conn.cursor(buffered=True, dictionary=True)
+    
+    mycursor.execute(sql, param)
+    
+    if insert:
+        conn.commit()
+        mycursor.close()
+        conn.close()
+        return
 
-def convert_names(list):
-    return (*list,)
+    rows = mycursor.fetchall()
+    Record = namedtuple('Record', rows[0].keys())
+    records = [Record(*r.values()) for r in rows]
 
+    mycursor.close()
+    conn.close()
+    return records
 
-def label_clean(label):
-    label_string = '"' + str(label) + '"'
-    return label_string
-
-
-def name_clean(newlines):
-    line_set = list()
-    for line in newlines:
-        str_line = '"' + str(line) + '"'
-        line_set.append(str_line)
-    return line_set
-
-# insert functions
-
-def label_insert(label):
+def InsertPlayers(sql, List):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    label_string = convert(label)
-    sql = "INSERT INTO labels_submitted (Label) VALUES (%s)"
-    try:
-        mycursor.execute(sql, label_string)
-    except:
-        pass
+    
+    r = list()
+    for i in List:
+        r.append(convert(i))
+    List = r
+    
+    query = convert_names(List)
+    mycursor.executemany(sql,query)
+    
     mydb.commit()
+    mycursor.close()
+    mydb.close()
+    return 
 
+def InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID):
+    mydb = mysql.connector.connect(**config_submissions)
+    mycursor = mydb.cursor(buffered=True)
+    
+    LabelID = int(dfLabelID.values[0][0])
+    playerID
+    
+    r = list()
+    for i in playerID:
+        r.append((i,LabelID))
+    
+    mycursor.executemany(sqlInsertPlayerLabel,r)
+    
+    mydb.commit()
     mycursor.close()
     mydb.close()
     return
 
-
-def name_insert(newlines):
+def PlayerID(sqlPlayerID, List):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    line_set = convert_names(newlines)
-    sql = "INSERT INTO players_submitted (Players) VALUES (%s)"
-    for i in line_set:
-        try:
-            i_c = convert(i)
-            mycursor.execute(sql, i_c)
-        except:
-            pass
-    mydb.commit()
-
+    
+    r = list()
+    for i in List:
+        r.append(convert(i))
+    List = r
+    
+    query = convert_names(List)
+    
+    playerID = list()
+    for i in query:
+        mycursor.execute(sqlPlayerID,i)
+        playerID.append(mycursor.fetchone()[0])
+    
     mycursor.close()
     mydb.close()
-    return
+    return playerID
 
-# recall functions 
+def get_paste_data(paste_url):
+    paste_data = requests.get(paste_url)
+    paste_soup = BeautifulSoup(paste_data.content, 'html.parser')
+    return paste_soup
 
-def label_id(label):
-    mydb = mysql.connector.connect(**config_submissions)
-    label_string = label_clean(label)
-    
-    mycursor = mydb.cursor(buffered=True)
-    sql = "SELECT * from labels_submitted WHERE label = %s" % str(label_string)
-    mycursor.execute(sql, label_string)
-    
-    head_rows = mycursor.fetchmany(size=1)
-    label_id = head_rows[0][0]
-    
-    mydb.commit()
+def get_paste_names(paste_soup):
+    Set = set()
+    lines = paste_soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
+    lines = lines.splitlines()
+    for line in lines:
+        L = re.fullmatch('[\w\d _-]{1,12}', line)
+        if L:
+            Set.add(line)
+            
+    List = Set
+    return List
 
-    mycursor.close()
-    mydb.close()
-    return label_id
-
-
-def name_id(newlines):
-    mydb = mysql.connector.connect(**config_submissions)
-    player_ids = []
-    line_set = name_clean(newlines)
-    
-    mycursor = mydb.cursor(buffered=True)
-    
-    for i in range(0,len(line_set)):
-        sql = "SELECT * from players_submitted WHERE Players = (%s)" % line_set[i]
-        mycursor.execute(sql)
-        head_rows = mycursor.fetchmany(size=1)
-        player_id = head_rows[0][0]
-        player_ids.append(player_id)
-    
-    mydb.commit()
-
-    mycursor.close()
-    mydb.close()
-    return player_ids
-
-# final join functions
-
-def player_label_join(label, newlines):
-    l_id = label_id(label)
-    p_ids = name_id(newlines)
-    mydb = mysql.connector.connect(**config_submissions)
-    mycursor = mydb.cursor(buffered=True)
-    for i in range(0,len(p_ids)):
-        sql = "INSERT IGNORE playerlabels_submitted (Player_ID, Label_ID) VALUES (%s, %s)" % (p_ids[i], l_id)
-        mycursor.execute(sql)
-    mydb.commit()
-
-    mycursor.close()
-    mydb.close()
-    return
+def get_paste_label(paste_soup):
+    label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()
+    L = re.fullmatch('[\w\d _-]{1,100}', label)
+    if L:
+        labelCheck = label
+    return labelCheck
 
 ################################################################################################################################################################
 
