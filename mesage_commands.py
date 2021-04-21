@@ -297,23 +297,23 @@ async def submit_command(message, params, recipient):
     paste_url = params
 
     sqlLabelInsert = ('''
-    INSERT INTO `labels_submitted`(`Label`) VALUES (%s)
+        INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)
     ''')
 
     sqlPlayersInsert = ('''
-    INSERT INTO `players_submitted`(`Players`) VALUES (%s)
+        INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)
     ''')
 
     sqlLabelID = ('''
-    SELECT ID FROM `labels_submitted` WHERE Label = %s
+        SELECT ID FROM `labels_submitted` WHERE Label = %s
     ''')
 
     sqlPlayerID = ('''
-    SELECT ID FROM `players_submitted` WHERE Players = %s
+        SELECT ID FROM `players_submitted` WHERE Players = %s
     ''')
 
     sqlInsertPlayerLabel = ('''
-    INSERT INTO `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
+        INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
     ''')
     
     paste_soup = sql.get_paste_data(paste_url)
