@@ -160,6 +160,7 @@ async def on_message(message):
             if command['name'].lower() == "!bulklocate":
                 await bulklocate_command(message, command['params'], 
                     client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
+                    return
     
 @client.event
 async def on_raw_reaction_add(payload):
