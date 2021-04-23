@@ -11,7 +11,6 @@ import requests as req
 
 import patron
 import sql
-from discord_slash import SlashCommand, SlashContext
 
 
 # Fun Commands

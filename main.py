@@ -1,13 +1,15 @@
+import os
+
 import discord
 from discord.ext import commands
+from dotenv import load_dotenv
 
 print(discord.__version__)
 
-from reaction_commands import *
-from mesage_commands import *
-from patron import *
+import reaction_commands as rc
+import mesage_commands as mc
 
-from allowed_channels import *
+import checks as checks
 
 load_dotenv()
 
@@ -20,6 +22,7 @@ intents.messages = True
 
 bot = commands.Bot(command_prefix='!', description=description, intents=intents)
 
+
 # discord bot events
 @bot.event
 async def on_ready():
@@ -28,123 +31,123 @@ async def on_ready():
 
 @bot.command()
 async def meow(ctx):
-    await meow_command(ctx)
+    await mc.meow_command(ctx)
 
 
 @bot.command()
 async def woof(ctx):
-    await woof_command(ctx)
+    await mc.woof_command(ctx)
 
 
 @bot.command()
 async def poke(ctx):
-    await poke_command(ctx)
+    await mc.poke_command(ctx)
 
 
 @bot.command()
 async def utc(ctx):
-    await utc_time_command(ctx)
+    await mc.utc_time_command(ctx)
 
 
 @bot.command()
 async def warn(ctx):
-    await warn_command(ctx)
+    await mc.warn_command(ctx)
 
 
 @bot.command()
 async def rules(ctx):
-    await rules_command(ctx)
+    await mc.rules_command(ctx)
 
 
 @bot.command()
 async def issues(ctx):
-    await issues_command(ctx)
+    await mc.issues_command(ctx)
 
 
 @bot.command()
 async def website(ctx):
-    await website_command(ctx)
+    await mc.website_command(ctx)
 
 
 @bot.command()
 async def patreon(ctx):
-    await patreon_command(ctx)
+    await mc.patreon_command(ctx)
 
 
 @bot.command()
 async def invite(ctx):
-    await invite_command(ctx)
+    await mc.invite_command(ctx)
 
 
 @bot.command()
 async def github(ctx, repo):
-    await github_command(ctx, repo)
+    await mc.github_command(ctx, repo)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def link(ctx, player_name):
-    await link_command(ctx, player_name)
+    await mc.link_command(ctx, player_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def verify(ctx, player_name):
-    await verify_comand(ctx, player_name)
+    await mc.verify_comand(ctx, player_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def primary(ctx, player_name):
-    await primary_command(ctx, player_name)
+    await mc.primary_command(ctx, player_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def list(ctx):
-    await list_command(ctx)
+    await mc.list_command(ctx)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def submit(ctx, paste_url):
-    await submit_command(ctx, paste_url, bot.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
+    await mc.submit_command(ctx, paste_url, bot.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def region(ctx, region_name):
-    await region_command(ctx, region_name)
+    await mc.region_command(ctx, region_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def map(ctx, region_name):
-    await map_command(ctx, region_name)
+    await mc.map_command(ctx, region_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def stats(ctx):
-    await stats_command(ctx)
+    await mc.stats_command(ctx)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def kc(ctx, player_name):
-    await kc_command(ctx, player_name)
+    await mc.kc_command(ctx, player_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def predict(ctx, player_name):
-    await predict_command(ctx, player_name)
+    await mc.predict_command(ctx, player_name)
 
 
-@commands.check(check_allowed_channel)
+@commands.check(checks.check_allowed_channel)
 @bot.command()
 async def heatmap(ctx, region_name):
-    await heatmap_command(ctx, region_name)
+    await mc.heatmap_command(ctx, region_name)
 
 
 @bot.event
@@ -165,8 +168,8 @@ async def on_message(message):
 
 @bot.event
 async def on_raw_reaction_add(payload):
-    await add_prediction_feedback(payload,
-                                  await get_reaction_message(payload))
+    await rc.add_prediction_feedback(payload,
+                                     await get_reaction_message(payload))
 
 
 @bot.event
