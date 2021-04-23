@@ -511,6 +511,17 @@ async def verify_comand(message, params):
         msg = msgUnverified
             
     await message.channel.send(msg)
+    
+async def bulklocate_command(message, params, recipient):
+    paste_url = params
+
+    #df = get_pastebin_locations(paste_url, token)
+
+    msg = "Work in Progress."
+
+    await recipient.send(msg)
+    
+####################################################################################### Functions
 
 # String Operations
 def is_valid_rsn(rsn):
@@ -548,3 +559,39 @@ async def runAnalysis(regionSelections, regionTrueName, sql):
     dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
     patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
     return
+
+# Bulk location lookup
+def get_location_paste_data(paste_url):
+    paste_data = requests.get(paste_url)
+    paste_soup = BeautifulSoup(paste_data.content, 'html.parser')
+    return paste_soup
+
+def get_location_paste_names(paste_soup):
+    List = list()
+    lines = paste_soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
+    lines = lines.splitlines()
+    for line in lines:
+        L = re.fullmatch('[\w\d _-]{1,12}', line)
+        if L:
+            List.append(line) 
+    return List
+
+def get_pastebin_locations(paste_url, token):
+    paste_soup = get_location_paste_data(paste_url)
+    List = get_location_paste_names(paste_soup)
+    json = {
+        'names' : List
+    }
+
+    url = f'https://www.osrsbotdetector.com/dev/discord/locations/{token}'
+    data = requests.get(url,json=json)
+
+    df = pd.DataFrame(data.json())
+    df['timestamp'] = pd.to_datetime(df['timestamp'])
+    def func(x):
+        names = x['name'].values
+        return names
+    groupedDf = df.groupby(by=['timestamp','region_name','region_id']).apply(func)
+    df = pd.DataFrame(groupedDf, columns = ['names'])
+    df.sort_values(by=['timestamp'],ascending=False, inplace=True)
+    return df
