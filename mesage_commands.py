@@ -423,9 +423,10 @@ async def link_command(message, params):
             + "+ 2. Login as: '" + str(playerName) + "'." + "\n" \
             + "+ 3. Join the clan channel: 'Ferrariic'." + "\n" \
             + "+ 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
-            + "+ 5. Type into the Clan Chat: '!Code:" + str(code) + "'." + "\n" \
-            + "+ 6. Check your Discord DMs for a 'Verification' message." + "\n" \
-            + "+ 7. Verification Process Complete." + "\n" \
+            + "+ 5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-commands." + "\n" \
+            + "+ 6. Type into the Clan Chat: '!Code " + str(code) + "'." + "\n" \
+            + "+ 7. Type '!verify " + str(playerName) + "' in #bot-commands channel to confirm that you have been Verified." + "\n" \
+            + "+ 9. Verification Process Complete." + "\n" \
             + "====== INFO ======\n" \
             + "+ You may link multiple Runescape accounts via this method." + "\n" \
             + "+ If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
