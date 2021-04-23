@@ -1,13 +1,12 @@
 import os
-import mysql.connector
-import string
-import random
 import re
+from collections import namedtuple
+
+import mysql.connector
 import numpy as np
 import requests as req
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
-from collections import namedtuple
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -25,7 +24,7 @@ config_players = {
   'database': os.getenv('DB_NAME_PLAYERS'),
 }
 
-############################### !submit command 
+############################### !submit command
 
 def convert_names(list):
     return (*list,)
@@ -36,9 +35,9 @@ def convert(list):
 def execute_sql(sql, insert=False, param=None):
     conn = mysql.connector.connect(**config_submissions)
     mycursor = conn.cursor(buffered=True, dictionary=True)
-    
+
     mycursor.execute(sql, param)
-    
+
     if insert:
         conn.commit()
         mycursor.close()
@@ -56,32 +55,32 @@ def execute_sql(sql, insert=False, param=None):
 def InsertPlayers(sql, List):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    
+
     r = list()
     for i in List:
         r.append(convert(i))
     List = r
-    
+
     query = convert_names(List)
     mycursor.executemany(sql,query)
-    
+
     mydb.commit()
     mycursor.close()
     mydb.close()
-    return 
+    return
 
 def InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    
+
     LabelID = int(dfLabelID.values[0][0])
-    
+
     r = list()
     for i in playerID:
         r.append((i,LabelID))
-    
+
     mycursor.executemany(sqlInsertPlayerLabel,r)
-    
+
     mydb.commit()
     mycursor.close()
     mydb.close()
@@ -90,14 +89,14 @@ def InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID):
 def PlayerID(sqlPlayerID, List):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    
+
     r = list()
     for i in List:
         r.append(convert(i))
     List = r
-    
+
     query = convert_names(List)
-    
+
     playerID = list()
 
     for i in query:
@@ -121,7 +120,7 @@ def get_paste_names(paste_soup):
         L = re.fullmatch('[\w\d _-]{1,12}', line)
         if L:
             Set.add(line)
-            
+
     List = Set
     return List
 
@@ -138,14 +137,14 @@ def get_paste_label(paste_soup):
 
 
 # Verification sql statements
-  
+
 def verificationPull(playerName):
     mydb_players = mysql.connector.connect(**config_players)
     mycursor = mydb_players.cursor(buffered=True)
-    
+
     player_id = 0
     exists = False
-    
+
     sql = "SELECT * FROM Players WHERE name = %s"
     mycursor.execute(sql,convert(playerName))
     data = mycursor.fetchmany(size=1)
@@ -154,7 +153,7 @@ def verificationPull(playerName):
         player_id = data[0][0]
     else:
         exists = False
-    
+
     mycursor.close()
     mydb_players.close()
     return player_id, exists
@@ -162,17 +161,17 @@ def verificationPull(playerName):
 def verification_check(player_id):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    
+
     verified = 0
     owner_id = 0
     verified_list = []
     owner_list = []
-    
+
     sql = "SELECT * from discordVerification WHERE Player_id = %s"
     mycursor.execute(sql,convert(player_id))
     data = mycursor.fetchall()
     print(len(data))
-    
+
     if len(data)>0:
         check = True
         for i in range(0,len(data)):
@@ -190,17 +189,17 @@ def verification_check(player_id):
 def verificationInsert(discord_id, player_id, code):
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
-    
+
     sql = "INSERT INTO discordVerification (Discord_id, Player_id, Code) VALUES (%s, %s, %s)"
     query = ((discord_id),(player_id),(code))
     mycursor.execute(sql,query)
     mydb.commit()
-    
+
     mycursor.close()
     mydb.close()
     return
-  
-  
+
+
 ################################################################################################################################################################
 
 # !Primary sql statements
@@ -211,12 +210,12 @@ def discord_verification_check(discord_id, player_id): #custom
     verified = 0
     owner_id = 0
     verified_list = []
-    
+
     sql = "SELECT * from discordVerification WHERE Discord_id = %s and Player_id = %s"
     query = ((discord_id),(player_id))
     mycursor.execute(sql,query)
     data = mycursor.fetchall()
-    
+
     if len(data)>0:
         check = True
         for i in range(0,len(data)):
@@ -233,7 +232,7 @@ def VerifyRSNs(discord_id, player_id): #custom
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
     verified_account = 0
-    
+
     sql = "Select * from discordVerification WHERE discord_id = %s and Player_id = %s"
     query = ((discord_id),(player_id))
     mycursor.execute(sql,query)
@@ -244,7 +243,7 @@ def VerifyRSNs(discord_id, player_id): #custom
         pass
     mycursor.close()
     mydb.close()
-    
+
     return data, verified_account
 
 def insertPrimaryNULL(discord_id):
@@ -259,14 +258,14 @@ def insertPrimaryNULL(discord_id):
 
     mycursor.close()
     mydb.close()
-    
+
     PrimaryNULL = True
     return PrimaryNULL
 
 def insertPrimaryTRUE(discord_id, player_id):
-    
+
     PrimaryTRUE = False
-    
+
     mydb = mysql.connector.connect(**config_submissions)
     mycursor = mydb.cursor(buffered=True)
 
@@ -277,10 +276,10 @@ def insertPrimaryTRUE(discord_id, player_id):
 
     mycursor.close()
     mydb.close()
-    
+
     PrimaryTRUE = True
     return PrimaryTRUE
-  
+
 ################################################################################################################################################################
 
 # Heatmap Statements
@@ -290,11 +289,11 @@ def getHeatmapRegion(regionName):
 
     sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
     regionName = "%" + regionName + "%"
-    query = convert(regionName) 
+    query = convert(regionName)
     print(query)
     mycursor.execute(sql,query)
     data = mycursor.fetchall()
-    
+
     mycursor.close()
     mydb_players.close()
     return data
@@ -331,10 +330,10 @@ def LocationgetPlayerID(playerName):
     mycursor = mydb_players.cursor(buffered=True)
 
     sql = "SELECT id FROM Players WHERE name = %s ORDER BY id DESC LIMIT 1"
-    query = convert(playerName) 
+    query = convert(playerName)
     mycursor.execute(sql,query)
     playerID = mycursor.fetchall()
-    
+
     mycursor.close()
     mydb_players.close()
     return playerID
@@ -344,10 +343,10 @@ def LocationgetReportLocation(playerID):
     mycursor = mydb_players.cursor(buffered=True)
 
     sql = "SELECT region_id FROM Reports WHERE reportedID = %s ORDER BY ID DESC LIMIT 1"
-    query = convert(playerID[0][0]) 
+    query = convert(playerID[0][0])
     mycursor.execute(sql,query)
     reportLocation = mycursor.fetchall()
-    
+
     mycursor.close()
     mydb_players.close()
     return reportLocation
@@ -357,7 +356,7 @@ def LocationgetReportLocationName(reportLocation):
     mycursor = mydb_players.cursor(buffered=True)
 
     sql = "SELECT region_name FROM regionIDNames WHERE region_ID = %s ORDER BY entry_ID DESC LIMIT 1"
-    query = convert(reportLocation[0][0]) 
+    query = convert(reportLocation[0][0])
     mycursor.execute(sql,query)
     reportLocationName = mycursor.fetchall()
     reportLocationName = reportLocationName[0][0]
