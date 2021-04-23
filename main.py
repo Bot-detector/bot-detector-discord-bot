@@ -47,52 +47,57 @@ async def on_message(message):
 
     command = parse_command(message.content)
 
-    if(command['name'] not in VALID_COMMANDS):
-        await message.channel.send(command['name'] + " is not a valid command.")
-        return
-
     #fun commands
 
     if command['name'].lower() == "!meow":
         await meow_command(message)
+        return
 
     if command['name'].lower() == "!woof":
         await woof_command(message)
+        return
 
     if command['name'].lower() == "!poke":
         await poke_command(message)
+        return
 
     if command['name'].lower() == "!utc":
         await utc_time_command(message)
-        
+        return
         
     # admin commands
 
     if message.content.lower() == "!warn":
         await warn_command(message)
+        return
         
     # channel links
         
     if command['name'].lower() == "!rules":
         await rules_command(message)
+        return
         
     if command['name'].lower() == "!issues":
         await issues_command(message)
+        return
         
     # Web links
 
     if command['name'].lower() == "!website":
         await website_command(message)
+        return
 
     if command['name'].lower() == "!patreon":
         await patreon_command(message)
+        return
 
     if command['name'].lower() == "!github":
         await github_command(message, command['params'])
+        return
 
     if command['name'].lower() == "!invite":
         await invite_command(message)
-
+        
     # locked channel commands
     
     general_channels = [825189024074563614]
@@ -110,42 +115,52 @@ async def on_message(message):
       
         if command['name'].lower() == "!link":
             await link_command(message, command['params'])
+            return
 
         if command['name'].lower() == "!verify":
             await verify_comand(message, command['params'])
+            return
             
         if command['name'].lower() == "!primary":
             await primary_command(message, command['params'])
+            return
      
         if command['name'].lower() == "!list":
             await list_command(message)
+            return
 
         if command['name'].lower() == "!submit":
             await submit_command(message, command['params'], 
                 client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
+            return
             
       # map command
     
         if command['name'].lower() == "!region":
             await region_command(message, command['params'])
+            return
     
         if command['name'].lower() == "!map":
             await map_command(message, command['params'])
+            return
     
       # plugin and database stats
 
         if command['name'].lower() == "!stats":
             await stats_command(message)
+            return
 
       # player stats
 
         if command['name'].lower() == "!kc":
             await kc_command(message, command['params'])
+            return
             
       #predict method
 
         if command['name'].lower() == "!predict":
             await predict_command(message, command['params'])
+            return
             
     if message.channel.id in content_creator_channels \
         or message.channel.id in patron_channels \
@@ -154,13 +169,18 @@ async def on_message(message):
         
         if command['name'].lower() == "!heatmap":
             await heatmap_command(message, command['params'])
-            
+            return
+
+        
          if message.channel.id in head_developer_channels:
             
             if command['name'].lower() == "!bulklocate":
                 await bulklocate_command(message, command['params'], 
                     client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
                     return
+                
+    await message.channel.send(command['name'] + " is not a valid command.")
+
     
 @client.event
 async def on_raw_reaction_add(payload):

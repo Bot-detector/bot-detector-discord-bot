@@ -12,14 +12,6 @@ import requests as req
 import sql
 import patron
 
-VALID_COMMANDS = ['!poke', '!meow', '!warn', 
-'!rules', '!website', '!patreon',
-'!github', '!invite', '!link',
-'!issues', '!list', '!submit',
-'!stats', '!kc', '!predict', '!verify',
-'!primary','!heatmap', '!utc',
-'!woof', '!region', '!map','!bulklocate']
-
 # Fun Commands
 
 async def poke_command(message):
