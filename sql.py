@@ -109,7 +109,7 @@ def PlayerID(sqlPlayerID, List):
     return playerID
 
 def get_paste_data(paste_url):
-    paste_data = requests.get(paste_url)
+    paste_data = req.get(paste_url)
     paste_soup = BeautifulSoup(paste_data.content, 'html.parser')
     return paste_soup
 

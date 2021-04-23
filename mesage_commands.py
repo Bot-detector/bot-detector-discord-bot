@@ -262,7 +262,7 @@ async def heatmap_command(message, params):
         try:
             await runAnalysis(regionSelections, regionTrueName, sql)
         except IndexError as i:
-            print(e)
+            print(i)
             await message.channel.send(f'Not enough data for {params}, sorry!')
         except Exception as e:
             print(e) 
@@ -317,14 +317,14 @@ async def submit_command(message, params, recipient):
     ''')
     
     try:
-        paste_soup = get_paste_data(paste_url)
-        List = get_paste_names(paste_soup)
-        labelCheck = get_paste_label(paste_soup)
-        execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
-        InsertPlayers(sqlPlayersInsert, List)
-        dfLabelID = pd.DataFrame(execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
-        playerID = PlayerID(sqlPlayerID, List)
-        InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+        paste_soup = sql.get_paste_data(paste_url)
+        List = sql.get_paste_names(paste_soup)
+        labelCheck = sql.get_paste_label(paste_soup)
+        sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+        sql.InsertPlayers(sqlPlayersInsert, List)
+        dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+        playerID = sql.PlayerID(sqlPlayerID, List)
+        sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
     except Exception as e:
         errors = str(e)
         
