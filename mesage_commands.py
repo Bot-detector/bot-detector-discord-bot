@@ -296,13 +296,13 @@ async def map_command(message, params):
 async def submit_command(message, params, recipient):
     errors = "No Errors"
     paste_url = params
-
+    
     sqlLabelInsert = ('''
-    INSERT INTO `labels_submitted`(`Label`) VALUES (%s)
+    INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)
     ''')
 
     sqlPlayersInsert = ('''
-    INSERT INTO `players_submitted`(`Players`) VALUES (%s)
+    INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)
     ''')
 
     sqlLabelID = ('''
@@ -314,34 +314,21 @@ async def submit_command(message, params, recipient):
     ''')
 
     sqlInsertPlayerLabel = ('''
-    INSERT INTO `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
+    INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
     ''')
     
-    paste_soup = sql.get_paste_data(paste_url)
-    List = sql.get_paste_names(paste_soup)
-    labelCheck = sql.get_paste_label(paste_soup)
-
     try:
-        sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+        paste_soup = get_paste_data(paste_url)
+        List = get_paste_names(paste_soup)
+        labelCheck = get_paste_label(paste_soup)
+        execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+        InsertPlayers(sqlPlayersInsert, List)
+        dfLabelID = pd.DataFrame(execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+        playerID = PlayerID(sqlPlayerID, List)
+        InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+    except Exception as e:
+        msg = str(e)
         
-    except Exception as e: #common exception is duplicate label entry, will be pulled later down the line
-        errors = e
-        pass
-
-    try:
-        sql.InsertPlayers(sqlPlayersInsert, List)
-    except Exception as e: #common exception is duplicate player entry, will be pulled later down the line
-        errors = e
-        pass
-
-    try: 
-        dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
-        playerID = sql.PlayerID(sqlPlayerID, List)
-        sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
-    except Exception as e: #attempts to insert the player IDs and player labels if pulled, will not pull if these values do not exist.
-        errors = e
-        pass
-    
     msg = "```diff" + "\n" \
         + "Paste Information Submitted" + "\n" \
         + "_____________________" + "\n" \
