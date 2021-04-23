@@ -60,12 +60,14 @@ async def patreon_command(message):
 
 
 async def github_command(message, repo):
-    repo_name = repo.lower()
+    repos = {
+        "core": "https://github.com/Ferrariic/Bot-Detector-Core-Files",
+        "plugin": "https://github.com/Ferrariic/bot-detector"
+    }
 
-    repo_url = \
-        "https://github.com/Ferrariic/Bot-Detector-Core-Files" if repo_name == "core" else \
-        "https://github.com/Ferrariic/bot-detector" if repo_name == "plugin" else \
-        "${0} isn't a valid GitHub repository name. Try 'Core' or 'Plugin'.".format(repo)
+    not_found_text = f"{repo} isn't a valid GitHub repository name. Try 'Core' or 'Plugin'."
+
+    repo_url = repos.get(repo.lower(), not_found_text)
 
     await message.channel.send(repo_url)
 
@@ -405,7 +407,6 @@ async def primary_command(message, player_name):
 
 
 async def link_command(message, player_name):
-
     if not is_valid_rsn(player_name):
         await message.channel.send(player_name + " isn't a valid Runescape user name.")
         return
@@ -484,7 +485,6 @@ async def link_command(message, player_name):
 
 
 async def verify_comand(message, player_name):
-
     if not is_valid_rsn(player_name):
         await message.channel.send(player_name + " isn't a valid Runescape user name.")
         return
