@@ -25,6 +25,8 @@ config_players = {
   'database': os.getenv('DB_NAME_PLAYERS'),
 }
 
+############################### !submit command 
+
 def convert_names(list):
     return (*list,)
 
@@ -73,7 +75,6 @@ def InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID):
     mycursor = mydb.cursor(buffered=True)
     
     LabelID = int(dfLabelID.values[0][0])
-    playerID
     
     r = list()
     for i in playerID:
@@ -98,10 +99,11 @@ def PlayerID(sqlPlayerID, List):
     query = convert_names(List)
     
     playerID = list()
+
     for i in query:
         mycursor.execute(sqlPlayerID,i)
         playerID.append(mycursor.fetchone()[0])
-    
+
     mycursor.close()
     mydb.close()
     return playerID
@@ -126,9 +128,11 @@ def get_paste_names(paste_soup):
 def get_paste_label(paste_soup):
     label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()
     L = re.fullmatch('[\w\d _-]{1,100}', label)
-    if L:
-        labelCheck = label
-    return labelCheck
+    if not L:
+        return
+    else:
+        pass
+    return label
 
 ################################################################################################################################################################
 

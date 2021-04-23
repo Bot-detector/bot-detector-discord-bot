@@ -262,7 +262,7 @@ async def heatmap_command(message, params):
         try:
             await runAnalysis(regionSelections, regionTrueName, sql)
         except IndexError as i:
-            print(e)
+            print(i)
             await message.channel.send(f'Not enough data for {params}, sorry!')
         except Exception as e:
             print(e) 
@@ -295,52 +295,39 @@ async def map_command(message, params):
 async def submit_command(message, params, recipient):
     errors = "No Errors"
     paste_url = params
-
+    
     sqlLabelInsert = ('''
-        INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)
+    INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)
     ''')
 
     sqlPlayersInsert = ('''
-        INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)
+    INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)
     ''')
 
     sqlLabelID = ('''
-        SELECT ID FROM `labels_submitted` WHERE Label = %s
+    SELECT ID FROM `labels_submitted` WHERE Label = %s
     ''')
 
     sqlPlayerID = ('''
-        SELECT ID FROM `players_submitted` WHERE Players = %s
+    SELECT ID FROM `players_submitted` WHERE Players = %s
     ''')
 
     sqlInsertPlayerLabel = ('''
-        INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
+    INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
     ''')
     
-    paste_soup = sql.get_paste_data(paste_url)
-    List = sql.get_paste_names(paste_soup)
-    labelCheck = sql.get_paste_label(paste_soup)
-
     try:
+        paste_soup = sql.get_paste_data(paste_url)
+        List = sql.get_paste_names(paste_soup)
+        labelCheck = sql.get_paste_label(paste_soup)
         sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
-        
-    except Exception as e: #common exception is duplicate label entry, will be pulled later down the line
-        errors = e
-        pass
-
-    try:
         sql.InsertPlayers(sqlPlayersInsert, List)
-    except Exception as e: #common exception is duplicate player entry, will be pulled later down the line
-        errors = e
-        pass
-
-    try: 
         dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
         playerID = sql.PlayerID(sqlPlayerID, List)
         sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
-    except Exception as e: #attempts to insert the player IDs and player labels if pulled, will not pull if these values do not exist.
-        errors = e
-        pass
-    
+    except Exception as e:
+        errors = str(e)
+        
     msg = "```diff" + "\n" \
         + "Paste Information Submitted" + "\n" \
         + "_____________________" + "\n" \
