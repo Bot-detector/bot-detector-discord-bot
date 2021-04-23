@@ -174,7 +174,8 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_command_error(ctx, error):
-    await ctx.channel.send(error)
+    if not isinstance(error, commands.CheckFailure):
+        await ctx.channel.send(error)
 
 
 @bot.event
