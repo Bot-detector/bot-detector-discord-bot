@@ -13,4 +13,4 @@ def check_patron(ctx):
 
 
 def check_channels(ctx, channels):
-    return channels in allowed_channels or ctx.channel.type == 'dm'
+    return ctx.channel.id in channels or ctx.channel.type == 'dm'
