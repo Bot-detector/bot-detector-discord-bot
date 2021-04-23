@@ -7,6 +7,7 @@ from reaction_commands import *
 from mesage_commands import *
 from patron import *
 
+from allowed_channels import *
 load_dotenv()
 
 intents = discord.Intents.default()
