@@ -327,7 +327,7 @@ async def submit_command(message, params, recipient):
         playerID = PlayerID(sqlPlayerID, List)
         InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
     except Exception as e:
-        msg = str(e)
+        errors = str(e)
         
     msg = "```diff" + "\n" \
         + "Paste Information Submitted" + "\n" \
