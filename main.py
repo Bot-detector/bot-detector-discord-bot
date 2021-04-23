@@ -1,164 +1,193 @@
-import discord
-print(discord.__version__)
-from dotenv import load_dotenv
-import logging
+import os
 
-from reaction_commands import *
-from mesage_commands import *
-from sql import *
-from patron import *
+import discord
+from discord.ext import commands
+from dotenv import load_dotenv
+
+print(discord.__version__)
+
+import reaction_commands as rc
+import mesage_commands as mc
+
+import checks as checks
 
 load_dotenv()
+
+description = '''It's NOT a bot. That would be quite hypocritical, wouldn't it?'''
 
 intents = discord.Intents.default()
 intents.members = True
 intents.reactions = True
 intents.messages = True
-client = discord.Client(intents=intents)
 
-# discord client events
+bot = commands.Bot(command_prefix='=', description=description, intents=intents)
 
-@client.event
+
+# discord bot events
+@bot.event
 async def on_ready():
-    print('We have logged in as {0.user}'.format(client))
+    print('We have logged in as {0}'.format(bot.user.name))
 
-@client.event
+
+@bot.command()
+async def meow(ctx):
+    await mc.meow_command(ctx)
+
+
+@bot.command()
+async def woof(ctx):
+    await mc.woof_command(ctx)
+
+
+@bot.command()
+async def poke(ctx):
+    await mc.poke_command(ctx)
+
+
+@bot.command()
+async def utc(ctx):
+    await mc.utc_time_command(ctx)
+
+
+@bot.command()
+async def warn(ctx):
+    await mc.warn_command(ctx)
+
+
+@bot.command()
+async def rules(ctx):
+    await mc.rules_command(ctx)
+
+
+@bot.command()
+async def issues(ctx):
+    await mc.issues_command(ctx)
+
+
+@bot.command()
+async def website(ctx):
+    await mc.website_command(ctx)
+
+
+@bot.command()
+async def patreon(ctx):
+    await mc.patreon_command(ctx)
+
+
+@bot.command()
+async def invite(ctx):
+    await mc.invite_command(ctx)
+
+
+@bot.command()
+async def github(ctx, repo):
+    await mc.github_command(ctx, repo)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def link(ctx, player_name):
+    await mc.link_command(ctx, player_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def verify(ctx, player_name):
+    await mc.verify_comand(ctx, player_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def primary(ctx, player_name):
+    await mc.primary_command(ctx, player_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def list(ctx):
+    await mc.list_command(ctx)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def submit(ctx, paste_url):
+    await mc.submit_command(ctx, paste_url, bot.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def region(ctx, region_name):
+    await mc.region_command(ctx, region_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def map(ctx, region_name):
+    await mc.map_command(ctx, region_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def stats(ctx):
+    await mc.stats_command(ctx)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def kc(ctx, player_name):
+    await mc.kc_command(ctx, player_name)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def predict(ctx, player_name):
+    await mc.predict_command(ctx, player_name)
+
+
+@commands.check(checks.check_patron)
+@bot.command()
+async def heatmap(ctx, region_name):
+    await mc.heatmap_command(ctx, region_name)
+
+
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
-        
+
+    await bot.process_commands(message)
+
     # easter eggs
-        
+
     if "a round of wintertodt is about to begin" in message.content.lower():
         await message.channel.send('Chop chop!')
-    
+
     if "25 buttholes" in message.content.lower():
         await message.channel.send('hahahahahaha w0w!')
 
-    #########################
-    # ALL COMMANDS GO BELOW #
-    #########################
 
-    if(len(message.content) <= 0):
-        return
-
-    if(message.content[0] != '!'):
-        return
-
-    command = parse_command(message.content)
-
-    if(command['name'] not in VALID_COMMANDS):
-        await message.channel.send(command['name'] + " is not a valid command.")
-        return
-
-    #fun commands
-
-    if command['name'].lower() == "!meow":
-        await meow_command(message)
-
-    if command['name'].lower() == "!woof":
-        await woof_command(message)
-
-    if command['name'].lower() == "!poke":
-        await poke_command(message)
-
-    if command['name'].lower() == "!utc":
-        await utc_time_command(message)
-        
-        
-    # admin commands
-
-    if message.content.lower() == "!warn":
-        await warn_command(message)
-        
-    # channel links
-        
-    if command['name'].lower() == "!rules":
-        await rules_command(message)
-        
-    if command['name'].lower() == "!issues":
-        await issues_command(message)
-        
-    # Web links
-
-    if command['name'].lower() == "!website":
-        await website_command(message)
-
-    if command['name'].lower() == "!patreon":
-        await patreon_command(message)
-
-    if command['name'].lower() == "!github":
-        await github_command(message, command['params'])
-
-    if command['name'].lower() == "!invite":
-        await invite_command(message)
-        
-    # Locked-Channel commands
-        
-    if message.channel.id == 825189024074563614 or message.channel.id == 833479046821052436 \
-        or message.channel.id == 822589004028444712 or message.channel.id == 830783778325528626 \
-        or message.channel.id == 834028368147775488 or  message.channel.type == 'dm':
-      
-        if command['name'].lower() == "!link":
-            await link_command(message, command['params'])
-
-        if command['name'].lower() == "!verify":
-            await verify_comand(message, command['params'])
-            
-        if command['name'].lower() == "!primary":
-            await primary_command(message, command['params'])
-     
-        if command['name'].lower() == "!list":
-            await list_command(message)
-
-        if command['name'].lower() == "!submit":
-            await submit_command(message, command['params'], 
-                client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
-            
-      # map command
-        if command['name'].lower() == "!region":
-            await region_command(message, command['params'])
-    
-        if command['name'].lower() == "!map":
-            await map_command(message, command['params'])
-    
-      # plugin and database stats
-
-        if command['name'].lower() == "!stats":
-            await stats_command(message)
-
-      # player stats
-
-        if command['name'].lower() == "!kc":
-            await kc_command(message, command['params'])
-            
-      #predict method
-
-        if command['name'].lower() == "!predict":
-            await predict_command(message, command['params'])
-            
-    if message.channel.id == 830783778325528626 or message.channel.id == 833479046821052436 \
-        or message.channel.id == 822589004028444712 or message.channel.id == 834028368147775488 \
-        or message.channel.type == 'dm':
-        
-        if command['name'].lower() == "!heatmap":
-            await heatmap_command(message, command['params'])
-    
-@client.event
+@bot.event
 async def on_raw_reaction_add(payload):
-    
-    await add_prediction_feedback(payload,
-        await get_reaction_message(payload))
+    await rc.add_prediction_feedback(payload,
+                                     await get_reaction_message(payload))
 
-@client.event
+
+@bot.event
+async def on_command_error(ctx, error):
+    if not isinstance(error, commands.CheckFailure):
+        await ctx.channel.send(error)
+
+
+@bot.event
 async def on_raw_reaction_removed(payload):
     print("REMOVED")
     print(payload)
-       
-          
-@client.event
+
+
+@bot.event
 async def on_member_join(member):
     pass
+
 
 def parse_command(cmd):
     cmd_split = cmd.split(" ", 1)
@@ -168,16 +197,18 @@ def parse_command(cmd):
         "params": None
     }
 
-    if(len(cmd_split) > 1):
-        command['params']= cmd_split[1]
+    if (len(cmd_split) > 1):
+        command['params'] = cmd_split[1]
 
     return command
 
+
 async def get_reaction_message(reaction_payload):
-    guild = client.get_guild(reaction_payload.guild_id)
+    guild = bot.get_guild(reaction_payload.guild_id)
     channel = guild.get_channel(reaction_payload.channel_id)
     message = await channel.fetch_message(reaction_payload.message_id)
 
     return message
 
-client.run(os.getenv('TOKEN'))
+
+bot.run(os.getenv('TOKEN'))

@@ -1,38 +1,25 @@
-import requests
 import os
 import os.path
-from os import path
-import shutil
-import pandas as pd
-import numpy as np
-import patron
-from IPython.display import Image, display
-import mysql.connector
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import seaborn as sns
-from datetime import date
 from collections import namedtuple
+from datetime import date
+
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import mysql.connector
+import numpy as np
+import pandas as pd
+import seaborn as sns
 from dotenv import load_dotenv
+# custom
+import sql
 
 load_dotenv()
 
-config_submissions = {
-  'user': os.getenv('DB_USER'),
-  'password': os.getenv('DB_PASS'),
-  'host': os.getenv('DB_HOST'),
-  'database': os.getenv('DB_NAME_SUBMISSIONS'),
-}
+config_submissions = sql.config_submissions
 
-config_players = {
-  'user': os.getenv('DB_USER'),
-  'password': os.getenv('DB_PASS'),
-  'host': os.getenv('DB_HOST'),
-  'database': os.getenv('DB_NAME_PLAYERS'),
-}
-###
+config_players = sql.config_players
 
+# TODO: Refactor all this
 def execute_sql(sql, insert=False, param=None):
     conn = mysql.connector.connect(**config_players)
     mycursor = conn.cursor(buffered=True, dictionary=True)
