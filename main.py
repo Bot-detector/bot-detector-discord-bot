@@ -92,12 +92,21 @@ async def on_message(message):
 
     if command['name'].lower() == "!invite":
         await invite_command(message)
-        
-    # Locked-Channel commands
-        
-    if message.channel.id == 825189024074563614 or message.channel.id == 833479046821052436 \
-        or message.channel.id == 822589004028444712 or message.channel.id == 830783778325528626 \
-        or message.channel.id == 834028368147775488 or  message.channel.type == 'dm':
+
+    # locked channel commands
+    
+    general_channels = [825189024074563614]
+    content_creator_channels = [822589004028444712, 833479046821052436, 834307018406756352, 834307467793399808]
+    patron_channels = [830783778325528626]
+    admin_channels = [834028368147775488]
+    head_developer_channels = [818520902987415602]
+
+    if message.channel.id in general_channels \
+        or message.channel.id in content_creator_channels \
+        or message.channel.id in patron_channels \
+        or message.channel.id in admin_channels \
+        or message.channel.id in head_developer_channels \
+        or message.channel.type == 'dm':
       
         if command['name'].lower() == "!link":
             await link_command(message, command['params'])
@@ -116,6 +125,7 @@ async def on_message(message):
                 client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
             
       # map command
+    
         if command['name'].lower() == "!region":
             await region_command(message, command['params'])
     
@@ -137,12 +147,19 @@ async def on_message(message):
         if command['name'].lower() == "!predict":
             await predict_command(message, command['params'])
             
-    if message.channel.id == 830783778325528626 or message.channel.id == 833479046821052436 \
-        or message.channel.id == 822589004028444712 or message.channel.id == 834028368147775488 \
-        or message.channel.type == 'dm':
+    if message.channel.id in content_creator_channels \
+        or message.channel.id in patron_channels \
+        or message.channel.id in admin_channels \
+        or message.channel.id in head_developer_channels:
         
         if command['name'].lower() == "!heatmap":
             await heatmap_command(message, command['params'])
+            
+         if message.channel.id in head_developer_channels:
+            
+            if command['name'].lower() == "!bulklocate":
+                await bulklocate_command(message, command['params'], 
+                    client.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
     
 @client.event
 async def on_raw_reaction_add(payload):
