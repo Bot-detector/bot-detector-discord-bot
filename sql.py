@@ -1,13 +1,12 @@
 import os
-import mysql.connector
-import string
-import random
 import re
+from collections import namedtuple
+
+import mysql.connector
 import numpy as np
 import requests as req
-from dotenv import load_dotenv
 from bs4 import BeautifulSoup
-from collections import namedtuple
+from dotenv import load_dotenv
 
 load_dotenv()
 

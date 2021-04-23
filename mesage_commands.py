@@ -1,16 +1,17 @@
 import os
-import re
-import json
-import string
-import discord
 import random
-import pandas as pd
-from random import randint
+import re
+import string
 from datetime import datetime, timezone
+from random import randint
+
+import discord
+import pandas as pd
 import requests as req
 
-import sql
 import patron
+import sql
+from discord_slash import SlashCommand, SlashContext
 
 
 # Fun Commands

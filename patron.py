@@ -1,19 +1,14 @@
-import requests
 import os
 import os.path
-from os import path
-import shutil
-import pandas as pd
-import numpy as np
-import patron
-from IPython.display import Image, display
-import mysql.connector
-import matplotlib
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import seaborn as sns
-from datetime import date
 from collections import namedtuple
+from datetime import date
+
+import matplotlib.image as mpimg
+import matplotlib.pyplot as plt
+import mysql.connector
+import numpy as np
+import pandas as pd
+import seaborn as sns
 from dotenv import load_dotenv
 
 load_dotenv()
