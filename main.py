@@ -144,7 +144,7 @@ async def predict(ctx, player_name):
     await mc.predict_command(ctx, player_name)
 
 
-@commands.check(checks.check_allowed_channel)
+@commands.check(checks.check_patron)
 @bot.command()
 async def heatmap(ctx, region_name):
     await mc.heatmap_command(ctx, region_name)
