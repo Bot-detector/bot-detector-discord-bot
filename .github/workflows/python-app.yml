@@ -10,10 +10,15 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  clean:
     runs-on: self-hosted
+    steps:
+      - name: Clean Directory
+        run: sudo rm -rf __pycache__
 
+  build:
+    runs-on: self-hosted
+    needs: [clean]
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
@@ -21,7 +26,6 @@ jobs:
         sudo systemctl stop discordbot.service
         python3 -m pip install --upgrade pip
         (test -d env && rm -rf env)
-        sudo rm -rf __pycache__
         source ./env/bin/activate
         pip3 install flake8 pytest
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
