@@ -134,14 +134,14 @@ async def stats(ctx):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def kc(ctx, player_name):
-    await mc.kc_command(ctx, player_name)
+async def kc(ctx, *player_name):
+    await mc.kc_command(ctx, " ".join(player_name))
 
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def predict(ctx, player_name):
-    await mc.predict_command(ctx, player_name)
+async def predict(ctx, *player_name):
+    await mc.predict_command(ctx, " ".join(player_name))
 
 
 @commands.check(checks.check_patron)
@@ -165,6 +165,14 @@ async def on_message(message):
     if "25 buttholes" in message.content.lower():
         await message.channel.send('hahahahahaha w0w!')
 
+    if "Tedious" in message.content:
+        await message.channel.send('Theeeee collection log')
+
+    #!a q p
+
+    if "::bank" == message.content.lower():
+        await message.channel.send('Hey, everyone, I just tried to do something very silly!')
+
 
 @bot.event
 async def on_raw_reaction_add(payload):
@@ -180,8 +188,7 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_raw_reaction_removed(payload):
-    print("REMOVED")
-    print(payload)
+    pass
 
 
 @bot.event
