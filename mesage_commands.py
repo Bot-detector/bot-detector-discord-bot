@@ -21,8 +21,10 @@ async def poke_command(message):
 
 async def meow_command(message):
     url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
-    await message.channel.send("https://cataas.com" + req.get(url).json()['url'])
-
+    try:
+        await message.channel.send("https://cataas.com" + req.get(url).json()['url'])
+    except req.exceptions.ConnectionError:
+        await(message.channel.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3"))
 
 async def woof_command(message):
     url = "https://some-random-api.ml/img/dog"

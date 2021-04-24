@@ -30,8 +30,8 @@ async def add_prediction_feedback(payload, message):
 
 def extract_prediction(message):
     name_substring = "+ Name: "
-    prediction_substring = "+ Prediction: "
-    confidence_substring = "+ Confidence: "
+    prediction_substring = "Prediction: "
+    confidence_substring = "Confidence: "
 
     message_lines = message.content.splitlines()
 
@@ -42,7 +42,5 @@ def extract_prediction(message):
     name = name_line[0].split(name_substring)[1]
     prediction = prediction_line[0].split(prediction_substring)[1]
     confidence = confidence_line[0].split(confidence_substring)[1]
-
-    print(name)
 
     return name, prediction, float(confidence)

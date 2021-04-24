@@ -20,7 +20,7 @@ intents.members = True
 intents.reactions = True
 intents.messages = True
 
-bot = commands.Bot(command_prefix='!', description=description, intents=intents)
+bot = commands.Bot(command_prefix='!', description=description, intents=intents, case_insensitive=True)
 
 
 # discord bot events
@@ -86,20 +86,21 @@ async def github(ctx, repo):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def link(ctx, player_name):
-    await mc.link_command(ctx, player_name)
+async def link(ctx, *player_name):
+    await mc.link_command(ctx, " ".join(player_name))
 
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def verify(ctx, player_name):
-    await mc.verify_comand(ctx, player_name)
+async def verify(ctx, *player_name):
+    print(" ".join(player_name))
+    await mc.verify_comand(ctx, " ".join(player_name))
 
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def primary(ctx, player_name):
-    await mc.primary_command(ctx, player_name)
+async def primary(ctx, *player_name):
+    await mc.primary_command(ctx, " ".join(player_name))
 
 
 @commands.check(checks.check_allowed_channel)
@@ -116,14 +117,14 @@ async def submit(ctx, paste_url):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def region(ctx, region_name):
-    await mc.region_command(ctx, region_name)
+async def region(ctx, *region_name):
+    await mc.region_command(ctx, " ".join(region_name))
 
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def map(ctx, region_name):
-    await mc.map_command(ctx, region_name)
+async def map(ctx, *region_name):
+    await mc.map_command(ctx, " ".join(region_name))
 
 
 @commands.check(checks.check_allowed_channel)
@@ -146,8 +147,8 @@ async def predict(ctx, *player_name):
 
 @commands.check(checks.check_patron)
 @bot.command()
-async def heatmap(ctx, region_name):
-    await mc.heatmap_command(ctx, region_name)
+async def heatmap(ctx, *region_name):
+    await mc.heatmap_command(ctx, " ".join(region_name))
 
 
 @bot.event
@@ -168,7 +169,8 @@ async def on_message(message):
     if "Tedious" in message.content:
         await message.channel.send('Theeeee collection log')
 
-    #!a q p
+    if "a q p" == message.content.lower():
+        await message.channel.send('( ͡° ͜ʖ ͡°)')
 
     if "::bank" == message.content.lower():
         await message.channel.send('Hey, everyone, I just tried to do something very silly!')
@@ -194,21 +196,6 @@ async def on_raw_reaction_removed(payload):
 @bot.event
 async def on_member_join(member):
     pass
-
-
-def parse_command(cmd):
-    cmd_split = cmd.split(" ", 1)
-
-    command = {
-        "name": cmd_split[0].lower(),
-        "params": None
-    }
-
-    if (len(cmd_split) > 1):
-        command['params'] = cmd_split[1]
-
-    return command
-
 
 async def get_reaction_message(reaction_payload):
     guild = bot.get_guild(reaction_payload.guild_id)
