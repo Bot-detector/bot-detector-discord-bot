@@ -188,8 +188,7 @@ async def on_command_error(ctx, error):
 
 @bot.event
 async def on_raw_reaction_removed(payload):
-    print("REMOVED")
-    print(payload)
+    pass
 
 
 @bot.event
