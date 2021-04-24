@@ -20,7 +20,8 @@ jobs:
       run: |
         sudo systemctl stop discordbot.service
         python3 -m pip install --upgrade pip
-        (test -d env && rm -rf env || python3 -m venv env)
+        (test -d env && rm -rf env)
+        sudo rm -rf __pycache__
         source ./env/bin/activate
         pip3 install flake8 pytest
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
