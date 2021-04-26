@@ -66,7 +66,7 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     plt.style.use("seaborn-white")
     plt.figure(figsize = (5,5))
     
-    map_img = mpimg.imread(f'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
+    map_img = mpimg.imread(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
 
     hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.7, cmap="winter_r", shade=True, bw=.1)
     hmax.set(xlabel='Local X', ylabel='Local Y')
