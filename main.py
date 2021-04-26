@@ -25,7 +25,7 @@ intents.members = True
 intents.reactions = True
 intents.messages = True
 
-bot = commands.Bot(command_prefix='@', description=description, intents=intents, case_insensitive=True)
+bot = commands.Bot(command_prefix='!', description=description, intents=intents, case_insensitive=True)
 
 
 # discord bot events
@@ -192,7 +192,7 @@ async def on_command_error(ctx, error):
     if not isinstance(error, commands.CheckFailure):
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        await ctx.channel.send('oops error')
+        await ctx.channel.send('Error - Please Message an Admin')
 
 
 @bot.event
