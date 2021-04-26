@@ -15,9 +15,7 @@ import sql
 
 load_dotenv()
 
-config_submissions = sql.config_submissions
-
-config_players = sql.config_players
+token = os.getenv('API_AUTH_TOKEN')
 
 # TODO: Refactor all this
 def execute_sql(sql, insert=False, param=None):
@@ -93,47 +91,33 @@ def CleanupImages(regionSelections):
     os.remove(f'{os.getcwd()}/{regionid}.png')
     return
 
-###
-
-def convert(list):
-    return (list, )
-
-def getHeatmapRegion(regionName):
-    mydb_players = mysql.connector.connect(**config_players)
-    mycursor = mydb_players.cursor(buffered=True)
-
-    sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
-    regionName = "%" + regionName + "%"
-    query = convert(regionName) 
-    print(query)
-    mycursor.execute(sql,query)
-    data = mycursor.fetchall()
-    
-    mycursor.close()
-    mydb_players.close()
+def getHeatmapRegion(regionName, token):
+    json = {
+        'region' : regionName
+    }
+    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
+    data = requests.get(url,json=json)
     return data
 
-def displayDuplicates(data):
-    region_name = list()
-    regionIDs = list()
-    removedDuplicates = list()
-    for i in data:
-        regionIDs.append(i[1])
-        region_name.append(i[3])
-    removedDuplicates = list(set(region_name))
-    return removedDuplicates, regionIDs, region_name
+def getHeatmapData(region_id, token):
+    json = {
+        'region_id' : region_id
+    }
+    url = f'https://www.osrsbotdetector.com/dev/discord/heatmap/{token}'
+    data = requests.get(url,json=json)
+    return data
 
-def allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates):
-    regionSelections = list()
-    regionIDindices = [i for i, x in enumerate(region_name) if x == str(regionTrueName)]
-    for i in regionIDindices:
-        regionSelections.append(regionIDs[i])
-    return regionSelections
+def displayDuplicates(df):
+    dfRegion = df.drop_duplicates(subset=['region_name'], keep='first')
+    return dfRegion
 
-def Autofill(removedDuplicates, regionName):
+def Autofill(dfRegion, regionName):
     regionShort = []
-    for i in removedDuplicates:
+    name_index = dfRegion['region_name'].values
+    location_index = dfRegion['region_ID'].values
+    for i in name_index:
         regionShort.append(len(i)-len(regionName))
     index = regionShort.index(np.min(regionShort))
-    regionTrueName = removedDuplicates[index]
-    return regionTrueName
+    regionTrueName = name_index[index]
+    region_id = location_index[index]
+    return regionTrueName, region_id
