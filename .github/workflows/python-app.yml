@@ -45,6 +45,7 @@ jobs:
           echo "${{ secrets.DB_NAME_PLAYERS }}" >> .env
           echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
           echo "${{ secrets.DISCORD_BOT_ID }}" >> .env
+          echo "COMMAND_PREFIX='!'" >> .env
           
       - name: run_bot
         run: |
