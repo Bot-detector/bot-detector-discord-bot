@@ -11,7 +11,12 @@ import mesage_commands as mc
 
 import checks as checks
 
+import sys
+import traceback
+
 load_dotenv()
+
+token = os.getenv('API_AUTH_TOKEN')
 
 description = '''It's NOT a bot. That would be quite hypocritical, wouldn't it?'''
 
@@ -117,14 +122,14 @@ async def submit(ctx, paste_url):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def region(ctx, *region_name):
-    await mc.region_command(ctx, " ".join(region_name))
+async def region(ctx, *region_name, token=token):
+    await mc.region_command(ctx, " ".join(region_name), token=token)
 
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def map(ctx, *region_name):
-    await mc.map_command(ctx, " ".join(region_name))
+async def map(ctx, *region_name, token=token):
+    await mc.map_command(ctx, " ".join(region_name), token=token)
 
 
 @commands.check(checks.check_allowed_channel)
@@ -147,8 +152,8 @@ async def predict(ctx, *player_name):
 
 @commands.check(checks.check_patron)
 @bot.command()
-async def heatmap(ctx, *region_name):
-    await mc.heatmap_command(ctx, " ".join(region_name))
+async def heatmap(ctx, *region_name, token=token):
+    await mc.heatmap_command(ctx, " ".join(region_name), token=token)
 
 
 @bot.event
@@ -185,7 +190,9 @@ async def on_raw_reaction_add(payload):
 @bot.event
 async def on_command_error(ctx, error):
     if not isinstance(error, commands.CheckFailure):
-        await ctx.channel.send(error)
+        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
+        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+        await ctx.channel.send('Error - Please Message an Admin')
 
 
 @bot.event
