@@ -86,9 +86,8 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     plt.close("all")
     return
 
-def CleanupImages(regionSelections):
-    regionid = regionSelections[0]
-    os.remove(f'{os.getcwd()}/{regionid}.png')
+def CleanupImages(region_id):
+    os.remove(f'{os.getcwd()}/{region_id}.png')
     return
 
 def getHeatmapRegion(regionName, token):
