@@ -200,7 +200,6 @@ async def predict_command(message, params):
 
 async def region_command(message, params, token):
     regionName = params
-    
     dataRegion = patron.getHeatmapRegion(regionName, token)
     dfDataRegion = pd.DataFrame(dataRegion.json())
     dfRegion = patron.displayDuplicates(dfDataRegion)

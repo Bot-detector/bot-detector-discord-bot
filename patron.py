@@ -9,6 +9,7 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import requests as req
 from dotenv import load_dotenv
 # custom
 import sql
@@ -18,26 +19,6 @@ load_dotenv()
 
 token = os.getenv('API_AUTH_TOKEN')
 
-# TODO: Refactor all this
-def execute_sql(sql, insert=False, param=None):
-    conn = mysql.connector.connect(**config_players)
-    mycursor = conn.cursor(buffered=True, dictionary=True)
-    
-    mycursor.execute(sql, param)
-    
-    if insert:
-        conn.commit()
-        mycursor.close()
-        conn.close()
-        return
-
-    rows = mycursor.fetchall()
-    Record = namedtuple('Record', rows[0].keys())
-    records = [Record(*r.values()) for r in rows]
-
-    mycursor.close()
-    conn.close()
-    return records
 
 def convertGlobaltoLocal(regionid, df):
     dfLocal = pd.DataFrame(columns=['player_ids','local_x','local_y'])
@@ -96,7 +77,7 @@ def getHeatmapRegion(regionName, token):
         'region' : regionName
     }
     url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
-    data = requests.get(url,json=json)
+    data = req.get(url,json=json)
     return data
 
 def getHeatmapData(region_id, token):
@@ -104,7 +85,7 @@ def getHeatmapData(region_id, token):
         'region_id' : region_id
     }
     url = f'https://www.osrsbotdetector.com/dev/discord/heatmap/{token}'
-    data = requests.get(url,json=json)
+    data = req.get(url,json=json)
     return data
 
 def displayDuplicates(df):
