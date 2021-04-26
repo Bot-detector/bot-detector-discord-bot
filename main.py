@@ -25,7 +25,7 @@ intents.members = True
 intents.reactions = True
 intents.messages = True
 
-bot = commands.Bot(command_prefix='!', description=description, intents=intents, case_insensitive=True)
+bot = commands.Bot(command_prefix='=', description=description, intents=intents, case_insensitive=True)
 
 
 # discord bot events
