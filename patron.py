@@ -9,36 +9,16 @@ import mysql.connector
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import requests as req
 from dotenv import load_dotenv
 # custom
 import sql
+import json
 
 load_dotenv()
 
-config_submissions = sql.config_submissions
+token = os.getenv('API_AUTH_TOKEN')
 
-config_players = sql.config_players
-
-# TODO: Refactor all this
-def execute_sql(sql, insert=False, param=None):
-    conn = mysql.connector.connect(**config_players)
-    mycursor = conn.cursor(buffered=True, dictionary=True)
-    
-    mycursor.execute(sql, param)
-    
-    if insert:
-        conn.commit()
-        mycursor.close()
-        conn.close()
-        return
-
-    rows = mycursor.fetchall()
-    Record = namedtuple('Record', rows[0].keys())
-    records = [Record(*r.values()) for r in rows]
-
-    mycursor.close()
-    conn.close()
-    return records
 
 def convertGlobaltoLocal(regionid, df):
     dfLocal = pd.DataFrame(columns=['player_ids','local_x','local_y'])
@@ -67,7 +47,7 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     plt.style.use("seaborn-white")
     plt.figure(figsize = (5,5))
     
-    map_img = mpimg.imread(f'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
+    map_img = mpimg.imread(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
 
     hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.7, cmap="winter_r", shade=True, bw=.1)
     hmax.set(xlabel='Local X', ylabel='Local Y')
@@ -88,52 +68,37 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     plt.close("all")
     return
 
-def CleanupImages(regionSelections):
-    regionid = regionSelections[0]
-    os.remove(f'{os.getcwd()}/{regionid}.png')
+def CleanupImages(region_id):
+    os.remove(f'{os.getcwd()}/{region_id}.png')
     return
 
-###
-
-def convert(list):
-    return (list, )
-
-def getHeatmapRegion(regionName):
-    mydb_players = mysql.connector.connect(**config_players)
-    mycursor = mydb_players.cursor(buffered=True)
-
-    sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
-    regionName = "%" + regionName + "%"
-    query = convert(regionName) 
-    print(query)
-    mycursor.execute(sql,query)
-    data = mycursor.fetchall()
-    
-    mycursor.close()
-    mydb_players.close()
+def getHeatmapRegion(regionName, token):
+    json = {
+        'region' : regionName
+    }
+    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
+    data = req.get(url,json=json)
     return data
 
-def displayDuplicates(data):
-    region_name = list()
-    regionIDs = list()
-    removedDuplicates = list()
-    for i in data:
-        regionIDs.append(i[1])
-        region_name.append(i[3])
-    removedDuplicates = list(set(region_name))
-    return removedDuplicates, regionIDs, region_name
+def getHeatmapData(region_id, token):
+    json = {
+        'region_id' : region_id
+    }
+    url = f'https://www.osrsbotdetector.com/dev/discord/heatmap/{token}'
+    data = req.get(url,json=json)
+    return data
 
-def allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates):
-    regionSelections = list()
-    regionIDindices = [i for i, x in enumerate(region_name) if x == str(regionTrueName)]
-    for i in regionIDindices:
-        regionSelections.append(regionIDs[i])
-    return regionSelections
+def displayDuplicates(df):
+    dfRegion = df.drop_duplicates(subset=['region_name'], keep='first')
+    return dfRegion
 
-def Autofill(removedDuplicates, regionName):
+def Autofill(dfRegion, regionName):
     regionShort = []
-    for i in removedDuplicates:
+    name_index = dfRegion['region_name'].values
+    location_index = dfRegion['region_ID'].values
+    for i in name_index:
         regionShort.append(len(i)-len(regionName))
     index = regionShort.index(np.min(regionShort))
-    regionTrueName = removedDuplicates[index]
-    return regionTrueName
+    regionTrueName = name_index[index]
+    region_id = location_index[index]
+    return regionTrueName, region_id

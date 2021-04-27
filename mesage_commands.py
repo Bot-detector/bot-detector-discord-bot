@@ -11,7 +11,13 @@ import requests as req
 
 import patron
 import sql
+import json
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
+token = os.getenv('API_AUTH_TOKEN')
 
 # Fun Commands
 
@@ -192,29 +198,20 @@ async def predict_command(message, params):
 
 # Heatmap and Region Commands
 
-async def region_command(message, params):
+async def region_command(message, params, token):
     regionName = params
-    data = patron.getHeatmapRegion(regionName)
-    removedDuplicates, regionIDs, region_name = patron.displayDuplicates(data)
-    if len(removedDuplicates) < 30:
-        if len(removedDuplicates) < 2:
-            regionTrueName = patron.Autofill(removedDuplicates, regionName)
-            regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
-            msg = "```diff" + "\n" \
-                  + "+ Input: " + str(regionName) + "\n" \
-                  + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
-                  + "+ Selected: " + str(regionTrueName) + "\n" \
-                  + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
-                  + "```"
-        else:
-            regionTrueName = patron.Autofill(removedDuplicates, regionName)
-            regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
-            msg = "```diff" + "\n" \
-                  + "+ Input: " + str(regionName) + "\n" \
-                  + "+ Selection From: " + str(', '.join([str(elem) for elem in removedDuplicates])) + "\n" \
-                  + "+ Selected: " + str(regionTrueName) + "\n" \
-                  + "+ Region Selections: " + str(', '.join([str(elem) for elem in regionSelections])) + "\n" \
-                  + "```"
+    dataRegion = patron.getHeatmapRegion(regionName, token)
+    dfDataRegion = pd.DataFrame(dataRegion.json())
+    dfRegion = patron.displayDuplicates(dfDataRegion)
+    
+    if len(dfRegion) < 30:
+        regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
+        
+        msg = "```diff" + "\n" \
+              + "+ Input: " + str(regionName) + "\n" \
+              + "+ Selection From: " + str(', '.join([str(elem) for elem in dfRegion['region_name'].values])) + "\n" \
+              + "+ Selected: " + str(regionTrueName) + "\n" \
+              + "```"
     else:
         msg = "```diff" + "\n" \
               + "- More than 30 Regions selected. Please refine your search." + "\n" \
@@ -224,47 +221,17 @@ async def region_command(message, params):
 
 # Patron Heatmap command
 
-async def heatmap_command(message, params):
+async def heatmap_command(message, params, token):
     regionName = params
-    sql = ('''
-    SELECT DISTINCT
-        rpts2.*,
-        rpts.x_coord,
-        rpts.y_coord,
-        rpts.region_id
-    FROM Reports rpts
-        INNER JOIN (
-            SELECT 
-                max(rp.id) id,
-                pl.name,
-                pl.confirmed_player,
-                pl.confirmed_ban
-            FROM Players pl
-            inner join Reports rp on (pl.id = rp.reportedID)
-            WHERE 1
-                and (pl.confirmed_ban = 1 or pl.confirmed_player = 1)
-                and rp.region_id = %s
-            GROUP BY
-                pl.name,
-                pl.confirmed_player,
-                pl.confirmed_ban
-        ) rpts2
-    ON (rpts.id = rpts2.id)
-    ''')
+  
+    dataRegion = patron.getHeatmapRegion(regionName, token)
+    dfDataRegion = pd.DataFrame(dataRegion.json())
+    dfRegion = patron.displayDuplicates(dfDataRegion)
 
-    data = patron.getHeatmapRegion(regionName)
-    print(data)
-    removedDuplicates, regionIDs, region_name = patron.displayDuplicates(data)
-    print(removedDuplicates)
-    print(regionIDs)
-    print(region_name)
-
-    if len(removedDuplicates) < 30:
-        regionTrueName = patron.Autofill(removedDuplicates, regionName)
-        regionSelections = patron.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
-        regionid = regionSelections[0]
+    if len(dfRegion)<30:
+        regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
         try:
-            await runAnalysis(regionSelections, regionTrueName, sql)
+            await runAnalysis(regionTrueName, region_id)
         except IndexError as i:
             print(i)
             await message.channel.send(f'Not enough data for {params}, sorry!')
@@ -274,25 +241,27 @@ async def heatmap_command(message, params):
     else:
         msg = ">30 Regions selected. Please refine your search."
 
-    await message.channel.send(file=discord.File(f'{os.getcwd()}/{regionid}.png'))
+    await message.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
 
-    patron.CleanupImages(regionSelections)
+    patron.CleanupImages(region_id)
 
-
-async def map_command(message, params):
+    
+async def map_command(message, params, token):
     regionName = params
-    data = sql.getHeatmapRegion(regionName)
-    removedDuplicates, regionIDs, region_name = sql.displayDuplicates(data)
-    if len(removedDuplicates) < 10:
-        regionTrueName = sql.Autofill(removedDuplicates, regionName)
-        regionSelections = sql.allHeatmapSubRegions(regionTrueName, region_name, regionIDs, removedDuplicates)
+    
+    dataRegion = patron.getHeatmapRegion(regionName, token)
+    dfDataRegion = pd.DataFrame(dataRegion.json())
+    dfRegion = patron.displayDuplicates(dfDataRegion)
+    
+    if len(dfRegion) < 30:
+        regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
         msg = str(
-            'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(
-                regionSelections[0]))
+            'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(region_id))
     else:
         msg = "```diff" + "\n" \
-              + "- More than 10 Regions selected. Please refine your search." + "\n" \
+              + "- More than 30 Regions selected. Please refine your search." + "\n" \
               + "```"
+        
     await message.channel.send(msg)
 
 
@@ -540,17 +509,19 @@ def plus_minus(var, compare):
 
 
 # Analysis run for Patron Heatmap
-async def runAnalysis(regionSelections, regionTrueName, sql):
-    region_id = regionSelections[0]
-    data = patron.execute_sql(sql, param=[region_id])
-    df = pd.DataFrame(data)
-
+def runAnalysis(regionTrueName, region_id):
+    region_id = int(region_id)
+    data = patron.getHeatmapData(region_id, token)
+    df = pd.DataFrame(data.json())
+    
     ban_mask = (df['confirmed_ban'] == 1)
     player_mask = (df['confirmed_player'] == 1)
+    
     df_ban = df[ban_mask].copy()
     df_player = df[player_mask].copy()
-
+    
     dfLocalBan = patron.convertGlobaltoLocal(region_id, df_ban)
     dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
+    
     patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
     return
