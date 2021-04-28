@@ -170,7 +170,6 @@ def verification_check(player_id):
     sql = "SELECT * from discordVerification WHERE Player_id = %s"
     mycursor.execute(sql,convert(player_id))
     data = mycursor.fetchall()
-    print(len(data))
 
     if len(data)>0:
         check = True
@@ -290,7 +289,6 @@ def getHeatmapRegion(regionName):
     sql = "SELECT * FROM regionIDNames WHERE region_name LIKE %s"
     regionName = "%" + regionName + "%"
     query = convert(regionName)
-    print(query)
     mycursor.execute(sql,query)
     data = mycursor.fetchall()
 

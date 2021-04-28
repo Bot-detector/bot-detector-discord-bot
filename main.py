@@ -1,4 +1,5 @@
 import os
+import atexit
 
 import discord
 from discord.ext import commands
@@ -13,6 +14,9 @@ import checks as checks
 
 import sys
 import traceback
+
+#Log File
+error_file = open('error.log', 'w+')
 
 load_dotenv()
 
@@ -98,7 +102,6 @@ async def link(ctx, *player_name):
 @commands.check(checks.check_allowed_channel)
 @bot.command()
 async def verify(ctx, *player_name):
-    print(" ".join(player_name))
     await mc.verify_comand(ctx, " ".join(player_name))
 
 
@@ -128,8 +131,13 @@ async def region(ctx, *region_name, token=token):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def map(ctx, *region_name, token=token):
-    await mc.map_command(ctx, " ".join(region_name), token=token)
+async def map(ctx, *region_name):
+    await mc.map_command(ctx, " ".join(region_name))
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def coords(ctx, x, y, z, zoom):
+    await mc.coords_command(ctx, x, y, z, zoom)
 
 
 @commands.check(checks.check_allowed_channel)
@@ -190,9 +198,10 @@ async def on_raw_reaction_add(payload):
 @bot.event
 async def on_command_error(ctx, error):
     if not isinstance(error, commands.CheckFailure):
-        print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-        await ctx.channel.send('Error - Please Message an Admin')
+        print('Ignoring exception in command {}:'.format(ctx.command), file=error_file)
+        traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
+        error_file.flush()
+        await ctx.channel.send('The command you\'ve entered could not be completed at this time.')
 
 
 @bot.event
@@ -211,5 +220,10 @@ async def get_reaction_message(reaction_payload):
 
     return message
 
+
+@atexit.register
+def shutdown():
+    error_file.close()
+    print("Bot is going night-night.")
 
 bot.run(os.getenv('TOKEN'))

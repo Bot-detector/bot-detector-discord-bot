@@ -12,6 +12,7 @@ import requests as req
 import patron
 import sql
 import json
+import numpy
 
 from dotenv import load_dotenv
 
@@ -23,7 +24,6 @@ token = os.getenv('API_AUTH_TOKEN')
 
 async def poke_command(message):
     await message.channel.send('Teehee! :3')
-
 
 async def meow_command(message):
     url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
@@ -222,6 +222,9 @@ async def region_command(message, params, token):
 # Patron Heatmap command
 
 async def heatmap_command(message, params, token):
+
+    info_msg = await message.channel.send("Getting that map ready for you. One moment, please!")
+
     regionName = params
   
     dataRegion = patron.getHeatmapRegion(regionName, token)
@@ -230,38 +233,62 @@ async def heatmap_command(message, params, token):
 
     if len(dfRegion)<30:
         regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
-        try:
-            await runAnalysis(regionTrueName, region_id)
-        except IndexError as i:
-            print(i)
-            await message.channel.send(f'Not enough data for {params}, sorry!')
-        except Exception as e:
-            print(e)
-            msg = "Image could not be rendered due to Low Data Pool size, or another error. Please select a new Region."
+
+        mapWasGenerated = runAnalysis(regionTrueName, region_id)
+
+        if not mapWasGenerated:
+            await map_command(message, params, token)
+            await message.channel.send("We have no data on this region yet.")
+
+        else:
+            try:
+                await message.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
+                await patron.CleanupImages(region_id)
+
+            except:
+                await message.channel.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                await message.channel.send('https://i.redd.it/lel3o4e2hhp11.jpg')
+
     else:
         msg = ">30 Regions selected. Please refine your search."
-
-    await message.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
-
-    patron.CleanupImages(region_id)
+        await message.channel.send(msg)
 
     
-async def map_command(message, params, token):
-    regionName = params
+    await info_msg.delete()
+
     
-    dataRegion = patron.getHeatmapRegion(regionName, token)
-    dfDataRegion = pd.DataFrame(dataRegion.json())
-    dfRegion = patron.displayDuplicates(dfDataRegion)
-    
-    if len(dfRegion) < 30:
-        regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
+async def map_command(message, params):
+
+    if params.isdigit():
+        region_id = params
+
         msg = str(
             'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(region_id))
+
     else:
-        msg = "```diff" + "\n" \
-              + "- More than 30 Regions selected. Please refine your search." + "\n" \
-              + "```"
+        regionName = params
+        dataRegion = patron.getHeatmapRegion(regionName, token)
+        dfDataRegion = pd.DataFrame(dataRegion.json())
+        dfRegion = patron.displayDuplicates(dfDataRegion)
+    
+        if len(dfRegion) < 30:
+            regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
+            msg = str(
+                'https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{}.png'.format(region_id))
+        else:
+            msg = "```diff" + "\n" \
+                + "- More than 30 Regions selected. Please refine your search." + "\n" \
+                + "```"
         
+    await message.channel.send(msg)
+
+
+async def coords_command(message, x, y, z, zoom):
+
+    BASE_URL = "https://raw.githubusercontent.com/Explv/osrs_map_tiles/master/"
+
+    msg = BASE_URL + str(z) + "/" + str(zoom) + "/" + str(y) + "/" + str(x) + ".png"
+
     await message.channel.send(msg)
 
 
@@ -513,15 +540,32 @@ def runAnalysis(regionTrueName, region_id):
     region_id = int(region_id)
     data = patron.getHeatmapData(region_id, token)
     df = pd.DataFrame(data.json())
-    
-    ban_mask = (df['confirmed_ban'] == 1)
-    player_mask = (df['confirmed_player'] == 1)
-    
-    df_ban = df[ban_mask].copy()
-    df_player = df[player_mask].copy()
-    
-    dfLocalBan = patron.convertGlobaltoLocal(region_id, df_ban)
-    dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
-    
-    patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
-    return
+
+    if(df.empty):
+        return False
+
+    if 'confirmed_ban' in df.columns:
+        ban_mask = (df['confirmed_ban'] == 1)
+        df_ban = df[ban_mask].copy()
+        dfLocalBan = patron.convertGlobaltoLocal(region_id, df_ban)
+
+    else:
+        dfLocalBan = pd.DataFrame()
+
+
+    if 'confirmed_player' in df.columns:
+        player_mask = (df['confirmed_player'] == 1)
+        df_player = df[player_mask].copy()
+        dfLocalReal = patron.convertGlobaltoLocal(region_id, df_player)
+
+    else:
+        dfLocalReal = pd.DataFrame()
+        
+    if not dfLocalBan.empty and not dfLocalReal.empty:
+        patron.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
+
+    else:
+        return False
+
+
+    return True
