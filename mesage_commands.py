@@ -29,34 +29,51 @@ async def poke_command(message):
 
 async def meow_command(message):
     url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
-    try:
-        await message.channel.send("https://cataas.com" + req.get(url).json()['url'])
-    except req.exceptions.ConnectionError:
-        await(message.channel.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3"))
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send("https://cataas.com" + js['url'])
+            else:
+                await message.channel.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
+
 
 async def woof_command(message):
     url = "https://some-random-api.ml/img/dog"
 
-    dogResponse = req.get(url)
-    dogJSON = dogResponse.json()
-    dogImgURL = dogJSON['link']
-    await message.channel.send(dogImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js['link'])
+            else:
+                await message.channel.send("Who let the dogs out?")
+
 
 async def birb_command(message):
     url = "http://shibe.online/api/birds"
 
-    birbResponse = req.get(url)
-    birbJSON = birbResponse.json()
-    birbImgURL = birbJSON[0]
-    await message.channel.send(birbImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js[0])
+            else:
+                await message.channel.send("Birds all flew away. :(")
+
 
 async def bunny_command(message):
     url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
 
-    bunnyResponse = req.get(url)
-    bunnyJSON = bunnyResponse.json()
-    bunnyImgURL = bunnyJSON['media']['gif']
-    await message.channel.send(bunnyImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js['media']['gif'])
+            else:
+                await message.channel.send("The buns went on the run.")
+
 
 async def utc_time_command(message):
     await message.channel.send(datetime.now(timezone.utc))
@@ -204,19 +221,22 @@ async def kc_command(message, params):
         await message.channel.send(playerName + " isn't a valid Runescape user name.")
         return
 
-    resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
-    respJSON = resp.json()
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName) as r:
+            if r.status == 200:
+                js = await r.json()
+                reports = js['reports']
+                bans = js['bans']
+                possible_bans = js['possible_bans']
 
-    reports = respJSON['reports']
-    bans = respJSON['bans']
-    possible_bans = respJSON['possible_bans']
+                msg = "```" + playerName + "'s Stats: \n" \
+                    + "Reports Submitted: " + str(reports) + "\n" \
+                    + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
+                    + "Confirmed Bans: " + str(bans) + "```\n"
 
-    msg = "```" + playerName + "'s Stats: \n" \
-          + "Reports Submitted: " + str(reports) + "\n" \
-          + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
-          + "Confirmed Bans: " + str(bans) + "```\n"
-
-    await message.channel.send(msg)
+                await message.channel.send(msg)
+            else:
+                await message.channel.send(f"Couldn't grab the !kc for {playerName}")
 
 
 async def predict_command(message, params):
