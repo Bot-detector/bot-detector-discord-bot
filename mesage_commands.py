@@ -41,6 +41,21 @@ async def woof_command(message):
     dogImgURL = dogJSON['link']
     await message.channel.send(dogImgURL)
 
+async def birb_command(message):
+    url = "http://shibe.online/api/birds"
+
+    birbResponse = req.get(url)
+    birbJSON = birbResponse.json()
+    birbImgURL = birbJSON[0]
+    await message.channel.send(birbImgURL)
+
+async def bunny_command(message):
+    url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
+
+    bunnyResponse = req.get(url)
+    bunnyJSON = bunnyResponse.json()
+    bunnyImgURL = bunnyJSON['media']['gif']
+    await message.channel.send(bunnyImgURL)
 
 async def utc_time_command(message):
     await message.channel.send(datetime.now(timezone.utc))
@@ -160,7 +175,7 @@ async def list_command(message):
 async def stats_command(message):
     playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
     otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.5/pluginhub")
+    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.6/pluginhub")
 
     playersJSON = playersTrackedResponse.json()
     otherStatsJSON = otherStatsResponse.json()
