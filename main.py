@@ -59,6 +59,11 @@ async def utc(ctx):
 
 
 @bot.command()
+async def lookup(ctx):
+    await mc.hiscores_lookup(ctx)
+
+
+@bot.command()
 async def warn(ctx):
     await mc.warn_command(ctx)
 

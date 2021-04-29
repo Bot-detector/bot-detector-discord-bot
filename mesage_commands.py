@@ -4,6 +4,7 @@ import re
 import string
 from datetime import datetime, timezone
 from random import randint
+from OSRS_Hiscores import Hiscores
 
 import discord
 import pandas as pd
@@ -65,6 +66,40 @@ async def website_command(message):
 
 async def patreon_command(message):
     await message.channel.send('https://www.patreon.com/bot_detector')
+
+
+async def hiscores_lookup(ctx, message):
+    username = message
+    username_parsed = username.replace(" ", "_")
+    await ctx.send("Searching for User... If there is no response, there was no account found.")
+    user = Hiscores(username_parsed, 'N')
+    embedvar = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
+    embedvar.add_field(name="Total", value=(user.skill('total')), inline=True)
+    embedvar.add_field(name="Attack", value=(user.skill('attack', 'level')), inline=True)
+    embedvar.add_field(name="Defence", value=(user.skill('defense', 'level')), inline=True)
+    embedvar.add_field(name="Strength", value=(user.skill('strength', 'level')), inline=True)
+    embedvar.add_field(name="Hitpoints", value=(user.skill('hitpoints', 'level')), inline=True)
+    embedvar.add_field(name="Ranged", value=(user.skill('ranged', 'level')), inline=True)
+    embedvar.add_field(name="Prayer", value=(user.skill('prayer', 'level')), inline=True)
+    embedvar.add_field(name="Magic", value=(user.skill('magic', 'level')), inline=True)
+    embedvar.add_field(name="Cooking", value=(user.skill('cooking', 'level')), inline=True)
+    embedvar.add_field(name="Woodcutting", value=(user.skill('woodcutting', 'level')), inline=True)
+    embedvar.add_field(name="Fletching", value=(user.skill('fletching', 'level')), inline=True)
+    embedvar.add_field(name="Fishing", value=(user.skill('fishing', 'level')), inline=True)
+    embedvar.add_field(name="Firemaking", value=(user.skill('firemaking', 'level')), inline=True)
+    embedvar.add_field(name="Crafting", value=(user.skill('crafting', 'level')), inline=True)
+    embedvar.add_field(name="Smithing", value=(user.skill('smithing', 'level')), inline=True)
+    embedvar.add_field(name="Mining", value=(user.skill('mining', 'level')), inline=True)
+    embedvar.add_field(name="Herblore", value=(user.skill('herblore', 'level')), inline=True)
+    embedvar.add_field(name="Agility", value=(user.skill('agility', 'level')), inline=True)
+    embedvar.add_field(name="Thieving", value=(user.skill('thieving', 'level')), inline=True)
+    embedvar.add_field(name="Slayer", value=(user.skill('slayer', 'level')), inline=True)
+    embedvar.add_field(name="Farming", value=(user.skill('farming', 'level')), inline=True)
+    embedvar.add_field(name="Runecrafting", value=(user.skill('runecrafting', 'level')), inline=True)
+    embedvar.add_field(name="Hunter", value=(user.skill('hunter', 'level')), inline=True)
+    embedvar.add_field(name="Construction", value=(user.skill('construction', 'level')), inline=True)
+    await ctx.channel.send(embed=embedvar)
+    print("Searched OSRS Hiscores for", username_parsed)
 
 
 async def github_command(message, repo):
