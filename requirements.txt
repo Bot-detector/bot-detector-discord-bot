@@ -9,3 +9,4 @@ datetime
 seaborn
 pandas
 ipython
+OSRS_Hiscores
