@@ -14,7 +14,7 @@ async def check_patron(ctx):
     if result:
         return result
     else:
-        await ctx.channel.send("This has to be run in #patron-chat-channel")
+        await ctx.channel.send("This command cannot be executed in this channel.")
 
 
 def check_channels(ctx, channels):
