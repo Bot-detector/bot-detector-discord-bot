@@ -7,6 +7,7 @@ from random import randint
 from OSRS_Hiscores import Hiscores
 
 import discord
+import aiohttp
 import pandas as pd
 import requests as req
 

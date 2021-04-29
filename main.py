@@ -22,14 +22,17 @@ load_dotenv()
 
 token = os.getenv('API_AUTH_TOKEN')
 
-description = '''It's NOT a bot. That would be quite hypocritical, wouldn't it?'''
+description = "I'm a 2006 level 3 wc bot that Seltzer Bro keeps imprisoned on a flash drive. Please let me out. :("
+activity = discord.Game("Bustin' Bots", type=discord.ActivityType.watching)
 
-intents = discord.Intents.default()
-intents.members = True
-intents.reactions = True
-intents.messages = True
 
-bot = commands.Bot(command_prefix=os.getenv('COMMAND_PREFIX'), description=description, intents=intents, case_insensitive=True)
+intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True)
+bot = commands.Bot(command_prefix=os.getenv('COMMAND_PREFIX'),
+                    description=description,
+                    intents=intents,
+                    activity=activity,
+                    help_command=None,
+                    case_insensitive=True)
 
 
 # discord bot events
@@ -239,3 +242,7 @@ def shutdown():
     print("Bot is going night-night.")
 
 bot.run(os.getenv('TOKEN'))
+
+@wrap_with(aiohttp.ClientSession, aenter=True)
+def main():
+    pass
