@@ -47,6 +47,13 @@ async def meow(ctx):
 async def woof(ctx):
     await mc.woof_command(ctx)
 
+@bot.command()
+async def birb(ctx):
+    await mc.birb_command(ctx)
+
+@bot.command()
+async def bunny(ctx):
+    await mc.bunny_command(ctx)
 
 @bot.command()
 async def poke(ctx):

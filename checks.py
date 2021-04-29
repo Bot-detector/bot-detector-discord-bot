@@ -8,8 +8,13 @@ def check_allowed_channel(ctx):
     return check_channels(ctx, allowed_channels + patron_channels)
 
 
-def check_patron(ctx):
-    return check_channels(ctx, patron_channels) and (set([role.id for role in ctx.author.roles]) & set(patron_roles))
+async def check_patron(ctx):
+    result = check_channels(ctx, patron_channels) and (set([role.id for role in ctx.author.roles]) & set(patron_roles))
+
+    if result:
+        return result
+    else:
+        await ctx.channel.send("This has to be run in #patron-chat-channel")
 
 
 def check_channels(ctx, channels):
