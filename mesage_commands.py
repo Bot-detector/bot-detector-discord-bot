@@ -7,8 +7,8 @@ from random import randint
 from OSRS_Hiscores import Hiscores
 
 import discord
+import aiohttp
 import pandas as pd
-import requests as req
 
 import patron
 import sql
@@ -28,34 +28,51 @@ async def poke_command(message):
 
 async def meow_command(message):
     url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
-    try:
-        await message.channel.send("https://cataas.com" + req.get(url).json()['url'])
-    except req.exceptions.ConnectionError:
-        await(message.channel.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3"))
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send("https://cataas.com" + js['url'])
+            else:
+                await message.channel.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
+
 
 async def woof_command(message):
     url = "https://some-random-api.ml/img/dog"
 
-    dogResponse = req.get(url)
-    dogJSON = dogResponse.json()
-    dogImgURL = dogJSON['link']
-    await message.channel.send(dogImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js['link'])
+            else:
+                await message.channel.send("Who let the dogs out?")
+
 
 async def birb_command(message):
     url = "http://shibe.online/api/birds"
 
-    birbResponse = req.get(url)
-    birbJSON = birbResponse.json()
-    birbImgURL = birbJSON[0]
-    await message.channel.send(birbImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js[0])
+            else:
+                await message.channel.send("Birds all flew away. :(")
+
 
 async def bunny_command(message):
     url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
 
-    bunnyResponse = req.get(url)
-    bunnyJSON = bunnyResponse.json()
-    bunnyImgURL = bunnyJSON['media']['gif']
-    await message.channel.send(bunnyImgURL)
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                js = await r.json()
+                await message.channel.send(js['media']['gif'])
+            else:
+                await message.channel.send("The buns went on the run.")
+
 
 async def utc_time_command(message):
     await message.channel.send(datetime.now(timezone.utc))
@@ -173,18 +190,35 @@ async def list_command(message):
 # Project Stats Commands
 
 async def stats_command(message):
-    playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
-    otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.6/pluginhub")
 
-    playersJSON = playersTrackedResponse.json()
-    otherStatsJSON = otherStatsResponse.json()
-    activeInstallsJSON = activeInstallsReponse.json()
+    async with aiohttp.ClientSession() as session:
+        playersTracked = ""
+        totalBans = ""
+        totalReports = ""
+        activeInstalls = ""
 
-    playersTracked = playersJSON['players'][0]
-    totalBans = otherStatsJSON['bans']
-    totalReports = otherStatsJSON['total_reports']
-    activeInstalls = activeInstallsJSON['bot-detector']
+        async with session.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers") as r:
+            if r.status == 200:
+                js = await r.json()
+                playersTracked = js['players'][0]
+            else:
+                playersTracked = "N/A"
+
+        async with session.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats") as r:
+            if r.status == 200:
+                js = await r.json()
+                totalBans = js['bans']
+                totalReports = js['total_reports']
+            else:
+                totalBans = "N/A"
+                totalReports = "N/A"
+
+        async with session.get("https://api.runelite.net/runelite-1.7.6/pluginhub") as r:
+            if r.status == 200:
+                js = await r.json()
+                activeInstalls = js['bot-detector']
+            else:
+                activeInstalls = "N/A" 
 
     msg = "```Project Stats:\n" \
           + "Players Analyzed: " + str(playersTracked) + "\n" \
@@ -203,57 +237,71 @@ async def kc_command(message, params):
         await message.channel.send(playerName + " isn't a valid Runescape user name.")
         return
 
-    resp = req.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName)
-    respJSON = resp.json()
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName) as r:
+            if r.status == 200:
+                js = await r.json()
+                reports = js['reports']
+                bans = js['bans']
+                possible_bans = js['possible_bans']
 
-    reports = respJSON['reports']
-    bans = respJSON['bans']
-    possible_bans = respJSON['possible_bans']
+                msg = "```" + playerName + "'s Stats: \n" \
+                    + "Reports Submitted: " + str(reports) + "\n" \
+                    + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
+                    + "Confirmed Bans: " + str(bans) + "```\n"
 
-    msg = "```" + playerName + "'s Stats: \n" \
-          + "Reports Submitted: " + str(reports) + "\n" \
-          + "Probable/Pending Bans: " + str(possible_bans) + "\n" \
-          + "Confirmed Bans: " + str(bans) + "```\n"
-
-    await message.channel.send(msg)
+                await message.channel.send(msg)
+            else:
+                await message.channel.send(f"Couldn't grab the !kc for {playerName}")
 
 
 async def predict_command(message, params):
     playerName = params
 
     if not is_valid_rsn(playerName):
-        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
         return
 
-    resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
-    respJSON = resp.json()
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
+            if r.status == 200:
+                js = await r.json()
+                name =        js['player_name']
+                prediction =  js['prediction_label']
+                player_id =   js['player_id']
+                confidence =  js['prediction_confidence']
+                secondaries = js['secondary_predictions']
 
-    name = respJSON['player_name']
-    prediction = respJSON['prediction_label']
-    player_id = respJSON['player_id']
-    confidence = respJSON['prediction_confidence']
-    secondaries = respJSON['secondary_predictions']
+                msg = "```diff\n" \
+                    + "+" + " Name: " + str(name) + "\n" \
+                    + str(plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
+                    + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence)) + "\n" \
+                    + "+" + " ID: " + str(player_id) + "\n" \
+                    + "============\n" \
+                    + "Prediction Breakdown \n\n"
 
-    msg = "```diff" + "\n" \
-          + "+" + " Name: " + str(name) + "\n" \
-          + str(plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-          + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence)) + "\n" \
-          + "+" + " ID: " + str(player_id) + "\n" \
-          + "============\n" \
-          + "Prediction Breakdown \n\n"
+                
+                for predict in secondaries:
+                    print("poop")
+                    print(predict)
+                    msg += str(plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
+                        + str(predict[1])
+                    msg += "\n"
 
-    for predict in secondaries:
-        msg += str(plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
-               + str(predict[1])
-        msg += "\n"
 
-    msg += "```\n"
+                msg += "```\n"
 
-    msg += "Click the reactions below to give feedback on the above prediction:"
-    my_msg = await message.channel.send(msg)
+                msg += "Click the reactions below to give feedback on the above prediction:"
+                    
+                my_msg = await message.channel.send(msg)
 
-    await my_msg.add_reaction('✔️')
-    await my_msg.add_reaction('❌')
+                await my_msg.add_reaction('✔️')
+                await my_msg.add_reaction('❌')
+
+            else:
+                await message.channel.send(f"I couldn't get a prediction for {playerName} :(")
+                return
+
 
 
 # Heatmap and Region Commands
