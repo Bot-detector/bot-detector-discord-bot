@@ -348,7 +348,7 @@ async def heatmap_command(message, params, token):
         mapWasGenerated = runAnalysis(regionTrueName, region_id)
 
         if not mapWasGenerated:
-            await map_command(message, params, token)
+            await map_command(message, params)
             await message.channel.send("We have no data on this region yet.")
 
         else:
