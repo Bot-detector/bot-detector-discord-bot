@@ -540,6 +540,7 @@ async def link_command(message, player_name):
                     + "+ Player: " + str(player_name) + "\n" \
                     + "====== Verification Information ======\n" \
                     + "- Player is: Unverified." + "\n" \
+                    + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
 
     player_id, exists = sql.verificationPull(player_name)
@@ -578,6 +579,7 @@ async def verify_comand(message, player_name):
                     + "+ Player: " + str(player_name) + "\n" \
                     + "====== Verification Information ======\n" \
                     + "- Player is: Unverified." + "\n" \
+                    + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
 
     player_id, exists = sql.verificationPull(player_name)
