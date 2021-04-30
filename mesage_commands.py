@@ -111,30 +111,30 @@ async def hiscores_lookup(ctx, rsn):
         intro_msg = await ctx.send("Searching for User... If there is no response, there was no account found.")
         user = Hiscores(username_parsed, 'N')
         embedvar = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
-        embedvar.add_field(name="Total", value=(user.skill('total')), inline=True)
-        embedvar.add_field(name="Attack", value=(user.skill('attack', 'level')), inline=True)
-        embedvar.add_field(name="Defence", value=(user.skill('defense', 'level')), inline=True)
-        embedvar.add_field(name="Strength", value=(user.skill('strength', 'level')), inline=True)
-        embedvar.add_field(name="Hitpoints", value=(user.skill('hitpoints', 'level')), inline=True)
-        embedvar.add_field(name="Ranged", value=(user.skill('ranged', 'level')), inline=True)
-        embedvar.add_field(name="Prayer", value=(user.skill('prayer', 'level')), inline=True)
-        embedvar.add_field(name="Magic", value=(user.skill('magic', 'level')), inline=True)
-        embedvar.add_field(name="Cooking", value=(user.skill('cooking', 'level')), inline=True)
-        embedvar.add_field(name="Woodcutting", value=(user.skill('woodcutting', 'level')), inline=True)
-        embedvar.add_field(name="Fletching", value=(user.skill('fletching', 'level')), inline=True)
-        embedvar.add_field(name="Fishing", value=(user.skill('fishing', 'level')), inline=True)
-        embedvar.add_field(name="Firemaking", value=(user.skill('firemaking', 'level')), inline=True)
-        embedvar.add_field(name="Crafting", value=(user.skill('crafting', 'level')), inline=True)
-        embedvar.add_field(name="Smithing", value=(user.skill('smithing', 'level')), inline=True)
-        embedvar.add_field(name="Mining", value=(user.skill('mining', 'level')), inline=True)
-        embedvar.add_field(name="Herblore", value=(user.skill('herblore', 'level')), inline=True)
-        embedvar.add_field(name="Agility", value=(user.skill('agility', 'level')), inline=True)
-        embedvar.add_field(name="Thieving", value=(user.skill('thieving', 'level')), inline=True)
-        embedvar.add_field(name="Slayer", value=(user.skill('slayer', 'level')), inline=True)
-        embedvar.add_field(name="Farming", value=(user.skill('farming', 'level')), inline=True)
-        embedvar.add_field(name="Runecrafting", value=(user.skill('runecrafting', 'level')), inline=True)
-        embedvar.add_field(name="Hunter", value=(user.skill('hunter', 'level')), inline=True)
-        embedvar.add_field(name="Construction", value=(user.skill('construction', 'level')), inline=True)
+        embedvar.add_field(name="Total - " + str(user.skill('total')), value="EXP - " + str(user.skill('total', 'experience')), inline=True)
+        embedvar.add_field(name="Attack - " + str(user.skill('attack')), value="EXP - " + str(user.skill('attack', 'experience')), inline=True)
+        embedvar.add_field(name="Defence - " + str(user.skill('defense')), value="EXP - " + str(user.skill('defense', 'experience')), inline=True)
+        embedvar.add_field(name="Strength - " + str(user.skill('strength')), value="EXP - " + str(user.skill('strength', 'experience')), inline=True)
+        embedvar.add_field(name="Hitpoints - " + str(user.skill('hitpoints')), value="EXP - " + str(user.skill('hitpoints', 'experience')), inline=True)
+        embedvar.add_field(name="Ranged - " + str(user.skill('ranged')), value="EXP - " + str(user.skill('ranged', 'experience')), inline=True)
+        embedvar.add_field(name="Prayer - " + str(user.skill('prayer')), value="EXP - " + str(user.skill('prayer', 'experience')), inline=True)
+        embedvar.add_field(name="Magic - " + str(user.skill('magic')), value="EXP - " + str(user.skill('magic', 'experience')), inline=True)
+        embedvar.add_field(name="Cooking - " + str(user.skill('cooking')), value="EXP - " + str(user.skill('cooking', 'experience')), inline=True)
+        embedvar.add_field(name="Woodcutting - " + str(user.skill('woodcutting')), value="EXP - " + str(user.skill('woodcutting', 'experience')), inline=True)
+        embedvar.add_field(name="Fletching - " + str(user.skill('fletching')), value="EXP - " + str(user.skill('fletching', 'experience')), inline=True)
+        embedvar.add_field(name="Fishing - " + str(user.skill('fishing')), value="EXP - " + str(user.skill('fishing', 'experience')), inline=True)
+        embedvar.add_field(name="Firemaking - " + str(user.skill('firemaking')), value="EXP - " + str(user.skill('firemaking', 'experience')), inline=True)
+        embedvar.add_field(name="Crafting - " + str(user.skill('crafting')), value="EXP - " + str(user.skill('crafting', 'experience')), inline=True)
+        embedvar.add_field(name="Smithing - " + str(user.skill('smithing')), value="EXP - " + str(user.skill('smithing', 'experience')), inline=True)
+        embedvar.add_field(name="Mining - " + str(user.skill('mining')), value="EXP - " + str(user.skill('mining', 'experience')), inline=True)
+        embedvar.add_field(name="Herblore - " + str(user.skill('herblore')), value="EXP - " + str(user.skill('herblore', 'experience')), inline=True)
+        embedvar.add_field(name="Agility - " + str(user.skill('agility')), value="EXP - " + str(user.skill('agility', 'experience')), inline=True)
+        embedvar.add_field(name="Thieving - " + str(user.skill('thieving')), value="EXP - " + str(user.skill('thieving', 'experience')), inline=True)
+        embedvar.add_field(name="Slayer - " + str(user.skill('slayer')), value="EXP - " + str(user.skill('slayer', 'experience')), inline=True)
+        embedvar.add_field(name="Farming - " + str(user.skill('farming')), value="EXP - " + str(user.skill('farming', 'experience')), inline=True)
+        embedvar.add_field(name="Runecrafting - " + str(user.skill('runecrafting')), value="EXP - " + str(user.skill('runecrafting', 'experience')), inline=True)
+        embedvar.add_field(name="Hunter - " + str(user.skill('hunter')), value="EXP - " + str(user.skill('hunter', 'experience')), inline=True)
+        embedvar.add_field(name="Construction - " + str(user.skill('construction')), value="EXP - " + str(user.skill('construction', 'experience')), inline=True)
         await ctx.channel.send(embed=embedvar)
         print("Searched OSRS Hiscores for", username_parsed)
     except Exception as e:
@@ -258,6 +258,8 @@ async def kc_command(message, params):
 async def predict_command(message, params):
     playerName = params
 
+    pending_message = await message.channel.send("Searching the database for the predicted username.")
+
     if not is_valid_rsn(playerName):
         await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
         return
@@ -302,6 +304,7 @@ async def predict_command(message, params):
                 await message.channel.send(f"I couldn't get a prediction for {playerName} :(")
                 return
 
+    await pending_message.delete()
 
 
 # Heatmap and Region Commands
