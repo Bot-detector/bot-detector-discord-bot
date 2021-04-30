@@ -11,6 +11,3 @@ pandas
 ipython
 OSRS_Hiscores
 aiohttp
-cchardet
-aiodns
-brotlipy
