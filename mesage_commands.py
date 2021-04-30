@@ -9,7 +9,6 @@ from OSRS_Hiscores import Hiscores
 import discord
 import aiohttp
 import pandas as pd
-import requests as req
 
 import patron
 import sql
@@ -191,18 +190,35 @@ async def list_command(message):
 # Project Stats Commands
 
 async def stats_command(message):
-    playersTrackedResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers")
-    otherStatsResponse = req.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats")
-    activeInstallsReponse = req.get("https://api.runelite.net/runelite-1.7.6/pluginhub")
 
-    playersJSON = playersTrackedResponse.json()
-    otherStatsJSON = otherStatsResponse.json()
-    activeInstallsJSON = activeInstallsReponse.json()
+    async with aiohttp.ClientSession() as session:
+        playersTracked = ""
+        totalBans = ""
+        totalReports = ""
+        activeInstalls = ""
 
-    playersTracked = playersJSON['players'][0]
-    totalBans = otherStatsJSON['bans']
-    totalReports = otherStatsJSON['total_reports']
-    activeInstalls = activeInstallsJSON['bot-detector']
+        async with session.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers") as r:
+            if r.status == 200:
+                js = await r.json()
+                playersTracked = js['players'][0]
+            else:
+                playersTracked = "N/A"
+
+        async with session.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats") as r:
+            if r.status == 200:
+                js = await r.json()
+                totalBans = js['bans']
+                totalReports = js['total_reports']
+            else:
+                totalBans = "N/A"
+                totalReports = "N/A"
+
+        async with session.get("https://api.runelite.net/runelite-1.7.6/pluginhub") as r:
+            if r.status == 200:
+                js = await r.json()
+                activeInstalls = js['bot-detector']
+            else:
+                activeInstalls = "N/A" 
 
     msg = "```Project Stats:\n" \
           + "Players Analyzed: " + str(playersTracked) + "\n" \
@@ -243,38 +259,49 @@ async def predict_command(message, params):
     playerName = params
 
     if not is_valid_rsn(playerName):
-        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
         return
 
-    resp = req.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName)
-    respJSON = resp.json()
+    async with aiohttp.ClientSession() as session:
+        async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
+            if r.status == 200:
+                js = await r.json()
+                name =        js['player_name']
+                prediction =  js['prediction_label']
+                player_id =   js['player_id']
+                confidence =  js['prediction_confidence']
+                secondaries = js['secondary_predictions']
 
-    name = respJSON['player_name']
-    prediction = respJSON['prediction_label']
-    player_id = respJSON['player_id']
-    confidence = respJSON['prediction_confidence']
-    secondaries = respJSON['secondary_predictions']
+                msg = "```diff\n" \
+                    + "+" + " Name: " + str(name) + "\n" \
+                    + str(plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
+                    + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence)) + "\n" \
+                    + "+" + " ID: " + str(player_id) + "\n" \
+                    + "============\n" \
+                    + "Prediction Breakdown \n\n"
 
-    msg = "```diff" + "\n" \
-          + "+" + " Name: " + str(name) + "\n" \
-          + str(plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-          + str(plus_minus(confidence, 0.75) + " Confidence: " + str(confidence)) + "\n" \
-          + "+" + " ID: " + str(player_id) + "\n" \
-          + "============\n" \
-          + "Prediction Breakdown \n\n"
+                
+                for predict in secondaries:
+                    print("poop")
+                    print(predict)
+                    msg += str(plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
+                        + str(predict[1])
+                    msg += "\n"
 
-    for predict in secondaries:
-        msg += str(plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
-               + str(predict[1])
-        msg += "\n"
 
-    msg += "```\n"
+                msg += "```\n"
 
-    msg += "Click the reactions below to give feedback on the above prediction:"
-    my_msg = await message.channel.send(msg)
+                msg += "Click the reactions below to give feedback on the above prediction:"
+                    
+                my_msg = await message.channel.send(msg)
 
-    await my_msg.add_reaction('✔️')
-    await my_msg.add_reaction('❌')
+                await my_msg.add_reaction('✔️')
+                await my_msg.add_reaction('❌')
+
+            else:
+                await message.channel.send(f"I couldn't get a prediction for {playerName} :(")
+                return
+
 
 
 # Heatmap and Region Commands
