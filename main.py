@@ -242,7 +242,3 @@ def shutdown():
     print("Bot is going night-night.")
 
 bot.run(os.getenv('TOKEN'))
-
-@wrap_with(aiohttp.ClientSession, aenter=True)
-def main():
-    pass
