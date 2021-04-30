@@ -5,15 +5,12 @@ from datetime import date
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-import mysql.connector
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import requests as req
 from dotenv import load_dotenv
 # custom
-import sql
-import json
+import aiohttp
 
 load_dotenv()
 
@@ -72,21 +69,30 @@ async def CleanupImages(region_id):
     os.remove(f'{os.getcwd()}/{region_id}.png')
     return
 
-def getHeatmapRegion(regionName, token):
+async def getHeatmapRegion(regionName, token):
     json = {
         'region' : regionName
     }
-    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
-    data = req.get(url,json=json)
-    return data
 
-def getHeatmapData(region_id, token):
+    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url,json=json) as r:
+            if r.status == 200:
+                data = await r.json()
+                return data
+
+async def getHeatmapData(region_id, token):
     json = {
         'region_id' : region_id
     }
     url = f'https://www.osrsbotdetector.com/dev/discord/heatmap/{token}'
-    data = req.get(url,json=json)
-    return data
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url,json=json) as r:
+            if r.status == 200:
+                data = await r.json()
+                return data
 
 def displayDuplicates(df):
     dfRegion = df.drop_duplicates(subset=['region_name'], keep='first')

@@ -338,14 +338,14 @@ async def heatmap_command(message, params, token):
 
     regionName = params
   
-    dataRegion = patron.getHeatmapRegion(regionName, token)
-    dfDataRegion = pd.DataFrame(dataRegion.json())
+    dataRegion = await patron.getHeatmapRegion(regionName, token)
+    dfDataRegion = pd.DataFrame(dataRegion)
     dfRegion = patron.displayDuplicates(dfDataRegion)
 
     if len(dfRegion)<30:
         regionTrueName, region_id = patron.Autofill(dfRegion, regionName)
 
-        mapWasGenerated = runAnalysis(regionTrueName, region_id)
+        mapWasGenerated = await runAnalysis(regionTrueName, region_id)
 
         if not mapWasGenerated:
             await map_command(message, params)
@@ -570,6 +570,7 @@ async def link_command(message, player_name):
                     + "+ Player: " + str(player_name) + "\n" \
                     + "====== Verification Information ======\n" \
                     + "- Player is: Unverified." + "\n" \
+                    + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
 
     player_id, exists = sql.verificationPull(player_name)
@@ -608,6 +609,7 @@ async def verify_comand(message, player_name):
                     + "+ Player: " + str(player_name) + "\n" \
                     + "====== Verification Information ======\n" \
                     + "- Player is: Unverified." + "\n" \
+                    + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
 
     player_id, exists = sql.verificationPull(player_name)
@@ -647,10 +649,10 @@ def plus_minus(var, compare):
 
 
 # Analysis run for Patron Heatmap
-def runAnalysis(regionTrueName, region_id):
+async def runAnalysis(regionTrueName, region_id):
     region_id = int(region_id)
-    data = patron.getHeatmapData(region_id, token)
-    df = pd.DataFrame(data.json())
+    data = await patron.getHeatmapData(region_id, token)
+    df = pd.DataFrame(data)
 
     if(df.empty):
         return False
