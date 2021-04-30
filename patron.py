@@ -5,15 +5,11 @@ from datetime import date
 
 import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
-import mysql.connector
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import requests as req
 from dotenv import load_dotenv
 # custom
-import sql
-import json
 import aiohttp
 
 load_dotenv()
