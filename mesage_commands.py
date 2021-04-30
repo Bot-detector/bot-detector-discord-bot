@@ -311,8 +311,8 @@ async def predict_command(message, params):
 
 async def region_command(message, params, token):
     regionName = params
-    dataRegion = patron.getHeatmapRegion(regionName, token)
-    dfDataRegion = pd.DataFrame(dataRegion.json())
+    dataRegion = await patron.getHeatmapRegion(regionName, token)
+    dfDataRegion = pd.DataFrame(dataRegion)
     dfRegion = patron.displayDuplicates(dfDataRegion)
     
     if len(dfRegion) < 30:
@@ -378,8 +378,8 @@ async def map_command(message, params):
 
     else:
         regionName = params
-        dataRegion = patron.getHeatmapRegion(regionName, token)
-        dfDataRegion = pd.DataFrame(dataRegion.json())
+        dataRegion = await patron.getHeatmapRegion(regionName, token)
+        dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = patron.displayDuplicates(dfDataRegion)
     
         if len(dfRegion) < 30:
