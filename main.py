@@ -140,6 +140,18 @@ async def submit(ctx, paste_url):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
+async def excelban(ctx, *playerName, token=token):
+    await mc.excel_ban_command(ctx, " ".join(playerName), token=token)
+    
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def csvban(ctx, *playerName, token=token):
+    await mc.csv_ban_command(ctx, " ".join(playerName), token=token)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
 async def region(ctx, *region_name, token=token):
     await mc.region_command(ctx, " ".join(region_name), token=token)
 
@@ -148,6 +160,7 @@ async def region(ctx, *region_name, token=token):
 @bot.command()
 async def map(ctx, *region_name):
     await mc.map_command(ctx, " ".join(region_name))
+
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
