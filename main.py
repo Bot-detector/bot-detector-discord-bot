@@ -104,6 +104,11 @@ async def invite(ctx):
 
 
 @bot.command()
+async def beta(ctx):
+    await mc.beta_command(ctx)
+
+
+@bot.command()
 async def github(ctx, repo):
     await mc.github_command(ctx, repo)
 

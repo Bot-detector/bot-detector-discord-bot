@@ -95,6 +95,9 @@ async def rules_command(message):
 async def website_command(message):
     await message.channel.send('https://www.osrsbotdetector.com/')
 
+async def beta_command(message):
+    await message.channel.send('https://github.com/Bot-detector/bot-detector/wiki/Running-the-Development-Version-From-Source')
+
 
 async def patreon_command(message):
     await message.channel.send('https://www.patreon.com/bot_detector')
@@ -254,8 +257,12 @@ async def predict_command(message, params):
     pending_message = await message.channel.send("Searching the database for the predicted username.")
 
     if not is_valid_rsn(playerName):
-        await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
-        return
+        if len(playerName) < 1:
+            await message.channel.send(f"Please enter a valid Runescape user name.")
+            return
+        else: 
+            await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
+            return
 
     async with aiohttp.ClientSession() as session:
         async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
