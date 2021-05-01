@@ -121,8 +121,8 @@ async def link(ctx, *player_name):
 
 @commands.check(checks.check_allowed_channel)
 @bot.command()
-async def verify(ctx, *player_name):
-    await mc.verify_comand(ctx, " ".join(player_name))
+async def verify(ctx, *player_name, token=token):
+    await mc.verify_comand(ctx, " ".join(player_name), token=token)
 
 
 @commands.check(checks.check_allowed_channel)
