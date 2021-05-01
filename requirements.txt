@@ -11,3 +11,4 @@ pandas
 ipython
 OSRS_Hiscores
 aiohttp
+openpyxl
