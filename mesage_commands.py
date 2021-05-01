@@ -95,6 +95,9 @@ async def rules_command(message):
 async def website_command(message):
     await message.channel.send('https://www.osrsbotdetector.com/')
 
+async def beta_command(message):
+    await message.channel.send('https://github.com/Bot-detector/bot-detector/wiki/Running-the-Development-Version-From-Source')
+
 
 async def patreon_command(message):
     await message.channel.send('https://www.patreon.com/bot_detector')
@@ -254,8 +257,12 @@ async def predict_command(message, params):
     pending_message = await message.channel.send("Searching the database for the predicted username.")
 
     if not is_valid_rsn(playerName):
-        await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
-        return
+        if len(playerName) < 1:
+            await message.channel.send(f"Please enter a valid Runescape user name.")
+            return
+        else: 
+            await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
+            return
 
     async with aiohttp.ClientSession() as session:
         async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
@@ -587,7 +594,7 @@ async def link_command(message, player_name):
     await message.author.send(msg)
 
 
-async def verify_comand(message, player_name):
+async def verify_comand(message, player_name, token):
     if not is_valid_rsn(player_name):
         await message.channel.send(player_name + " isn't a valid Runescape user name.")
         return
@@ -604,14 +611,13 @@ async def verify_comand(message, player_name):
                     + "- Player is: Unverified." + "\n" \
                     + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
+    try:
+        verified = await get_player_verified_status(playerName=player_name, token=token)
+    except IndexError:
+        verified = 0
 
-    player_id, exists = sql.verificationPull(player_name)
-    if exists:
-        check, verified, owner_list = sql.verification_check(player_id)
-        if verified:
-            msg = msgVerified
-        else:
-            msg = msgUnverified
+    if verified:
+        msg = msgVerified
     else:
         msg = msgUnverified
 
@@ -675,3 +681,15 @@ async def runAnalysis(regionTrueName, region_id):
 
 
     return True
+
+
+async def get_player_verified_status(playerName, token):
+
+    url = f'https://www.osrsbotdetector.com/dev/discord/player_verification_status/{token}/{playerName}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                verify = await r.json()
+
+    return verify[0]['Verified_status']
