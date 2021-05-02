@@ -311,9 +311,22 @@ async def predict_command(message, params):
 
 async def export_bans(message, params, token, filetype):
     playerName = params
+    discord_id = message.author.id
 
     if not is_valid_rsn(playerName):
         await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    status = await get_player_verification_full_status(playerName=playerName, token=token)
+    owner_id = status['Discord_id']
+    verified = status['Verified_status']
+
+    if discord_id != owner_id:
+        await message.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
+        return
+    
+    if verified == 0:
+        await message.channel.send("You must complete the verification process for: '" + playerName + "'. Please check your DMs for a previously sent verification token.")
         return
 
     info_msg = await message.channel.send("Getting that data for you right now! One moment, please :)")
@@ -650,7 +663,9 @@ async def verify_comand(message, player_name, token):
                     + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
     try:
-        verified = await get_player_verified_status(playerName=player_name, token=token)
+        verified = await get_player_verification_full_status(playerName=player_name, token=token)
+        verified = verified['Verified_status']
+
     except IndexError:
         verified = 0
 
@@ -720,14 +735,13 @@ async def runAnalysis(regionTrueName, region_id):
 
     return True
 
+async def get_player_verification_full_status(playerName, token):
 
-async def get_player_verified_status(playerName, token):
-
-    url = f'https://www.osrsbotdetector.com/dev/discord/player_verification_status/{token}/{playerName}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/player_rsn_discord_account_status/{token}/{playerName}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
             if r.status == 200:
                 verify = await r.json()
 
-    return verify[0]['Verified_status']
+    return verify[0]
