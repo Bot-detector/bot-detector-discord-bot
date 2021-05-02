@@ -98,6 +98,9 @@ async def rules_command(message):
 async def website_command(message):
     await message.channel.send('https://www.osrsbotdetector.com/')
 
+async def beta_command(message):
+    await message.channel.send('https://github.com/Bot-detector/bot-detector/wiki/Running-the-Development-Version-From-Source')
+
 
 async def patreon_command(message):
     await message.channel.send('https://www.patreon.com/bot_detector')
@@ -113,33 +116,26 @@ async def hiscores_lookup(ctx, rsn):
         username_parsed = username.replace(" ", "_")
         intro_msg = await ctx.send("Searching for User... If there is no response, there was no account found.")
         user = Hiscores(username_parsed, 'N')
+
+        skills_list = [ 'Attack',           'Hitpoints',    'Mining', 
+                        'Strength',         'Agility',      'Smithing',
+                        'Defense',          'Herblore',     'Fishing',
+                        'Ranged',           'Thieving',     'Cooking',
+                        'Prayer',           'Crafting',     'Firemaking',
+                        'Magic',            'Fletching',    'Woodcutting',
+                        'Runecrafting',     'Slayer',       'Farming',
+                        'Construction',     'Hunter',       'Total' ]
+
         embedvar = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
-        embedvar.add_field(name="Total - " + str(user.skill('total')), value="EXP - " + str(user.skill('total', 'experience')), inline=True)
-        embedvar.add_field(name="Attack - " + str(user.skill('attack')), value="EXP - " + str(user.skill('attack', 'experience')), inline=True)
-        embedvar.add_field(name="Defence - " + str(user.skill('defense')), value="EXP - " + str(user.skill('defense', 'experience')), inline=True)
-        embedvar.add_field(name="Strength - " + str(user.skill('strength')), value="EXP - " + str(user.skill('strength', 'experience')), inline=True)
-        embedvar.add_field(name="Hitpoints - " + str(user.skill('hitpoints')), value="EXP - " + str(user.skill('hitpoints', 'experience')), inline=True)
-        embedvar.add_field(name="Ranged - " + str(user.skill('ranged')), value="EXP - " + str(user.skill('ranged', 'experience')), inline=True)
-        embedvar.add_field(name="Prayer - " + str(user.skill('prayer')), value="EXP - " + str(user.skill('prayer', 'experience')), inline=True)
-        embedvar.add_field(name="Magic - " + str(user.skill('magic')), value="EXP - " + str(user.skill('magic', 'experience')), inline=True)
-        embedvar.add_field(name="Cooking - " + str(user.skill('cooking')), value="EXP - " + str(user.skill('cooking', 'experience')), inline=True)
-        embedvar.add_field(name="Woodcutting - " + str(user.skill('woodcutting')), value="EXP - " + str(user.skill('woodcutting', 'experience')), inline=True)
-        embedvar.add_field(name="Fletching - " + str(user.skill('fletching')), value="EXP - " + str(user.skill('fletching', 'experience')), inline=True)
-        embedvar.add_field(name="Fishing - " + str(user.skill('fishing')), value="EXP - " + str(user.skill('fishing', 'experience')), inline=True)
-        embedvar.add_field(name="Firemaking - " + str(user.skill('firemaking')), value="EXP - " + str(user.skill('firemaking', 'experience')), inline=True)
-        embedvar.add_field(name="Crafting - " + str(user.skill('crafting')), value="EXP - " + str(user.skill('crafting', 'experience')), inline=True)
-        embedvar.add_field(name="Smithing - " + str(user.skill('smithing')), value="EXP - " + str(user.skill('smithing', 'experience')), inline=True)
-        embedvar.add_field(name="Mining - " + str(user.skill('mining')), value="EXP - " + str(user.skill('mining', 'experience')), inline=True)
-        embedvar.add_field(name="Herblore - " + str(user.skill('herblore')), value="EXP - " + str(user.skill('herblore', 'experience')), inline=True)
-        embedvar.add_field(name="Agility - " + str(user.skill('agility')), value="EXP - " + str(user.skill('agility', 'experience')), inline=True)
-        embedvar.add_field(name="Thieving - " + str(user.skill('thieving')), value="EXP - " + str(user.skill('thieving', 'experience')), inline=True)
-        embedvar.add_field(name="Slayer - " + str(user.skill('slayer')), value="EXP - " + str(user.skill('slayer', 'experience')), inline=True)
-        embedvar.add_field(name="Farming - " + str(user.skill('farming')), value="EXP - " + str(user.skill('farming', 'experience')), inline=True)
-        embedvar.add_field(name="Runecrafting - " + str(user.skill('runecrafting')), value="EXP - " + str(user.skill('runecrafting', 'experience')), inline=True)
-        embedvar.add_field(name="Hunter - " + str(user.skill('hunter')), value="EXP - " + str(user.skill('hunter', 'experience')), inline=True)
-        embedvar.add_field(name="Construction - " + str(user.skill('construction')), value="EXP - " + str(user.skill('construction', 'experience')), inline=True)
+
+        for skill in skills_list:
+            embedvar.add_field( name=f"{skill} - {user.skill(skill.lower())}", 
+                                value=f"EXP - {int(user.skill(skill.lower(), 'experience')):,d}", 
+                                inline=True )
+        
         await ctx.channel.send(embed=embedvar)
-        print("Searched OSRS Hiscores for", username_parsed)
+
+
     except Exception as e:
         print(e)
         await ctx.channel.send("Something went terribly wrong. :(")
@@ -264,8 +260,12 @@ async def predict_command(message, params):
     pending_message = await message.channel.send("Searching the database for the predicted username.")
 
     if not is_valid_rsn(playerName):
-        await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
-        return
+        if len(playerName) < 1:
+            await message.channel.send(f"Please enter a valid Runescape user name.")
+            return
+        else: 
+            await message.channel.send(f"{playerName} isn't a valid Runescape user name.")
+            return
 
     async with aiohttp.ClientSession() as session:
         async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
@@ -309,6 +309,41 @@ async def predict_command(message, params):
 
     await pending_message.delete()
 
+async def export_bans(message, params, token, filetype):
+    playerName = params
+
+    if not is_valid_rsn(playerName):
+        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    info_msg = await message.channel.send("Getting that data for you right now! One moment, please :)")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
+            if r.status == 200:
+
+                js = await r.json()
+                df = pd.DataFrame(js)
+
+                if filetype == 'excel':
+                    df.to_excel(f"{playerName}_bans.xlsx")
+                    filePath = f'{os.getcwd()}/{playerName}_bans.xlsx'
+                else:
+                    df.to_csv(f"{playerName}_bans.csv")
+                    filePath = f'{os.getcwd()}/{playerName}_bans.csv'
+
+                await message.author.send(file=discord.File(filePath))
+                os.remove(filePath)
+                await info_msg.edit(content=f"Your {filetype} file for {playerName} has been sent to your DMs.")
+            else:
+                await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
+
+
+async def excel_ban_command(message, params, token):
+    await export_bans(message, params, token, 'excel')
+
+async def csv_ban_command(message, params, token):
+    await export_bans(message, params, token, 'csv')
 
 # Heatmap and Region Commands
 
@@ -332,43 +367,6 @@ async def region_command(message, params, token):
               + "```"
     await message.channel.send(msg)
 
-
-async def export_bans(message, params, token, filetype):
-    playerName = params
-
-    if not is_valid_rsn(playerName):
-        await message.channel.send(playerName + " isn't a valid Runescape user name.")
-        return
-
-    info_msg = await message.channel.send("Getting that data for you right now! One moment, please :)")
-
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
-            if r.status == 200:
-                
-                js = await r.json()
-                df = pd.DataFrame(js)
-
-                if filetype == 'excel':
-                    df.to_excel(f"{playerName}_bans.xlsx")
-                    filePath = f'{os.getcwd()}/{playerName}_bans.xlsx'
-                else:
-                    df.to_csv(f"{playerName}_bans.csv")
-                    filePath = f'{os.getcwd()}/{playerName}_bans.csv'
-                
-                await message.author.send(file=discord.File(filePath))
-                os.remove(filePath)
-                await info_msg.edit(content=f"Your {filetype} file for {playerName} has been sent to your DMs.")
-            else:
-                await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
-
-
-async def excel_ban_command(message, params, token):
-    await export_bans(message, params, token, 'excel')
-
-async def csv_ban_command(message, params, token):
-    await export_bans(message, params, token, 'csv')
-            
 
 # Patron Heatmap command
 
@@ -634,7 +632,7 @@ async def link_command(message, player_name):
     await message.author.send(msg)
 
 
-async def verify_comand(message, player_name):
+async def verify_comand(message, player_name, token):
     if not is_valid_rsn(player_name):
         await message.channel.send(player_name + " isn't a valid Runescape user name.")
         return
@@ -651,14 +649,13 @@ async def verify_comand(message, player_name):
                     + "- Player is: Unverified." + "\n" \
                     + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
+    try:
+        verified = await get_player_verified_status(playerName=player_name, token=token)
+    except IndexError:
+        verified = 0
 
-    player_id, exists = sql.verificationPull(player_name)
-    if exists:
-        check, verified, owner_list = sql.verification_check(player_id)
-        if verified:
-            msg = msgVerified
-        else:
-            msg = msgUnverified
+    if verified:
+        msg = msgVerified
     else:
         msg = msgUnverified
 
@@ -722,3 +719,15 @@ async def runAnalysis(regionTrueName, region_id):
 
 
     return True
+
+
+async def get_player_verified_status(playerName, token):
+
+    url = f'https://www.osrsbotdetector.com/dev/discord/player_verification_status/{token}/{playerName}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                verify = await r.json()
+
+    return verify[0]['Verified_status']
