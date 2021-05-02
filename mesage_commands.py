@@ -8,12 +8,15 @@ from OSRS_Hiscores import Hiscores
 
 import discord
 import aiohttp
+from discord import file
 import pandas as pd
 
 import patron
 import sql
 import json
 import numpy
+
+import openpyxl
 
 from dotenv import load_dotenv
 
@@ -306,6 +309,41 @@ async def predict_command(message, params):
 
     await pending_message.delete()
 
+async def export_bans(message, params, token, filetype):
+    playerName = params
+
+    if not is_valid_rsn(playerName):
+        await message.channel.send(playerName + " isn't a valid Runescape user name.")
+        return
+
+    info_msg = await message.channel.send("Getting that data for you right now! One moment, please :)")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
+            if r.status == 200:
+
+                js = await r.json()
+                df = pd.DataFrame(js)
+
+                if filetype == 'excel':
+                    df.to_excel(f"{playerName}_bans.xlsx")
+                    filePath = f'{os.getcwd()}/{playerName}_bans.xlsx'
+                else:
+                    df.to_csv(f"{playerName}_bans.csv")
+                    filePath = f'{os.getcwd()}/{playerName}_bans.csv'
+
+                await message.author.send(file=discord.File(filePath))
+                os.remove(filePath)
+                await info_msg.edit(content=f"Your {filetype} file for {playerName} has been sent to your DMs.")
+            else:
+                await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
+
+
+async def excel_ban_command(message, params, token):
+    await export_bans(message, params, token, 'excel')
+
+async def csv_ban_command(message, params, token):
+    await export_bans(message, params, token, 'csv')
 
 # Heatmap and Region Commands
 
