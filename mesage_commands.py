@@ -737,11 +737,14 @@ async def runAnalysis(regionTrueName, region_id):
 
 async def get_player_verification_full_status(playerName, token):
 
-    url = f'https://www.osrsbotdetector.com/dev/discord/player_rsn_discord_account_status/{token}/{playerName}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/verify/player_rsn_discord_account_status/{token}/{playerName}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
             if r.status == 200:
                 verify = await r.json()
 
-    return verify[0]
+                return verify[0]
+
+            else:
+                return None
