@@ -90,7 +90,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=player_name, token=token)
         if verifyStatus == None:
-            return
+            return  
         else:
             
             isVerified = verifyStatus['Verified_status']
