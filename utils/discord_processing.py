@@ -1,6 +1,6 @@
 import aiohttp
 
-BASE_URL = 'https://www.osrsbotdetector.com/dev'
+BASE_URL = 'https://www.osrsbotdetector.com/api'
 
 async def get_player_verification_full_status(playerName, token):
 
