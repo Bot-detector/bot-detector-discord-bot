@@ -11,8 +11,6 @@ async def get_player_verification_full_status(playerName, token):
             if r.status == 200:
                 data = await r.json()
 
-    
-
     try:
         return data[0]
     except:
@@ -21,6 +19,7 @@ async def get_player_verification_full_status(playerName, token):
 async def get_playerid_verification(playerName, token):
 
     url = f'{BASE_URL}/discord/verify/playerid/{token}/{playerName}'
+    print(url)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
