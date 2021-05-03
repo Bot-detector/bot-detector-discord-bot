@@ -3,13 +3,14 @@ from discord.ext.commands import command, check
 
 import aiohttp
 import checks
+import help_messages
 
-class ProjectStatsCommands(Cog):
+class ProjectStatsCommands(Cog, name='Project Stats Commands'):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="stats")
+    @command(name="stats", description=help_messages.stats_help_msg)
     @check(checks.check_allowed_channel)
     async def stats_command(self, ctx):
 

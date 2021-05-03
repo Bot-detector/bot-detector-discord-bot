@@ -4,6 +4,7 @@ from discord.ext.commands import command, check
 import os
 import sql
 import checks
+import help_messages
 import pandas as pd
 
 from dotenv import load_dotenv
@@ -11,12 +12,12 @@ load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
 
-class BotSubmissionsCommands(Cog):
+class BotSubmissionsCommands(Cog , name="Bot Submissions Commands"):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="list")
+    @command(name="list", description=help_messages.list_help_msg)
     @check(checks.check_allowed_channel)
     async def list_command(self, ctx):
         msg = "Please send a link to a Pastebin URL containing your name list." + "\n" \
@@ -39,7 +40,7 @@ class BotSubmissionsCommands(Cog):
 
         await ctx.author.send(msg)
 
-    @command(name="submit")
+    @command(name="submit", description=help_messages.submit_help_msg)
     @check(checks.check_allowed_channel)
     async def submit_command(self, ctx, paste_url):
         errors = "No Errors"

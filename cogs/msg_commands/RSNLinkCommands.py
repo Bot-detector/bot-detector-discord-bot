@@ -8,6 +8,8 @@ import string
 import random
 import sql
 import checks
+import help_messages
+
 import sys
 sys.path.append("./utils")
 import string_processing
@@ -17,12 +19,12 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
-class RSNLinkCommands(Cog):
+class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="link")
+    @command(name="link", description=help_messages.link_help_msg)
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
@@ -108,7 +110,7 @@ class RSNLinkCommands(Cog):
 
     
 
-    @command(name="verify")
+    @command(name="verify", description=help_messages.verify_help_msg)
     @check(checks.check_allowed_channel)
     async def verify_comand(self, ctx, *player_name):
 
