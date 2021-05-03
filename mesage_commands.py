@@ -650,7 +650,7 @@ async def verify_comand(message, player_name, token):
                     + f"- Please use the !link {player_name} command to claim ownership." + "\n" \
                     + "```"
     try:
-        verified = await get_player_verified_status(playerName=player_name, token=token)
+        verified = await get_player_verification_full_status(playerName=player_name, token=token)
     except IndexError:
         verified = 0
 
@@ -721,13 +721,16 @@ async def runAnalysis(regionTrueName, region_id):
     return True
 
 
-async def get_player_verified_status(playerName, token):
+async def get_player_verification_full_status(playerName, token):
 
-    url = f'https://www.osrsbotdetector.com/dev/discord/player_verification_status/{token}/{playerName}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/verify/player_rsn_discord_account_status/{token}/{playerName}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
             if r.status == 200:
                 verify = await r.json()
 
-    return verify[0]['Verified_status']
+                return verify[0]
+
+            else:
+                return None
