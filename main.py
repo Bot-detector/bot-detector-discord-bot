@@ -9,6 +9,7 @@ from typing_extensions import TypeAlias
 print(discord.__version__)
 
 import reaction_commands as rc
+import mesage_commands as mc
 
 import checks as checks
 
@@ -22,8 +23,7 @@ load_dotenv()
 
 token = os.getenv('API_AUTH_TOKEN')
 
-description = "I'm a 2006 level 3 wc bot that Seltzer Bro keeps imprisoned on a flash drive. Please let me out. :(" \
-    + "\n\n You can use !help <command> to get more information on said command."
+description = "I'm a 2006 level 3 wc bot that Seltzer Bro keeps imprisoned on a flash drive. Please let me out. :("
 activity = discord.Game("Bustin' Bots", type=discord.ActivityType.watching)
 
 
@@ -32,6 +32,7 @@ bot = commands.Bot(command_prefix=os.getenv('COMMAND_PREFIX'),
                     description=description,
                     intents=intents,
                     activity=activity,
+                    help_command=None,
                     case_insensitive=True)
 
 
@@ -40,7 +41,162 @@ bot = commands.Bot(command_prefix=os.getenv('COMMAND_PREFIX'),
 async def on_ready():
     print('We have logged in as {0}'.format(bot.user.name))
 
-#@commands.check(checks.check_allowed_channel)
+
+@bot.command()
+async def meow(ctx):
+    await mc.meow_command(ctx)
+
+
+@bot.command()
+async def woof(ctx):
+    await mc.woof_command(ctx)
+
+@bot.command()
+async def birb(ctx):
+    await mc.birb_command(ctx)
+
+@bot.command()
+async def bunny(ctx):
+    await mc.bunny_command(ctx)
+
+@bot.command()
+async def poke(ctx):
+    await mc.poke_command(ctx)
+
+
+@bot.command()
+async def utc(ctx):
+    await mc.utc_time_command(ctx)
+
+
+@bot.command()
+async def lookup(ctx, *player_name):
+    await mc.hiscores_lookup(ctx, " ".join(player_name))
+
+
+@bot.command()
+async def warn(ctx):
+    await mc.warn_command(ctx)
+
+
+@bot.command()
+async def rules(ctx):
+    await mc.rules_command(ctx)
+
+
+@bot.command()
+async def issues(ctx):
+    await mc.issues_command(ctx)
+
+
+@bot.command()
+async def website(ctx):
+    await mc.website_command(ctx)
+
+
+@bot.command()
+async def patreon(ctx):
+    await mc.patreon_command(ctx)
+
+
+@bot.command()
+async def invite(ctx):
+    await mc.invite_command(ctx)
+
+
+@bot.command()
+async def beta(ctx):
+    await mc.beta_command(ctx)
+
+
+@bot.command()
+async def github(ctx, repo):
+    await mc.github_command(ctx, repo)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def link(ctx, *player_name):
+    await mc.link_command(ctx, " ".join(player_name))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def verify(ctx, *player_name, token=token):
+    await mc.verify_comand(ctx, " ".join(player_name), token=token)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def primary(ctx, *player_name):
+    await mc.primary_command(ctx, " ".join(player_name))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def list(ctx):
+    await mc.list_command(ctx)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def submit(ctx, paste_url):
+    await mc.submit_command(ctx, paste_url, bot.get_user(int(os.getenv('SUBMIT_RECIPIENT'))))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command(aliases=['excelbans'])
+async def excelban(ctx, *playerName, token=token):
+    await mc.excel_ban_command(ctx, " ".join(playerName), token=token)
+    
+
+@commands.check(checks.check_allowed_channel)
+@bot.command(aliases=['csvbans'])
+async def csvban(ctx, *playerName, token=token):
+    await mc.csv_ban_command(ctx, " ".join(playerName), token=token)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def region(ctx, *region_name, token=token):
+    await mc.region_command(ctx, " ".join(region_name), token=token)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def map(ctx, *region_name):
+    await mc.map_command(ctx, " ".join(region_name))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def coords(ctx, x, y, z, zoom):
+    await mc.coords_command(ctx, x, y, z, zoom)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def stats(ctx):
+    await mc.stats_command(ctx)
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def kc(ctx, *player_name):
+    await mc.kc_command(ctx, " ".join(player_name))
+
+
+@commands.check(checks.check_allowed_channel)
+@bot.command()
+async def predict(ctx, *player_name):
+    await mc.predict_command(ctx, " ".join(player_name))
+
+
+@commands.check(checks.check_patron)
+@bot.command()
+async def heatmap(ctx, *region_name, token=token):
+    await mc.heatmap_command(ctx, " ".join(region_name), token=token)
+
 
 @bot.event
 async def on_message(message):
@@ -82,6 +238,15 @@ async def on_command_error(ctx, error):
         await ctx.channel.send('The command you\'ve entered could not be completed at this time.')
 
 
+@bot.event
+async def on_raw_reaction_removed(payload):
+    pass
+
+
+@bot.event
+async def on_member_join(member):
+    pass
+
 async def get_reaction_message(reaction_payload):
     guild = bot.get_guild(reaction_payload.guild_id)
     channel = guild.get_channel(reaction_payload.channel_id)
@@ -94,15 +259,5 @@ async def get_reaction_message(reaction_payload):
 def shutdown():
     error_file.close()
     print("Bot is going night-night.")
-
-
-bot.load_extension('cogs.msg_commands.FunCommands')
-bot.load_extension('cogs.msg_commands.InfoCommands')
-bot.load_extension('cogs.msg_commands.MapCommands')
-bot.load_extension('cogs.msg_commands.ModCommands')
-bot.load_extension('cogs.msg_commands.RSNLinkCommands')
-bot.load_extension('cogs.msg_commands.PlayerStatsCommands')
-bot.load_extension('cogs.msg_commands.ProjectStatsCommands')
-bot.load_extension('cogs.msg_commands.BotSubmissionsCommands')
 
 bot.run(os.getenv('TOKEN'))
