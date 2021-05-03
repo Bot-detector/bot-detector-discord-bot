@@ -12,8 +12,8 @@ import help_messages
 
 import sys
 sys.path.append("./utils")
-import string_processing
-import discord_processing
+import utils.string_processing as string_processing
+import utils.discord_processing as discord_processing
 
 from dotenv import load_dotenv
 load_dotenv()
