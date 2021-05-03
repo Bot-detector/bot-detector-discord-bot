@@ -21,77 +21,6 @@ class RSNLinkCommands(Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="primary")
-    @check(checks.check_allowed_channel)
-    async def primary_command(self, ctx, *player_name):
-        discord_id = ctx.author.id
-
-        joinedName = string_processing.joinParams(player_name)
-
-        if not string_processing.is_valid_rsn(joinedName):
-            await ctx.channel.send(joinedName + " isn't a valid Runescape user name.")
-            return
-
-        msgDoesNotExist = "```diff" + "\n" \
-                        + "- Player does not exist. Please verify that you have typed in the username correctly." + "\n" \
-                        + "```"
-        msgNotConnected = "```diff" + "\n" \
-                        + "- You are not connected to this player. You must verify your link to this player with !link <RSN>." + "\n" \
-                        + "```"
-        msgPendingVerification = "```diff" + "\n" \
-                                + "- You are pending verification on this player. Please verify this account with !link <RSN>" + "\n" \
-                                + "```"
-        msgPlayerUnverified = "```diff" + "\n" \
-                            + "- The account you are attempting to link is Unverified. Please !link <RSN> and verify this account." + "\n" \
-                            + "```"
-        msgNULLError = "```diff" + "\n" \
-                    + "- Primary values could not be reset to NULL. Please contact an Administrator." + "\n" \
-                    + "```"
-        msgPrimarySetError = "```diff" + "\n" \
-                            + "- Your player could not be assigned a Primary value. Please contact an Administrator." + "\n" \
-                            + "```"
-        msgConfirmedPrimary = "```diff" + "\n" \
-                            + "+ Player has been successfully updated as Primary." + "\n" \
-                            + "```"
-
-        print(joinedName)
-
-        player_id, exists = sql.verificationPull(joinedName)
-        if exists:
-            check, verified = sql.discord_verification_check(discord_id, player_id)
-            if check:
-                if verified:
-                    data, verified_account = sql.VerifyRSNs(discord_id, player_id)
-                    if verified_account:
-                        PrimaryNULL = sql.insertPrimaryNULL(discord_id)
-                        if PrimaryNULL:
-                            PrimaryTRUE = sql.insertPrimaryTRUE(discord_id, player_id)
-                            if PrimaryTRUE:
-                                print("Player has been successfully updated as Primary.")
-                                msg = msgConfirmedPrimary
-                            else:
-                                print("Your player could not be assigned a Primary value. Please contact an Administrator.")
-                                msg = msgPrimarySetError
-                        else:
-                            print("Primary values could not be reset to NULL. Please contact an Administrator.")
-                            msg = msgNULLError
-                    else:
-                        print(
-                            "The account you are attempting to link is Unverified. Please !link <RSN> and verify this account.")
-                        msg = msgPlayerUnverified
-                else:
-                    print("You are pending verification on this player. Please verify this account with !link <RSN>")
-                    msg = msgPendingVerification
-            else:
-                print("You are not connected to this player. You must verify your link to this player with !link <RSN>.")
-                msg = msgNotConnected
-        else:
-            print("Player does not exist. Please verify that you have typed in the username correctly.")
-            msg = msgDoesNotExist
-
-        await ctx.author.send(msg)
-
-
     @command(name="link")
     @check(checks.check_allowed_channel)
     async def link_command(self,ctx, *player_name):
@@ -173,7 +102,6 @@ class RSNLinkCommands(Cog):
             msg = msgInstallPlugin
 
         await ctx.author.send(msg)
-
 
     @command(name="verify")
     @check(checks.check_allowed_channel)
