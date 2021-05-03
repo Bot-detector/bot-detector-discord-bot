@@ -19,3 +19,5 @@ async def check_patron(ctx):
 
 def check_channels(ctx, channels):
     return ctx.channel.id in channels or ctx.channel.type == 'dm'
+
+

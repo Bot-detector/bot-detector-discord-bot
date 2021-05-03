@@ -4,6 +4,7 @@ import atexit
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from typing_extensions import TypeAlias
 
 print(discord.__version__)
 
@@ -144,13 +145,13 @@ async def submit(ctx, paste_url):
 
 
 @commands.check(checks.check_allowed_channel)
-@bot.command()
+@bot.command(aliases=['excelbans'])
 async def excelban(ctx, *playerName, token=token):
     await mc.excel_ban_command(ctx, " ".join(playerName), token=token)
     
 
 @commands.check(checks.check_allowed_channel)
-@bot.command()
+@bot.command(aliases=['csvbans'])
 async def csvban(ctx, *playerName, token=token):
     await mc.csv_ban_command(ctx, " ".join(playerName), token=token)
 
