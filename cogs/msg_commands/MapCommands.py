@@ -5,6 +5,7 @@ import discord
 import os
 import pandas as pd
 import checks
+import help_messages
 
 import sys
 sys.path.append("./utils")
@@ -15,12 +16,12 @@ from dotenv import load_dotenv
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
-class MapCommands(Cog):
+class MapCommands(Cog, name='Map Commands'):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="region")
+    @command(name="region", description=help_messages.region_help_msg)
     @check(checks.check_allowed_channel)
     async def region_command(self, ctx, *params):
         regionName = string_processing.joinParams(params)
@@ -43,7 +44,7 @@ class MapCommands(Cog):
         await ctx.channel.send(msg)
 
 
-    @command(name="heatmap")
+    @command(name="heatmap", description=help_messages.heatmap_help_msg)
     @check(checks.check_patron)
     async def heatmap_command(self, ctx, *params):
 
@@ -82,7 +83,7 @@ class MapCommands(Cog):
         await info_msg.delete()
 
 
-    @command(name="map")
+    @command(name="map", description=help_messages.map_help_msg)
     @check(checks.check_allowed_channel)
     async def map_command(self, ctx, *params):
 
@@ -112,7 +113,7 @@ class MapCommands(Cog):
         await ctx.channel.send(msg)
 
 
-    @command(name="coords")
+    @command(name="coords", description=help_messages.coords_help_msg)
     @check(checks.check_allowed_channel)
     async def coords_command(self, ctx, x, y, z, zoom):
 

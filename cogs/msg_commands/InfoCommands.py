@@ -4,38 +4,39 @@ from discord.ext.commands import command, check
 import datetime
 from datetime import timezone
 import checks
+import help_messages
 
-class InfoCommands(Cog):
+class InfoCommands(Cog, name='General Info Commands'):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="utc")
+    @command(name="utc", description=help_messages.utc_help_msg)
     @check(checks.check_allowed_channel)
     async def utc_time_command(self, ctx):
         await ctx.channel.send(datetime.now(timezone.utc))
 
-    @command(name="rules")
+    @command(name="rules", description=help_messages.rules_help_msg)
     @check(checks.check_allowed_channel)
     async def rules_command(self, ctx):
         await ctx.channel.send('<#825137784112807946>')
 
-    @command(name="website", aliases=["site"])
+    @command(name="website", aliases=["site"], description=help_messages.website_help_msg)
     @check(checks.check_allowed_channel)
     async def website_command(self, ctx):
         await ctx.channel.send('https://www.osrsbotdetector.com/')
 
-    @command(name="beta")
+    @command(name="beta", description=help_messages.beta_help_msg)
     @check(checks.check_allowed_channel)
     async def beta_command(self, ctx):
         await ctx.channel.send('https://github.com/Bot-detector/bot-detector/wiki/Running-the-Development-Version-From-Source')
 
-    @command(name="patreon")
+    @command(name="patreon", description=help_messages.patreon_help_msg)
     @check(checks.check_allowed_channel)
     async def patreon_command(self, ctx):
         await ctx.channel.send('https://www.patreon.com/bot_detector')
 
-    @command(name="github")
+    @command(name="github", description=help_messages.github_help_msg)
     @check(checks.check_allowed_channel)
     async def github_command(self, ctx, repo):
         repos = {
@@ -52,13 +53,13 @@ class InfoCommands(Cog):
         await ctx.channel.send(repo_url)
 
 
-    @command(name="invite")
+    @command(name="invite", description=help_messages.invite_help_msg)
     @check(checks.check_allowed_channel)
     async def invite_command(self, ctx):
         await ctx.channel.send('https://discord.com/invite/JCAGpcjbfP')
 
 
-    @command(name="issues", aliases=["issue"])
+    @command(name="issues", aliases=["issue"], description=help_messages.issues_help_msg)
     @check(checks.check_allowed_channel)
     async def issues_command(self, ctx):
         await ctx.channel.send('<#822851862016950282>')

@@ -6,6 +6,7 @@ import discord
 import aiohttp
 from OSRS_Hiscores import Hiscores
 import checks
+import help_messages
 import pandas as pd
 
 import sys
@@ -17,12 +18,12 @@ load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
 
-class PlayerStatsCommands(Cog):
+class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="lookup", aliases=["hiscores"])
+    @command(name="lookup", aliases=["hiscores"], description=help_messages.lookup_help_msg)
     @check(checks.check_allowed_channel)
     async def hiscores_lookup(self, ctx, *param):
 
@@ -62,7 +63,7 @@ class PlayerStatsCommands(Cog):
         await intro_msg.delete()
 
 
-    @command(name="kc", aliases=["killcount"])
+    @command(name="kc", aliases=["killcount"], description=help_messages.kc_help_msg)
     @check(checks.check_allowed_channel)
     async def kc_command(self, ctx, *params):
         playerName = string_processing.joinParams(params)
@@ -89,7 +90,7 @@ class PlayerStatsCommands(Cog):
                     await ctx.channel.send(f"Couldn't grab the !kc for {playerName}")
 
 
-    @command(name="predict")
+    @command(name="predict", description=help_messages.predict_help_msg)
     @check(checks.check_allowed_channel)
     async def predict_command(self, ctx, *params):
         playerName = string_processing.joinParams(params)
@@ -173,12 +174,12 @@ class PlayerStatsCommands(Cog):
                     await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
 
 
-    @command(name="excelban")
+    @command(name="excelban", description=help_messages.excelban_help_msg)
     @check(checks.check_allowed_channel)
     async def excel_ban_command(self, ctx, *params):
         await self.export_bans(ctx, params, 'excel')
 
-    @command(name="csvban")
+    @command(name="csvban", description=help_messages.csvban_help_msg)
     @check(checks.check_allowed_channel)
     async def csv_ban_command(self, ctx, *params):
         await self.export_bans(ctx, params, 'csv')
