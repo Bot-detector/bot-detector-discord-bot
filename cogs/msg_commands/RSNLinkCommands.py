@@ -11,6 +11,7 @@ import checks
 import sys
 sys.path.append("./utils")
 import string_processing
+import discord_processing
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,7 +24,7 @@ class RSNLinkCommands(Cog):
 
     @command(name="link")
     @check(checks.check_allowed_channel)
-    async def link_command(self,ctx, *player_name):
+    async def link_command(self ,ctx, *player_name):
 
         joinedName = string_processing.joinParams(player_name)
 
@@ -36,20 +37,19 @@ class RSNLinkCommands(Cog):
 
         msgPassed = "```diff" + "\n" \
                     + "====== STATUS ======\n" \
-                    + "Request to link RSN: " + str(joinedName ) + "\n" \
-                    + "Your discord ID is: " + str(discord_id) + "\n" \
-                    + "Access Code: " + str(code) + "\n" \
+                    + f"Request to link RSN: {joinedName} \n" \
+                    + f"Your discord ID is: {discord_id} \n" \
+                    + f"Access Code: {code} \n" \
                     + "====== SETUP ======\n" \
                     + "+ Please read through these instructions." + "\n" \
                     + "+ 1. Open Old School Runescape through RuneLite." + "\n" \
-                    + "+ 2. Login as: '" + str(joinedName ) + "'." + "\n" \
+                    + f"+ 2. Login as: '{joinedName}' \n" \
                     + "+ 3. Join the clan channel: 'Ferrariic'." + "\n" \
                     + "+ 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
                     + "+ 5. If a Plugin Admin or Plugin Moderator is not available, please leave a ctx in #bot-commands." + "\n" \
-                    + "+ 6. Type into the Clan Chat: '!Code " + str(code) + "'." + "\n" \
-                    + "+ 7. Type '!verify " + str(
-            joinedName ) + "' in #bot-commands channel to confirm that you have been Verified." + "\n" \
-                    + "+ 9. Verification Process Complete." + "\n" \
+                    + f"+ 6. Type into the Clan Chat: '!Code {code}' \n" \
+                    + f"+ 7. Type '!verify {joinedName}' in #bot-commands channel to confirm that you have been Verified." + "\n" \
+                    + "+ 8. Verification Process Complete." + "\n" \
                     + "====== INFO ======\n" \
                     + "+ You may link multiple Runescape accounts via this method." + "\n" \
                     + "+ If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
@@ -71,37 +71,38 @@ class RSNLinkCommands(Cog):
                         + "```"
 
         msgVerified = "```diff" + "\n" \
-                    + "+ Player: " + str(joinedName ) + "\n" \
+                    + f"+ Player: {player_name} \n" \
                     + "====== Verification Information ======\n" \
                     + "+ Player is: Verified." + "\n" \
                     + "```"
 
-        msgUnverified = "```diff" + "\n" \
-                        + "+ Player: " + str(joinedName ) + "\n" \
-                        + "====== Verification Information ======\n" \
-                        + "- Player is: Unverified." + "\n" \
-                        + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
-                        + "```"
+        verifyID = await discord_processing.get_playerid_verification(playerName=player_name, token=token)
 
-        player_id, exists = sql.verificationPull(joinedName )
-        if exists:
-            check, verified, owner_list = sql.verification_check(player_id)
-            if verified:
-                msg = msgVerified
-            else:
-                if check:
-                    if int(discord_id) not in owner_list:
-                        sql.verificationInsert(discord_id, player_id, code)
-                        msg = msgPassed
-                    else:
-                        msg = msgInUse
-                else:
-                    sql.verificationInsert(discord_id, player_id, code)
-                    msg = msgPassed
+        if verifyID == None:
+            await ctx.channel.send(msgInstallPlugin)
+            return
+
+        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=player_name, token=token)
+        if verifyStatus == None:
+            return
         else:
-            msg = msgInstallPlugin
+            
+            isVerified = verifyStatus['Verified_status']
 
-        await ctx.author.send(msg)
+            if isVerified == 1:
+                owner_verified_info = await discord_processing.get_verified_player_info(playerName=player_name, token=token)
+                ownerID = owner_verified_info['Discord_id']
+                if ownerID == discord_id:
+                    ctx.channel.send(msgVerified)
+                    return
+
+        try:
+            msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
+            await ctx.channel.send(msgPassed)
+        except Exception as e:
+            pass
+
+    
 
     @command(name="verify")
     @check(checks.check_allowed_channel)
