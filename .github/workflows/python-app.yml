@@ -25,7 +25,6 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
         (test -d env && rm -rf env)
         source ./env/bin/activate
         pip3 install flake8 pytest
@@ -45,6 +44,7 @@ jobs:
           echo "${{ secrets.DB_NAME_PLAYERS }}" >> .env
           echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
           echo "${{ secrets.DISCORD_BOT_ID }}" >> .env
+          echo "COMMAND_PREFIX='!'" >> .env
           
       - name: run_bot
         run: |
