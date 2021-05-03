@@ -98,6 +98,7 @@ def shutdown():
 bot.load_extension('cogs.msg_commands.FunCommands')
 bot.load_extension('cogs.msg_commands.InfoCommands')
 bot.load_extension('cogs.msg_commands.MapCommands')
+bot.load_extension('cogs.msg_commands.ModCommands')
 bot.load_extension('cogs.msg_commands.RSNLinkCommands')
 bot.load_extension('cogs.msg_commands.PlayerStatsCommands')
 bot.load_extension('cogs.msg_commands.ProjectStatsCommands')
