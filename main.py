@@ -40,7 +40,6 @@ bot = commands.Bot(command_prefix=os.getenv('COMMAND_PREFIX'),
 async def on_ready():
     print('We have logged in as {0}'.format(bot.user.name))
 
-#@commands.check(checks.check_allowed_channel)
 
 @bot.event
 async def on_message(message):
