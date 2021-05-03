@@ -4,6 +4,7 @@ import atexit
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+from typing_extensions import TypeAlias
 
 print(discord.__version__)
 
