@@ -37,6 +37,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         code = string_processing.id_generator()
         discord_id = ctx.author.id
 
+
         msgPassed = "```diff" + "\n" \
                     + "====== STATUS ======\n" \
                     + f"Request to link RSN: {joinedName} \n" \
@@ -57,20 +58,23 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                     + "+ If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
                     + "+ In the event of a name change please allow some time for your data to be transferred over." + "\n" \
                     + "====== NOTICE ======\n" \
-                    + "- Do not delete this ctx." + "\n" \
+                    + "- Do not delete this message." + "\n" \
                     + "- If this RSN was submitted in error, please type '!link <Your Correct RSN>'." + "\n" \
                     + "- This code will not expire, it is tied to your unique RSN:Discord Pair." + "\n" \
                     + "- If you are unable to become 'Verified' through this process, please contact an administrator for assistance." + "\n" \
                     + "```"
 
+
         msgInUse = "```diff" + "\n" \
                 + "- RSN is currently in use. Please contact an Administrator." + "\n" \
                 + "```"
+
 
         msgInstallPlugin = "```diff" + "\n" \
                         + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
                         + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
                         + "```"
+
 
         msgVerified = "```diff" + "\n" \
                     + f"+ Player: {player_name} \n" \
@@ -86,7 +90,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=player_name, token=token)
         if verifyStatus == None:
-            return
+            return  
         else:
             
             isVerified = verifyStatus['Verified_status']
