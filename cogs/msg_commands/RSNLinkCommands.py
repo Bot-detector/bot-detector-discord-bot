@@ -11,6 +11,7 @@ import checks
 import sys
 sys.path.append("./utils")
 import string_processing
+import discord_processing
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -23,7 +24,7 @@ class RSNLinkCommands(Cog):
 
     @command(name="link")
     @check(checks.check_allowed_channel)
-    async def link_command(self,ctx, *player_name):
+    async def link_command(self ,ctx, *player_name):
 
         joinedName = string_processing.joinParams(player_name)
 
@@ -37,18 +38,18 @@ class RSNLinkCommands(Cog):
 
         msgPassed = "```diff" + "\n" \
                     + "====== STATUS ======\n" \
-                    + f"Request to link RSN: {player_name} \n" \
+                    + f"Request to link RSN: {joinedName} \n" \
                     + f"Your discord ID is: {discord_id} \n" \
                     + f"Access Code: {code} \n" \
                     + "====== SETUP ======\n" \
                     + "+ Please read through these instructions." + "\n" \
                     + "+ 1. Open Old School Runescape through RuneLite." + "\n" \
-                    + f"+ 2. Login as: '{player_name}' \n" \
+                    + f"+ 2. Login as: '{joinedName}' \n" \
                     + "+ 3. Join the clan channel: 'Ferrariic'." + "\n" \
                     + "+ 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
-                    + "+ 5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-commands." + "\n" \
+                    + "+ 5. If a Plugin Admin or Plugin Moderator is not available, please leave a ctx in #bot-commands." + "\n" \
                     + f"+ 6. Type into the Clan Chat: '!Code {code}' \n" \
-                    + f"+ 7. Type '!verify {player_name}' in #bot-commands channel to confirm that you have been Verified." + "\n" \
+                    + f"+ 7. Type '!verify {joinedName}' in #bot-commands channel to confirm that you have been Verified." + "\n" \
                     + "+ 8. Verification Process Complete." + "\n" \
                     + "====== INFO ======\n" \
                     + "+ You may link multiple Runescape accounts via this method." + "\n" \
@@ -79,16 +80,13 @@ class RSNLinkCommands(Cog):
                     + "+ Player is: Verified." + "\n" \
                     + "```"
 
-
-        verifyID = await self.get_playerid_verification(playerName=player_name, token=token)
-
+        verifyID = await discord_processing.get_playerid_verification(playerName=player_name, token=token)
 
         if verifyID == None:
-            await ctx.author.send(msgInstallPlugin)
+            await ctx.channel.send(msgInstallPlugin)
             return
 
-
-        verifyStatus = await self.get_player_verification_full_status(playerName=player_name, token=token)
+        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=player_name, token=token)
         if verifyStatus == None:
             return
         else:
@@ -96,70 +94,19 @@ class RSNLinkCommands(Cog):
             isVerified = verifyStatus['Verified_status']
 
             if isVerified == 1:
-                owner_verified_info = await self.get_verified_player_info(playerName=player_name, token=token)
+                owner_verified_info = await discord_processing.get_verified_player_info(playerName=player_name, token=token)
                 ownerID = owner_verified_info['Discord_id']
                 if ownerID == discord_id:
-                    ctx.author.send(msgVerified)
+                    ctx.channel.send(msgVerified)
                     return
 
         try:
-            messagetxt = await self.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
-            print(messagetxt)
-            await ctx.author.send(msgPassed)
+            msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
+            await ctx.channel.send(msgPassed)
         except Exception as e:
             pass
 
-        await ctx.author.send("Nice.")
-            
-
-    async def get_player_verification_full_status(playerName, token):
-
-        url = f'https://www.osrsbotdetector.com/dev/discord/verify/player_rsn_discord_account_status/{token}/name'
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status == 200:
-                    data = await r.json()
-
-        try:
-            return data[0]
-        except:
-            return None
-
-    async def get_playerid_verification(playerName, token):
-
-        url = f'https://www.osrsbotdetector.com/dev/discord/verify/playerid/{token}/{playerName}'
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status == 200:
-                    playerIDverif = await r.json()
-
-        try:
-            return playerIDverif[0]
-        except:
-            return None
-
-    async def get_verified_player_info(playerName, token):
-
-        url = f'https://www.osrsbotdetector.com/dev/discord/verify/verified_player_info/{token}/{playerName}'
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status == 200:
-                    vplayerinfo = await r.json()
-
-        return vplayerinfo[0]
-
-    async def post_discord_player_info(discord_id, player_id, code, token):
-
-        id = player_id['id']
-
-        url = f'https://www.osrsbotdetector.com/dev/discord/verify/insert_player_dpc/{token}/{discord_id}/{id}/{code}'
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url) as r:
-                return await r.json() if r.status == 200 else {"error":f"Failed: {r.status} error"}
+    
 
     @command(name="verify")
     @check(checks.check_allowed_channel)
