@@ -16,6 +16,7 @@ async def get_player_verification_full_status(playerName, token):
     except:
         return None
 
+
 async def get_playerid_verification(playerName, token):
 
     url = f'{BASE_URL}/discord/verify/playerid/{token}/{playerName}'
@@ -33,6 +34,7 @@ async def get_playerid_verification(playerName, token):
     except:
         return None
 
+
 async def get_verified_player_info(playerName, token):
 
     url = f'{BASE_URL}/discord/verify/verified_player_info/{token}/{playerName}'
@@ -44,6 +46,7 @@ async def get_verified_player_info(playerName, token):
 
     return vplayerinfo[0]
 
+
 async def post_discord_player_info(discord_id, player_id, code, token):
 
     id = player_id['id']
@@ -53,3 +56,15 @@ async def post_discord_player_info(discord_id, player_id, code, token):
     async with aiohttp.ClientSession() as session:
         async with session.post(url) as r:
             return await r.json() if r.status == 200 else {"error":f"Failed: {r.status} error"}
+
+
+async def get_linked_accounts(discord_id, token):
+
+    url = f'{BASE_URL}/discord/get_linked_accounts/{token}/{discord_id}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                linkedAccounts = await r.json()
+
+    return linkedAccounts
