@@ -10,8 +10,6 @@ import sql
 import checks
 import help_messages
 
-import sys
-sys.path.append("./utils")
 import utils.string_processing as string_processing
 import utils.discord_processing as discord_processing
 
@@ -106,7 +104,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         try:
             msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
-            await ctx.channel.send(msgPassed)
+            await ctx.author.send(msgPassed)
         except Exception as e:
             print(e)
             pass
@@ -137,6 +135,12 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                         + "- Player is: Unverified." + "\n" \
                         + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
                         + "```"
+
+        try:
+            verified = await discord_processing.get_player_verification_full_status(joinedName, token)
+        except IndexError:
+            verified = 0
+
 
         if isVerified:
             msg = msgVerified

@@ -7,10 +7,8 @@ import pandas as pd
 import checks
 import help_messages
 
-import sys
-sys.path.append("./utils")
-import map_processing
-import string_processing
+import utils.string_processing as string_processing
+import utils.map_processing as map_processing
 
 from dotenv import load_dotenv
 load_dotenv()
