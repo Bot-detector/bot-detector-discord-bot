@@ -1,9 +1,6 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command
 
-import datetime
-from datetime import timezone
-
 class ModCommands(Cog, name='Moderator Commands'):
 
     def __init__(self, bot):
