@@ -9,9 +9,8 @@ import checks
 import help_messages
 import pandas as pd
 
-import sys
-sys.path.append("./utils")
-import string_processing
+import utils.string_processing as string_processing
+import utils.discord_processing as discord_processing
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -146,9 +145,22 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
     async def export_bans(self, ctx, params, filetype):
         playerName = string_processing.joinParams(params)
+        discord_id = ctx.author.id
 
         if not string_processing.is_valid_rsn(playerName):
             await ctx.channel.send(playerName + " isn't a valid Runescape user name.")
+            return
+
+        status = await discord_processing.get_player_verification_full_status(playerName=playerName, token=token)
+        owner_id = status['Discord_id']
+        verified = status['Verified_status']
+
+        if discord_id != owner_id:
+            await ctx.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
+            return
+        
+        if verified == 0:
+            await ctx.channel.send("You must complete the verification process for: '" + playerName + "'. Please check your DMs for a previously sent verification token.")
             return
 
         info_msg = await ctx.channel.send("Getting that data for you right now! One moment, please :)")
@@ -174,12 +186,12 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
 
 
-    @command(name="excelban", description=help_messages.excelban_help_msg)
+    @command(name="excelban", aliases=["excelbans"], description=help_messages.excelban_help_msg)
     @check(checks.check_allowed_channel)
     async def excel_ban_command(self, ctx, *params):
         await self.export_bans(ctx, params, 'excel')
 
-    @command(name="csvban", description=help_messages.csvban_help_msg)
+    @command(name="csvban", aliases=["csvbans"], description=help_messages.csvban_help_msg)
     @check(checks.check_allowed_channel)
     async def csv_ban_command(self, ctx, *params):
         await self.export_bans(ctx, params, 'csv')

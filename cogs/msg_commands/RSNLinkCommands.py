@@ -10,10 +10,8 @@ import sql
 import checks
 import help_messages
 
-import sys
-sys.path.append("./utils")
-import string_processing
-import discord_processing
+import utils.string_processing as string_processing
+import utils.discord_processing as discord_processing
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -133,7 +131,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                         + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
                         + "```"
         try:
-            verified = await self.get_player_verified_status(joinedName)
+            verified = await discord_processing.get_player_verification_full_status(joinedName, token)
         except IndexError:
             verified = 0
 
@@ -143,17 +141,6 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             msg = msgUnverified
 
         await ctx.channel.send(msg)
-
-    async def get_player_verified_status(self, player_name):
-
-        url = f'https://www.osrsbotdetector.com/dev/discord/player_verification_status/{token}/{player_name}'
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status == 200:
-                    verify = await r.json()
-
-        return verify[0]['Verified_status']
 
 def setup(bot):
     bot.add_cog(RSNLinkCommands(bot))
