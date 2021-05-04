@@ -104,7 +104,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         try:
             msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
-            await ctx.channel.send(msgPassed)
+            await ctx.author.send(msgPassed)
         except Exception as e:
             pass
 
