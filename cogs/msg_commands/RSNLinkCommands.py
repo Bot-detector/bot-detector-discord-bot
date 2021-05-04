@@ -71,42 +71,44 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         msgInstallPlugin = "```diff" + "\n" \
                         + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
                         + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
+                        + "- Please turn off Anonymous mode." + "\n" \
                         + "```"
 
 
         msgVerified = "```diff" + "\n" \
-                    + f"+ Player: {player_name} \n" \
+                    + f"+ Player: {joinedName} \n" \
                     + "====== Verification Information ======\n" \
                     + "+ Player is: Verified." + "\n" \
                     + "```"
 
-        verifyID = await discord_processing.get_playerid_verification(playerName=player_name, token=token)
+        verifyID = await discord_processing.get_playerid_verification(playerName=joinedName, token=token)
 
         if verifyID == None:
             await ctx.channel.send(msgInstallPlugin)
             return
 
-        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=player_name, token=token)
+        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
+
         if verifyStatus == None:
-            return  
+            pass
         else:
             
-            isVerified = verifyStatus['Verified_status']
+            isVerified = verifyStatus['Verified_status'] #returns verify status
 
             if isVerified == 1:
-                owner_verified_info = await discord_processing.get_verified_player_info(playerName=player_name, token=token)
+                owner_verified_info = await discord_processing.get_verified_player_info(playerName=joinedName, token=token)
                 ownerID = owner_verified_info['Discord_id']
                 if ownerID == discord_id:
-                    ctx.channel.send(msgVerified)
+                    await ctx.channel.send(msgVerified)
                     return
 
         try:
             msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
             await ctx.author.send(msgPassed)
         except Exception as e:
+            print(e)
             pass
 
-    
 
     @command(name="verify", description=help_messages.verify_help_msg)
     @check(checks.check_allowed_channel)
@@ -117,6 +119,9 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         if not string_processing.is_valid_rsn(joinedName):
             await ctx.channel.send(joinedName + " isn't a valid Runescape user name.")
             return
+
+        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
+        isVerified = verifyStatus['Verified_status'] #returns verify status
 
         msgVerified = "```diff" + "\n" \
                     + "+ Player: " + str(joinedName) + "\n" \
@@ -130,12 +135,14 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                         + "- Player is: Unverified." + "\n" \
                         + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
                         + "```"
+
         try:
             verified = await discord_processing.get_player_verification_full_status(joinedName, token)
         except IndexError:
             verified = 0
 
-        if verified:
+
+        if isVerified:
             msg = msgVerified
         else:
             msg = msgUnverified
