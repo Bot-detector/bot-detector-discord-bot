@@ -1,11 +1,13 @@
 from discord.ext.commands import Cog
-from discord.ext.commands import command, check
+from discord.ext.commands import command, check, has_permissions
 
 import os
 import discord
 import aiohttp
 from OSRS_Hiscores import Hiscores
+from discord.ext.commands.converter import MemberConverter
 import checks
+import roles
 import help_messages
 import pandas as pd
 
@@ -88,6 +90,55 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 else:
                     await ctx.channel.send(f"Couldn't grab the !kc for {playerName}")
 
+
+    #rank up '/discord/get_linked_accounts/<token>/<discord_id>
+    @command(name="rankup", aliases=["updaterank"], description=help_messages.rankup_help_msg)
+    @has_permissions(manage_roles = True)
+    @check(checks.check_allowed_channel)
+    async def rankup_command(self, ctx):
+        member = ctx.author
+
+        linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
+
+        if(len(linkedAccounts) == 0):
+            mbed = discord.Embed (
+                description = f"You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so."
+            )
+
+            await ctx.channel.send(embed=mbed)
+            return
+        else:
+            for r in member.roles:
+                if r.id == roles.special_roles["verified_rsn"]:
+                    #awesome, you're verified.
+                    break
+
+            else:
+                verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["verified_rsn"], member.guild.roles)
+                await member.add_roles(verified_role)
+
+
+        bot_hunter_role = await roles.get_bot_hunter_role(linkedAccounts, member)
+
+        if(bot_hunter_role == False):
+            mbed = discord.Embed (
+                description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)"
+            )
+
+            await ctx.channel.send(embed=mbed)
+            return
+
+        await roles.remove_old_roles(member)
+        await member.add_roles(bot_hunter_role)
+
+        ''' Leave this commented out until we clean out the multi-ranks
+        mbed = discord.Embed (
+                description = f"{ctx.author}, you are now a {bot_hunter_role}!"
+            )
+
+        await ctx.channel.send(embed=mbed)
+        '''
+        return
 
     @command(name="predict", description=help_messages.predict_help_msg)
     @check(checks.check_allowed_channel)
