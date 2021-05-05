@@ -54,7 +54,7 @@ async def get_bot_hunter_role(verifiedPlayers, member):
 
     if(bans == 0):
         return False #No rank just yet
-    elif(bans < 5):
+    elif(bans == 1):
         return discord.utils.find(lambda r: r.id == bot_hunter_roles[1]["role_id"], member.guild.roles)
     else:
         kc_amounts = list(bot_hunter_roles.keys())

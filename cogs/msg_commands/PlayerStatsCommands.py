@@ -96,11 +96,14 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
     @has_permissions(manage_roles = True)
     @check(checks.check_allowed_channel)
     async def rankup_command(self, ctx):
+        #member = ctx.author
         member = ctx.author
+        print(member)
 
         linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
 
         if(len(linkedAccounts) == 0):
+            print("No accounts see")
             mbed = discord.Embed (
                 description = f"You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so."
             )
@@ -111,14 +114,17 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             for r in member.roles:
                 if r.id == roles.special_roles["verified_rsn"]:
                     #awesome, you're verified.
+                    print("verified already")
                     break
 
             else:
+                print("adding verification")
                 verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["verified_rsn"], member.guild.roles)
                 await member.add_roles(verified_role)
 
 
         bot_hunter_role = await roles.get_bot_hunter_role(linkedAccounts, member)
+        print(bot_hunter_role)
 
         if(bot_hunter_role == False):
             mbed = discord.Embed (

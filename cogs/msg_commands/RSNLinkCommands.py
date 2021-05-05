@@ -90,9 +90,8 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
         if verifyStatus == None:
-            pass
+            return
         else:
-            
             isVerified = verifyStatus['Verified_status'] #returns verify status
 
             if isVerified == 1:
@@ -116,13 +115,6 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         joinedName = string_processing.joinParams(player_name)
 
-        if not string_processing.is_valid_rsn(joinedName):
-            await ctx.channel.send(joinedName + " isn't a valid Runescape user name.")
-            return
-
-        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
-        isVerified = verifyStatus['Verified_status'] #returns verify status
-
         msgVerified = "```diff" + "\n" \
                     + "+ Player: " + str(joinedName) + "\n" \
                     + "====== Verification Information ======\n" \
@@ -136,18 +128,25 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                         + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
                         + "```"
 
-        try:
-            verified = await discord_processing.get_player_verification_full_status(joinedName, token)
-        except IndexError:
-            verified = 0
+        
+        if not string_processing.is_valid_rsn(joinedName):
+            await ctx.channel.send(joinedName + " isn't a valid Runescape user name.")
+            return
 
+        verifyData = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
-        if isVerified:
-            msg = msgVerified
+        if verifyData == None:
+            await ctx.channel.send(msgUnverified)
+            return
         else:
-            msg = msgUnverified
+            for data in verifyData:
+                if data['Verified_status'] == 1:
+                    await ctx.channel.send(msgVerified)
+                    return
+            else:
+                await ctx.channel.send(msgUnverified)
+            return
 
-        await ctx.channel.send(msg)
 
 def setup(bot):
     bot.add_cog(RSNLinkCommands(bot))

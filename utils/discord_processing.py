@@ -10,9 +10,8 @@ async def get_player_verification_full_status(playerName, token):
         async with session.get(url) as r:
             if r.status == 200:
                 data = await r.json()
-
     try:
-        return data[0]
+        return data
     except:
         return None
 
