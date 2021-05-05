@@ -6,6 +6,8 @@ import aiohttp
 from random import randint
 import checks
 import help_messages
+import subprocess
+
 
 
 class FunCommands(Cog, name="Fun Commands"):
@@ -16,11 +18,19 @@ class FunCommands(Cog, name="Fun Commands"):
     @check(checks.check_allowed_channel)
     async def poke_command(self, ctx):
 
-        latency = round(self.bot.latency,3)
+        discord_latency = round(self.bot.latency,3)
+        ping_api = subprocess.check_call(['ping','-c1','www.osrsbotdetector.com'])
+        #bot_api_latency = ping_api
+
+        if ping_api == 0:
+            isServerUp = "Online"
+        else:
+            isServerUp = "Uh-Oh"
 
         mbed = discord.Embed(color=0x00ff)
         mbed.add_field (name="Teehee", value=f":3", inline=False)
-        mbed.add_field (name="Ping:", value=f"{latency} ms", inline=False)
+        mbed.add_field (name="Discord Ping:", value=f"{discord_latency} ms", inline=False)
+        mbed.add_field (name="BD API Status:", value=f"{isServerUp}", inline=False)
         await ctx.channel.send(embed=mbed)
 
     @command(name="meow", description=help_messages.meow_help_msg)

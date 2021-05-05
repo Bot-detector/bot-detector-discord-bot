@@ -12,4 +12,4 @@ ipython
 OSRS_Hiscores
 aiohttp
 openpyxl
-tcping
+pythonping
