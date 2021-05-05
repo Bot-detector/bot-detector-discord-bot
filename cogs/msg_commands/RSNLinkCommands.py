@@ -1,12 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command, check
 
-import re
 import os
-import aiohttp
-import string
-import random
-import sql
 import checks
 import help_messages
 
@@ -154,6 +149,12 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             else:
                 await ctx.channel.send(msgUnverified)
             return
+
+    @command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
+    @check(checks.check_allowed_channel)
+    async def verify_comand(self, ctx):
+
+        pass
 
 
 def setup(bot):

@@ -2,7 +2,7 @@ from discord.ext.commands import Cog
 from discord.ext.commands import command, check
 
 import os
-import sql
+import utils.sql as sql
 import checks
 import help_messages
 import pandas as pd
