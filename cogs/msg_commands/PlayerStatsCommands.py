@@ -184,7 +184,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         return
 
 
-    @command(name="predict", description=help_messages.predict_help_msg)
+    @command(name="predict", aliases=["detect"], description=help_messages.predict_help_msg)
     @check(checks.check_allowed_channel)
     async def predict_command(self, ctx, *params):
         playerName = string_processing.joinParams(params)
