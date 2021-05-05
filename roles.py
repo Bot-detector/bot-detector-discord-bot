@@ -66,9 +66,9 @@ async def get_bot_hunter_role(verifiedPlayers, member):
         kc_placement = bisect.bisect(kc_amounts, bans)
 
         if kc_amounts[kc_placement] == bans:
-            role_key = kc_placement
+            role_key = kc_amounts[kc_placement]
         elif kc_amounts[kc_placement + 1] == bans:
-            role_key = kc_placement + 1
+            role_key = kc_amounts[kc_placement + 1]
         else:
             role_key = kc_amounts[kc_placement - 1]
 
