@@ -151,8 +151,6 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
         new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
 
-        print(current_role.color)
-
         if(new_role == False):
             mbed = discord.Embed (
                 description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
