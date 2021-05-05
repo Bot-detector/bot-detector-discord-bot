@@ -74,6 +74,8 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_command_error(ctx, error):
+    await ctx.author.guild.fetch_member(219327430064603137).send(error)
+
     if not isinstance(error, commands.CheckFailure):
         print('Ignoring exception in command {}:'.format(ctx.command), file=error_file)
         traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
