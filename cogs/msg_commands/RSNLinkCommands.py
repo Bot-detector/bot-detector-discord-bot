@@ -26,8 +26,8 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
-        if player_name is None:
-            await ctx.channel.send("Please specify the RSN of the account you'd wish to link.")
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
             return
 
         joinedName = string_processing.joinParams(player_name)
@@ -116,6 +116,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @command(name="verify", description=help_messages.verify_help_msg)
     @check(checks.check_allowed_channel)
     async def verify_comand(self, ctx, *player_name):
+
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
+            return
 
         joinedName = string_processing.joinParams(player_name)
 

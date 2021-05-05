@@ -124,7 +124,6 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
     @command(name="rankup", aliases=["updaterank"], description=help_messages.rankup_help_msg)
-    @has_permissions(manage_roles = True)
     @check(checks.check_allowed_channel)
     async def rankup_command(self, ctx):
         member = ctx.author
