@@ -249,8 +249,8 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             await ctx.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
             return
 
-        owner_id = status['Discord_id']
-        verified = status['Verified_status']
+        owner_id = status[0]['Discord_id']
+        verified = status[0]['Verified_status']
 
         if discord_id != owner_id:
             await ctx.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
