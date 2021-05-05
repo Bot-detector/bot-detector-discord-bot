@@ -102,4 +102,6 @@ link_help_msg = f"Usage: !link <your OSRS name> Allows you to pair an OSRS accou
     + "Currently, linking allows you to vote on predictions with reactions in #bot-commands and receive your ban breakdowns with !excelban and !csvban. " \
     +"\n\nYOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin."
 
+linked_help_msg = f"The bot will DM you which OSRS accounts are linked to your Discord ID."
+
 verify_help_msg = f"Usage: !verify <player name> Shows the verification status of a player."
