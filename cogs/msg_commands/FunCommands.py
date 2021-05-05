@@ -22,8 +22,6 @@ class FunCommands(Cog, name="Fun Commands"):
         mbed.add_field (name="Ping:", value=f"{latency} ms", inline=False)
         await ctx.channel.send(embed=mbed)
 
-        await ctx.channel.send()
-
     @command(name="meow", description=help_messages.meow_help_msg)
     @check(checks.check_allowed_channel)
     async def meow_command(self, ctx):
