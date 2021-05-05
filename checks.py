@@ -1,4 +1,4 @@
-allowed_channels = [825189024074563614]
+allowed_channels = [825189024074563614, 834028368147775488]
 patron_channels = [834028368147775488, 822589004028444712, 834307018406756352, 834307467793399808, 830783778325528626, 833479046821052436, 834307018406756352, 834307467793399808]
 
 patron_roles = [833455217420927027, 818528428851855361, 830782790786220104, 822589202964152370, 837324705472053299]
@@ -14,7 +14,7 @@ async def check_patron(ctx):
     if result:
         return result
     else:
-        await ctx.channel.send("This command cannot be executed in this channel.")
+        await ctx.channel.send("This is Patreon-Only command. It must be ran in #patron-chat-channel.")
 
 
 def check_channels(ctx, channels):
