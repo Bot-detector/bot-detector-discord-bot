@@ -79,15 +79,15 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 )
 
                 await ctx.channel.send(embed=mbed)
+                return
 
             contributions =  await roles.get_multi_player_contributions(linkedAccounts)
 
-            displayName = ctx.author.display_name
             bans = contributions[0]
             possible_bans = contributions[1]
             reports = contributions[2]
 
-            mbed = discord.Embed(title=f"{displayName}'s Stats", color=0x00ff00)
+            mbed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
             mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
             mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
@@ -163,7 +163,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         if new_role is not current_role:
             mbed = discord.Embed (
-                    description = f"{ctx.author}, you are now a {new_role}!"
+                    description = f"{ctx.author.display_name}, you are now a {new_role}!"
                 )
 
             mbed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
