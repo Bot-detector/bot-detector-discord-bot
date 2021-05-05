@@ -64,7 +64,13 @@ async def get_bot_hunter_role(verifiedPlayers, member):
     else:
         kc_amounts = list(bot_hunter_roles.keys())
         kc_placement = bisect.bisect(kc_amounts, bans)
-        role_key = kc_amounts[kc_placement - 1]
+
+        if kc_amounts[kc_placement] == bans:
+            role_key = kc_placement
+        elif kc_amounts[kc_placement + 1] == bans:
+            role_key = kc_placement + 1
+        else:
+            role_key = kc_amounts[kc_placement - 1]
 
         return discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
 
