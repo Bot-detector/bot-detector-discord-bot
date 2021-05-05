@@ -71,8 +71,8 @@ kc_help_msg = f"Usage: !kc <player name> Shows how many reports (passive and man
     + "and home many possible and confirmed bans have resulted from those reports."
 
 rankup_help_msg = f"Have you been an absolute reaper of bots, and you want your Discord rank to reflect it? Calling this command will " \
-    + "tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with you Discord " \
-    + "ID. The bot will tally up your KC from all accounts you have linked. This command also will give you the Verified RSN role."
+    + "tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with your Discord " \
+    + "ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role."
 
 predict_help_msg = f"Usage: !predict <player name> Runs the player through our machine learning model " \
     + "and displays the classifications the ML model assigns to the player. Note that any line with a confidence below "\
