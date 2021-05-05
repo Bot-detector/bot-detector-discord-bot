@@ -14,7 +14,7 @@ class InfoCommands(Cog, name='General Info Commands'):
     @command(name="utc", description=help_messages.utc_help_msg)
     @check(checks.check_allowed_channel)
     async def utc_time_command(self, ctx):
-        await ctx.channel.send(datetime.now(timezone.utc))
+        await ctx.channel.send(datetime.datetime.now(timezone.utc))
 
     @command(name="rules", description=help_messages.rules_help_msg)
     @check(checks.check_allowed_channel)
