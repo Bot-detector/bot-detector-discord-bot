@@ -4,11 +4,10 @@ from discord.ext.commands import command, check, has_permissions
 import os
 import discord
 import aiohttp
-import asyncio
 from OSRS_Hiscores import Hiscores
 from discord.ext.commands.converter import MemberConverter
 import checks
-import roles
+import utils.roles as roles
 import help_messages
 import pandas as pd
 
@@ -154,7 +153,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         if(new_role == False):
             mbed = discord.Embed (
                 description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
-                color = new_role.color
+                color = discord.Colour.dark_red()
             )
 
             await ctx.channel.send(embed=mbed)
