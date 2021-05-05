@@ -132,7 +132,8 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         if(len(linkedAccounts) == 0):
             mbed = discord.Embed (
-                description = f"You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so."
+                description = f"You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so.",
+                color = discord.Colour.dark_red()
             )
 
             await ctx.channel.send(embed=mbed)
@@ -150,9 +151,12 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
         new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
 
+        print(current_role.color)
+
         if(new_role == False):
             mbed = discord.Embed (
-                description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)"
+                description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
+                color = new_role.color
             )
 
             await ctx.channel.send(embed=mbed)
@@ -163,7 +167,8 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         if new_role is not current_role:
             mbed = discord.Embed (
-                    description = f"{ctx.author.display_name}, you are now a {new_role}!"
+                    description = f"{ctx.author.display_name}, you are now a {new_role}!",
+                    color = new_role.color
                 )
 
             mbed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
@@ -172,7 +177,8 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         else:
             mbed = discord.Embed (
-                    description = f"You are not yet eligible for a new role. I believe in you! So keep going! :)"
+                    description = f"You are not yet eligible for a new role. I believe in you! Keep it up! :)",
+                    color = new_role.color
                 )
 
             await ctx.channel.send(embed=mbed)
