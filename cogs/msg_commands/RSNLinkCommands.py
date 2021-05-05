@@ -1,12 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command, check
 
-import re
 import os
-import aiohttp
-import string
-import random
-import sql
 import checks
 import help_messages
 
@@ -112,6 +107,22 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             print(e)
             pass
 
+    @command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
+    @check(checks.check_allowed_channel)
+    async def linked_comand(self, ctx):
+        linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
+
+        if len(linkedAccounts) == 0:
+            await ctx.author.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
+        else:
+            msg = f"Accounts Currently Linked to Your Discord ID:\n"
+
+            for acc in linkedAccounts:
+                msg += f"{acc['name']}\n"
+
+            await ctx.author.send(msg)
+
+        return
 
     @command(name="verify", description=help_messages.verify_help_msg)
     @check(checks.check_allowed_channel)

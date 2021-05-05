@@ -71,7 +71,7 @@ class MapCommands(Cog, name='Map Commands'):
             mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
 
             if not mapWasGenerated:
-                await self.map_command(ctx, params)
+                await self.map_command(ctx, *params)
                 await ctx.channel.send("We have no data on this region yet.")
 
             else:
