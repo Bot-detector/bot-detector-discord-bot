@@ -26,6 +26,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
+        if player_name is None:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to link.")
+            return
+
         joinedName = string_processing.joinParams(player_name)
 
         if not string_processing.is_valid_rsn(joinedName):
@@ -89,7 +93,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
-        if verifyStatus == None:
+        if verifyStatus[0] == None:
             return
         else:
             isVerified = verifyStatus[0]['Verified_status'] #returns verify status
