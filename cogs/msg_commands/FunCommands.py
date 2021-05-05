@@ -6,6 +6,7 @@ from random import randint
 import checks
 import help_messages
 
+
 class FunCommands(Cog, name="Fun Commands"):
     def __init__(self, bot):
         self.bot = bot
