@@ -1,6 +1,7 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command, check
 
+import discord
 import aiohttp
 from random import randint
 import checks
@@ -13,7 +14,15 @@ class FunCommands(Cog, name="Fun Commands"):
     @command(name="poke", description=help_messages.poke_help_msg)
     @check(checks.check_allowed_channel)
     async def poke_command(self, ctx):
-        await ctx.channel.send('Teehee! :3')
+
+        latency = round(self.bot.latency,3)
+
+        mbed = discord.Embed(color=0x00ff)
+        mbed.add_field (name="Teehee", value=f":3", inline=False)
+        mbed.add_field (name="Ping:", value=f"{latency} ms", inline=False)
+        await ctx.channel.send(embed=mbed)
+
+        await ctx.channel.send()
 
     @command(name="meow", description=help_messages.meow_help_msg)
     @check(checks.check_allowed_channel)
