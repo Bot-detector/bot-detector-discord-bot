@@ -78,7 +78,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         if len(player_name) == 0:
             await ctx.channel.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
             return
-            
+
         joinedName = string_processing.joinParams(player_name)
 
         if not string_processing.is_valid_rsn(joinedName):
@@ -98,6 +98,23 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             mbed = await unverified_msg(joinedName)
 
         await ctx.channel.send(embed=mbed)
+
+    @command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
+    @check(checks.check_allowed_channel)
+    async def linked_comand(self, ctx):
+        linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
+
+        if len(linkedAccounts) == 0:
+            await ctx.author.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
+        else:
+            msg = f"Accounts Currently Linked to Your Discord ID:\n"
+
+            for acc in linkedAccounts:
+                msg += f"{acc['name']}\n"
+
+            await ctx.author.send(msg)
+
+        return
 
 
 async def verified_msg(joinedName):
