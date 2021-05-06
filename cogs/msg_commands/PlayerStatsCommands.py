@@ -6,6 +6,7 @@ import discord
 import aiohttp
 from OSRS_Hiscores import Hiscores
 from discord.ext.commands.converter import MemberConverter
+from discord.utils import _string_width
 import checks
 import utils.roles as roles
 import help_messages
@@ -91,7 +92,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
             mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
             mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
-            
+            mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
             await ctx.channel.send(embed=mbed)
 
         else:
