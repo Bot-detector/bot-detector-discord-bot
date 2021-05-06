@@ -141,9 +141,3 @@ async def link_msg(joinedName, code):
 
 def setup(bot):
     bot.add_cog(RSNLinkCommands(bot))
-
-
-
-
-
-

@@ -1,6 +1,6 @@
 import aiohttp
 
-BASE_URL = 'https://www.osrsbotdetector.com/dev'
+BASE_URL = 'https://www.osrsbotdetector.com/api'
 
 async def get_player_verification_full_status(playerName, token):
 
@@ -10,9 +10,8 @@ async def get_player_verification_full_status(playerName, token):
         async with session.get(url) as r:
             if r.status == 200:
                 data = await r.json()
-
     try:
-        return data[0]
+        return data
     except:
         return None
 
@@ -60,7 +59,7 @@ async def post_discord_player_info(discord_id, player_id, code, token):
 
 async def get_linked_accounts(discord_id, token):
 
-    url = f'{BASE_URL}/discord/get_linked_accounts/{token}/{discord_id}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/get_linked_accounts/{token}/{discord_id}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
