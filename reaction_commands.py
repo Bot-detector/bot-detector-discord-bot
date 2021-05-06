@@ -41,6 +41,8 @@ def extract_prediction(message):
 
     name = name_line[0].split(name_substring)[1]
     prediction = prediction_line[0].split(prediction_substring)[1]
-    confidence = confidence_line[0].split(confidence_substring)[1]
+    confidence_percent = confidence_line[0].split(confidence_substring)[1]
 
-    return name, prediction, float(confidence)
+    confidence = float(confidence_percent.strip('%'))/100
+
+    return name, prediction, confidence
