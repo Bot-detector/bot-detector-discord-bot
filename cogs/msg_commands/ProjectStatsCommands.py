@@ -4,6 +4,7 @@ from discord.ext.commands import command, check
 import aiohttp
 import checks
 import help_messages
+import discord
 
 class ProjectStatsCommands(Cog, name='Project Stats Commands'):
 
@@ -43,14 +44,18 @@ class ProjectStatsCommands(Cog, name='Project Stats Commands'):
                 else:
                     activeInstalls = "N/A" 
 
-        msg = "```Project Stats:\n" \
-            + "Players Analyzed: " + str(playersTracked) + "\n" \
-            + "Reports Sent to Jagex: " + str(totalReports) + "\n" \
-            + "Resultant Bans: " + str(totalBans) + "\n" \
-            + "Active Installs: " + str(activeInstalls) \
-            + "```"
 
-        await ctx.channel.send(msg)
+        mbed = await project_stats(playersTracked, totalReports, totalBans, activeInstalls)
+
+        await ctx.channel.send(embed=mbed)
+
+async def project_stats(playersTracked, totalReports, totalBans, activeInstalls):
+    mbed = discord.Embed(title=f"Bot Detector Plugin", color=0x00ff00)
+    mbed.add_field (name="= Project Stats =", value=f"Players Analyzed: {playersTracked:,}" + "\n" \
+        + f"Jagex Reports: {totalReports:,}" + "\n" \
+        + f"Bans: {totalBans:,}" + "\n" \
+        + f"Active Installs: {activeInstalls:,}", inline=False)
+    return mbed
 
 def setup(bot):
     bot.add_cog(ProjectStatsCommands(bot))
