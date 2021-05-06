@@ -120,10 +120,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         return
 
-
 async def verified_msg(joinedName):
     mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0x00ff00)
     mbed.add_field (name="Verified:", value=f"{joinedName} is Verified.", inline=False)
+    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117238120-538b4f00-adfa-11eb-9c58-d5500af7d215.png")
     return mbed
 
 
@@ -131,6 +131,7 @@ async def unverified_msg(joinedName):
     mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
     mbed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
     mbed.add_field (name="Next Steps:", value=f"Please type '!link {joinedName}'", inline=False)
+    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png")
     return mbed
 
 
@@ -138,6 +139,7 @@ async def installplugin_msg():
     mbed = discord.Embed(title=f"Plugin Not Installed:", color=0xff0000)
     mbed.add_field (name="Status:", value=f"This account has not installed the Bot-Detector Plugin.", inline=False)
     mbed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite", inline=False)
+    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117361316-e1f9e200-ae87-11eb-840b-3bad75e80ff6.png")
     return mbed
 
 
