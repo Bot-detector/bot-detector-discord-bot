@@ -26,6 +26,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
+            return
+
         joinedName = string_processing.joinParams(player_name)
 
         if not string_processing.is_valid_rsn(joinedName):
@@ -44,7 +48,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
-        if verifyStatus == None:
+        if len(verifyStatus) == 0:
             pass
         else:
             
@@ -59,7 +63,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                     return
 
         try:
-            msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
+            await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
             mbed = await link_msg(joinedName=joinedName, code=code)
             await ctx.author.send(embed=mbed)
         except Exception as e:
