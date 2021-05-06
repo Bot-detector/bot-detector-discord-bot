@@ -26,6 +26,16 @@ class MapCommands(Cog, name='Map Commands'):
         dataRegion = await map_processing.getHeatmapRegion(regionName, token)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = map_processing.displayDuplicates(dfDataRegion)
+
+        if len(dfRegion) == 0:
+            mbed = discord.Embed (
+                description = f"\"{regionName}\" does not correspond with any of our labeled regions." \
+                    + " It is possible that we just need to add it. Please let us know if so!",
+                color = discord.Colour.dark_red()
+            )
+
+            await ctx.channel.send(embed=mbed)
+            return
         
         if len(dfRegion) < 30:
             regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
@@ -46,44 +56,79 @@ class MapCommands(Cog, name='Map Commands'):
     @check(checks.check_patron)
     async def heatmap_command(self, ctx, *params):
 
-        info_msg = await ctx.channel.send("Getting that map ready for you. One moment, please!")
+        if len(params) == 0:
+            ctx.channel.send("Please enter a region name or region ID.")
+            return
+        else:
 
-        joinedParams = string_processing.joinParams(params)
-        regionName = joinedParams
-    
-        dataRegion = await map_processing.getHeatmapRegion(regionName, token)
-        dfDataRegion = pd.DataFrame(dataRegion)
-        dfRegion = map_processing.displayDuplicates(dfDataRegion)
+            info_msg = await ctx.channel.send("Getting that map ready for you. One moment, please!")
 
-        if len(dfRegion)<30:
-            regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
+            if params[0].isdigit():
+                region_id = params[0]
+                regionTrueName = f"Region ID: {region_id}"
+                mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
 
-            mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
-
-            if not mapWasGenerated:
-                await self.map_command(ctx, params)
-                await ctx.channel.send("We have no data on this region yet.")
+                if not mapWasGenerated:
+                    await self.map_command(ctx, *params)
+                    await ctx.channel.send("We have no data on this region yet.")
+                else:
+                    try:
+                        await ctx.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
+                        await map_processing.CleanupImages(region_id)
+                    except:
+                        await ctx.channel.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                        await ctx.channel.send('https://i.redd.it/lel3o4e2hhp11.jpg')
 
             else:
-                try:
-                    await ctx.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
-                    await map_processing.CleanupImages(region_id)
+                joinedParams = string_processing.joinParams(params)
+                regionName = joinedParams
+                dataRegion = await map_processing.getHeatmapRegion(regionName, token)
+                dfDataRegion = pd.DataFrame(dataRegion)
+                dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
-                except:
-                    await ctx.channel.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
-                    await ctx.channel.send('https://i.redd.it/lel3o4e2hhp11.jpg')
+                if len(dfRegion) == 0:
+                    mbed = discord.Embed (
+                        description = f"\"{regionName}\" does not correspond with any of our labeled regions." \
+                            + " It is possible that we just need to add it. Please let us know if so!",
+                        color = discord.Colour.dark_red()
+                    )
 
-        else:
-            msg = ">30 Regions selected. Please refine your search."
-            await ctx.channel.send(msg)
+                    await ctx.channel.send(embed=mbed)
+                    return
 
-        
-        await info_msg.delete()
+                if len(dfRegion)<30:
+                    regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
+
+                    mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
+
+                    if not mapWasGenerated:
+                        await self.map_command(ctx, *params)
+                        await ctx.channel.send("We have no data on this region yet.")
+
+                    else:
+                        try:
+                            await ctx.channel.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
+                            await map_processing.CleanupImages(region_id)
+
+                        except:
+                            await ctx.channel.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                            await ctx.channel.send('https://i.redd.it/lel3o4e2hhp11.jpg')
+
+                else:
+                    msg = ">30 Regions selected. Please refine your search."
+                    await ctx.channel.send(msg)
+
+                
+                await info_msg.delete()
 
 
     @command(name="map", description=help_messages.map_help_msg)
     @check(checks.check_allowed_channel)
     async def map_command(self, ctx, *params):
+
+        if len(params) == 0:
+            ctx.channel.send("Please enter a region name or region ID.")
+            return
 
         joinedParams = string_processing.joinParams(params)
 
@@ -98,6 +143,16 @@ class MapCommands(Cog, name='Map Commands'):
             dataRegion = await map_processing.getHeatmapRegion(regionName, token)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
+
+            if len(dfRegion) == 0:
+                mbed = discord.Embed (
+                    description = f"\"{regionName}\" does not correspond with any of our labeled regions." \
+                        + " It is possible that we just need to add it. Please let us know if so!",
+                    color = discord.Colour.dark_red()
+                )
+                
+                await ctx.channel.send(embed=mbed)
+                return
         
             if len(dfRegion) < 30:
                 regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)

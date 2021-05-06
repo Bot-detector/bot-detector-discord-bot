@@ -70,9 +70,9 @@ lookup_help_msg = f"Usage: !lookup <player name> Places a table in chat show the
 kc_help_msg = f"Usage: !kc <player name> Shows how many reports (passive and manual) a player has submitted through our plugin " \
     + "and home many possible and confirmed bans have resulted from those reports."
 
-rankup_help_msg = f"Have you been an absolute reaper of bots, and you want your Discord rank to reflect it? Calling this command will " \
-    + "tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with you Discord " \
-    + "ID. The bot will tally up your KC from all accounts you have linked. This command also will give you the Verified RSN role."
+rankup_help_msg = f"Have you been an absolute reaper of bots, and you want your Discord role to reflect it? Calling this command will " \
+    + "tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with your Discord " \
+    + "ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role."
 
 predict_help_msg = f"Usage: !predict <player name> Runs the player through our machine learning model " \
     + "and displays the classifications the ML model assigns to the player. Note that any line with a confidence below "\
@@ -101,5 +101,7 @@ stats_help_msg = f"Displays the project-wide reporting statistics. Also shows to
 link_help_msg = f"Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future. " \
     + "Currently, linking allows you to vote on predictions with reactions in #bot-commands and receive your ban breakdowns with !excelban and !csvban. " \
     +"\n\nYOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin."
+
+linked_help_msg = f"The bot will DM you which OSRS accounts are linked to your Discord ID."
 
 verify_help_msg = f"Usage: !verify <player name> Shows the verification status of a player."

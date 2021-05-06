@@ -32,9 +32,11 @@ special_roles = {
 
 
 #Gets bans from all accounts passed in
-async def get_total_bans(verifiedPlayers):
+async def get_multi_player_contributions(verifiedPlayers):
     
     totalBans = 0
+    totalPossibleBans = 0
+    totalReports = 0
 
     for player in verifiedPlayers:
         playerName = player["name"]
@@ -44,13 +46,16 @@ async def get_total_bans(verifiedPlayers):
                 if r.status == 200:
                     js = await r.json()
                     totalBans += int(js['bans'])
+                    totalPossibleBans += int(js['possible_bans'])
+                    totalReports += int(js['reports'])
 
-    return totalBans
+    return totalBans, totalPossibleBans, totalReports
 
 
 async def get_bot_hunter_role(verifiedPlayers, member):
 
-    bans = await get_total_bans(verifiedPlayers)
+    contributions = await get_multi_player_contributions(verifiedPlayers)
+    bans = contributions[0]
 
     if(bans == 0):
         return False #No rank just yet
@@ -59,17 +64,22 @@ async def get_bot_hunter_role(verifiedPlayers, member):
     else:
         kc_amounts = list(bot_hunter_roles.keys())
         kc_placement = bisect.bisect(kc_amounts, bans)
-        role_key = kc_amounts[kc_placement - 1]
+
+        if kc_amounts[kc_placement] == bans:
+            role_key = kc_amounts[kc_placement]
+        elif kc_amounts[kc_placement + 1] == bans:
+            role_key = kc_amounts[kc_placement + 1]
+        else:
+            role_key = kc_amounts[kc_placement - 1]
 
         return discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
 
 
 async def remove_old_roles(member):
 
-    old_roles = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
+    old_roles = member.roles
 
-    while old_roles is not None:
-        await member.remove_roles(old_roles)
-        old_roles = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
-
-        
+    for role in old_roles:
+        if 'Bot Hunter' in role.name:
+            to_remove = discord.utils.find(lambda r: role.name in r.name, member.roles)
+            await member.remove_roles(to_remove)
