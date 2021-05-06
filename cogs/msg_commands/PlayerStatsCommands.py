@@ -6,6 +6,7 @@ import discord
 import aiohttp
 from OSRS_Hiscores import Hiscores
 from discord.ext.commands.converter import MemberConverter
+from discord.utils import _string_width
 import checks
 import utils.roles as roles
 import help_messages
@@ -91,7 +92,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
             mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
             mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
-            
+            mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
             await ctx.channel.send(embed=mbed)
 
         else:
@@ -211,7 +212,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     msg = "```diff\n" \
                         + "+" + " Name: " + str(name) + "\n" \
                         + str(string_processing.plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-                        + str(string_processing.plus_minus(confidence, 0.75) + " Confidence: " + f"{confidence * 100}%") + "\n" \
+                        + str(string_processing.plus_minus(confidence, 0.75) + " Confidence: " + f"{round(confidence * 100, 2)}%") + "\n" \
                         + "+" + " ID: " + str(player_id) + "\n" \
                         + "============\n" \
                         + "Prediction Breakdown \n\n"
@@ -219,7 +220,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     
                     for predict in secondaries:
                         msg += str(string_processing.plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
-                            + f"{predict[1] * 100}%"
+                            + f"{round(predict[1] * 100, 2)}%"
                         msg += "\n"
 
                     msg += "```\n"

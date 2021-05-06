@@ -55,6 +55,7 @@ async def project_stats(playersTracked, totalReports, totalBans, activeInstalls)
         + f"Jagex Reports: {totalReports:,}" + "\n" \
         + f"Bans: {totalBans:,}" + "\n" \
         + f"Active Installs: {activeInstalls:,}", inline=False)
+    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117360948-60a24f80-ae87-11eb-8a5a-7ba57f85deb2.png")
     return mbed
 
 def setup(bot):
