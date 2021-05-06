@@ -211,7 +211,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     msg = "```diff\n" \
                         + "+" + " Name: " + str(name) + "\n" \
                         + str(string_processing.plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-                        + str(string_processing.plus_minus(confidence, 0.75) + " Confidence: " + str(confidence)) + "\n" \
+                        + str(string_processing.plus_minus(confidence, 0.75) + " Confidence: " + f"{confidence * 100}%") + "\n" \
                         + "+" + " ID: " + str(player_id) + "\n" \
                         + "============\n" \
                         + "Prediction Breakdown \n\n"
@@ -219,7 +219,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     
                     for predict in secondaries:
                         msg += str(string_processing.plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
-                            + str(predict[1])
+                            + f"{predict[1] * 100}%"
                         msg += "\n"
 
                     msg += "```\n"

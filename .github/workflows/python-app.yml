@@ -25,6 +25,7 @@ jobs:
       run: |
         python3.9 -m venv env
         source ./env/bin/activate
+        python3.9 -m pip install --upgrade pip
         pip3 install flake8 pytest
         if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
         
@@ -42,6 +43,7 @@ jobs:
           echo "${{ secrets.DB_NAME_PLAYERS }}" >> .env
           echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
           echo "${{ secrets.DISCORD_BOT_ID }}" >> .env
+          echo "${{ secrets.API_AUTH_TOKEN}}" >> .env
           echo "${{ secrets.API_AUTH_TOKEN }}" >> .env
           echo "COMMAND_PREFIX='!'" >> .env
           

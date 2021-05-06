@@ -111,7 +111,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
             names = ""
             for acc in linkedAccounts:
-                names += f"{acc['name']}"
+                names += f"{acc['name']}\n"
                 
 
             mbed.add_field (name="Linked Accounts:", value=f"{names}", inline=False)

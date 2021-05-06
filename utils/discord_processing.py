@@ -59,7 +59,7 @@ async def post_discord_player_info(discord_id, player_id, code, token):
 
 async def get_linked_accounts(discord_id, token):
 
-    url = f'https://www.osrsbotdetector.com/dev/discord/get_linked_accounts/{token}/{discord_id}'
+    url = f'{BASE_URL}/discord/get_linked_accounts/{token}/{discord_id}'
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:

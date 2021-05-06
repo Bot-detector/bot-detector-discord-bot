@@ -1,4 +1,5 @@
-import aiohttp
+import requests as req
+
 
 async def add_prediction_feedback(payload, message):
 
@@ -22,13 +23,9 @@ async def add_prediction_feedback(payload, message):
 
     endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
 
-    async with aiohttp.ClientSession() as session:
-        async with session.post(endpoint, json=prediction) as r:
-            if r.status == 200:
-                return
-            else:
-                #error
-                return
+    request = req.post(endpoint, json=prediction)
+
+    return
 
 
 def extract_prediction(message):
@@ -44,6 +41,8 @@ def extract_prediction(message):
 
     name = name_line[0].split(name_substring)[1]
     prediction = prediction_line[0].split(prediction_substring)[1]
-    confidence = confidence_line[0].split(confidence_substring)[1]
+    confidence_percent = confidence_line[0].split(confidence_substring)[1]
 
-    return name, prediction, float(confidence)
+    confidence = float(confidence_percent.strip('%'))/100
+
+    return name, prediction, confidence
