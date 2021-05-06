@@ -15,7 +15,7 @@ class ModCommands(Cog, name='Moderator Commands'):
 
 async def warn_msg():
     mbed = discord.Embed(title=f"WARNING", color=0xff0000)
-    mbed.add_field (name="= wARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+    mbed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
     return mbed
 

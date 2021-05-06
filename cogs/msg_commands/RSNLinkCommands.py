@@ -6,9 +6,8 @@ import os
 import aiohttp
 import string
 import random
-import sql
-import checks
 import help_messages
+import checks
 import discord
 
 import utils.string_processing as string_processing
@@ -49,7 +48,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             pass
         else:
             
-            isVerified = verifyStatus['Verified_status'] 
+            isVerified = verifyStatus[0]['Verified_status'] 
 
             if isVerified == 1:
                 owner_verified_info = await discord_processing.get_verified_player_info(playerName=joinedName, token=token)
@@ -81,7 +80,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
         try:
-            isVerified = verifyStatus['Verified_status'] 
+            isVerified = verifyStatus[0]['Verified_status'] 
 
             if isVerified:
                 mbed = await verified_msg(joinedName)
