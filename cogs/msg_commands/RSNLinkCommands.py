@@ -22,7 +22,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="link", description=help_messages.link_help_msg)
+    @command(name="link", aliases=["pair"], description=help_messages.link_help_msg)
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
