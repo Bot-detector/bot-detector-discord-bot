@@ -107,12 +107,16 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         if len(linkedAccounts) == 0:
             await ctx.author.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
         else:
-            msg = f"Accounts Currently Linked to Your Discord ID:\n"
+            mbed = discord.Embed(color=0x00ff00)
 
+            names = ""
             for acc in linkedAccounts:
-                msg += f"{acc['name']}\n"
+                names += f"{acc['name']}"
+                
 
-            await ctx.author.send(msg)
+            mbed.add_field (name="Linked Accounts:", value=f"{names}", inline=False)
+
+            await ctx.author.send(embed=mbed)
 
         return
 
