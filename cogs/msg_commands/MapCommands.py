@@ -86,6 +86,16 @@ class MapCommands(Cog, name='Map Commands'):
                 dfDataRegion = pd.DataFrame(dataRegion)
                 dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
+                if len(dfRegion) == 0:
+                    mbed = discord.Embed (
+                        description = f"\"{regionName}\" does not correspond with any of our labeled regions." \
+                            + " It is possible that we just need to add it. Please let us know if so!",
+                        color = discord.Colour.dark_red()
+                    )
+
+                    await ctx.channel.send(embed=mbed)
+                    return
+
                 if len(dfRegion)<30:
                     regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
 
