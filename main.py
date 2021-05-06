@@ -9,11 +9,6 @@ from typing_extensions import TypeAlias
 print(discord.__version__)
 
 import reaction_commands as rc
-import mesage_commands as mc
-
-import checks as checks
-
-import sys
 import traceback
 
 #Log File
