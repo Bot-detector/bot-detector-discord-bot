@@ -75,6 +75,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @check(checks.check_allowed_channel)
     async def verify_comand(self, ctx, *player_name):
 
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
+            return
+            
         joinedName = string_processing.joinParams(player_name)
 
         if not string_processing.is_valid_rsn(joinedName):
