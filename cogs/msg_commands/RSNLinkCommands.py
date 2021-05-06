@@ -9,6 +9,7 @@ import random
 import sql
 import checks
 import help_messages
+import discord
 
 import utils.string_processing as string_processing
 import utils.discord_processing as discord_processing
@@ -35,56 +36,11 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         code = string_processing.id_generator()
         discord_id = ctx.author.id
 
-
-        msgPassed = "```diff" + "\n" \
-                    + "====== STATUS ======\n" \
-                    + f"Request to link RSN: {joinedName} \n" \
-                    + f"Your discord ID is: {discord_id} \n" \
-                    + f"Access Code: {code} \n" \
-                    + "====== SETUP ======\n" \
-                    + "+ Please read through these instructions." + "\n" \
-                    + "+ 1. Open Old School Runescape through RuneLite." + "\n" \
-                    + f"+ 2. Login as: '{joinedName}' \n" \
-                    + "+ 3. Join the clan channel: 'Ferrariic'." + "\n" \
-                    + "+ 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
-                    + "+ 5. If a Plugin Admin or Plugin Moderator is not available, please leave a ctx in #bot-commands." + "\n" \
-                    + f"+ 6. Type into the Clan Chat: '!Code {code}' \n" \
-                    + f"+ 7. Type '!verify {joinedName}' in #bot-commands channel to confirm that you have been Verified." + "\n" \
-                    + "+ 8. Verification Process Complete." + "\n" \
-                    + "====== INFO ======\n" \
-                    + "+ You may link multiple Runescape accounts via this method." + "\n" \
-                    + "+ If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
-                    + "+ In the event of a name change please allow some time for your data to be transferred over." + "\n" \
-                    + "====== NOTICE ======\n" \
-                    + "- Do not delete this message." + "\n" \
-                    + "- If this RSN was submitted in error, please type '!link <Your Correct RSN>'." + "\n" \
-                    + "- This code will not expire, it is tied to your unique RSN:Discord Pair." + "\n" \
-                    + "- If you are unable to become 'Verified' through this process, please contact an administrator for assistance." + "\n" \
-                    + "```"
-
-
-        msgInUse = "```diff" + "\n" \
-                + "- RSN is currently in use. Please contact an Administrator." + "\n" \
-                + "```"
-
-
-        msgInstallPlugin = "```diff" + "\n" \
-                        + "- This user has not installed the Bot Detector plugin, or this user does not exist." + "\n" \
-                        + "- Please install the plugin or re-enter your !link <RSN> command." + "\n" \
-                        + "- Please turn off Anonymous mode." + "\n" \
-                        + "```"
-
-
-        msgVerified = "```diff" + "\n" \
-                    + f"+ Player: {joinedName} \n" \
-                    + "====== Verification Information ======\n" \
-                    + "+ Player is: Verified." + "\n" \
-                    + "```"
-
         verifyID = await discord_processing.get_playerid_verification(playerName=joinedName, token=token)
 
         if verifyID == None:
-            await ctx.channel.send(msgInstallPlugin)
+            mbed = await installplugin_msg()
+            await ctx.channel.send(embed=mbed)
             return
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
@@ -93,18 +49,20 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             pass
         else:
             
-            isVerified = verifyStatus['Verified_status'] #returns verify status
+            isVerified = verifyStatus['Verified_status'] 
 
             if isVerified == 1:
                 owner_verified_info = await discord_processing.get_verified_player_info(playerName=joinedName, token=token)
                 ownerID = owner_verified_info['Discord_id']
                 if ownerID == discord_id:
-                    await ctx.channel.send(msgVerified)
+                    mbed = await verified_msg(joinedName)
+                    await ctx.channel.send(embed=mbed)
                     return
 
         try:
             msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
-            await ctx.author.send(msgPassed)
+            mbed = await link_msg(joinedName=joinedName, code=code)
+            await ctx.author.send(embed=mbed)
         except Exception as e:
             print(e)
             pass
@@ -121,33 +79,65 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             return
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
-        isVerified = verifyStatus['Verified_status'] #returns verify status
-
-        msgVerified = "```diff" + "\n" \
-                    + "+ Player: " + str(joinedName) + "\n" \
-                    + "====== Verification Information ======\n" \
-                    + "+ Player is: Verified." + "\n" \
-                    + "```"
-
-        msgUnverified = "```diff" + "\n" \
-                        + "+ Player: " + str(joinedName) + "\n" \
-                        + "====== Verification Information ======\n" \
-                        + "- Player is: Unverified." + "\n" \
-                        + f"- Please use the !link {joinedName} command to claim ownership." + "\n" \
-                        + "```"
 
         try:
-            verified = await discord_processing.get_player_verification_full_status(joinedName, token)
-        except IndexError:
-            verified = 0
+            isVerified = verifyStatus['Verified_status'] 
+
+            if isVerified:
+                mbed = await verified_msg(joinedName)
+            else:
+                mbed = await unverified_msg(joinedName)
+        except:
+            mbed = await unverified_msg(joinedName)
+
+        await ctx.channel.send(embed=mbed)
 
 
-        if isVerified:
-            msg = msgVerified
-        else:
-            msg = msgUnverified
+async def verified_msg(joinedName):
+    mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0x00ff00)
+    mbed.add_field (name="Verified:", value=f"{joinedName} is Verified.", inline=False)
+    return mbed
 
-        await ctx.channel.send(msg)
+
+async def unverified_msg(joinedName):
+    mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
+    mbed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
+    mbed.add_field (name="Next Steps:", value=f"Please type '!link {joinedName}'", inline=False)
+    return mbed
+
+
+async def installplugin_msg():
+    mbed = discord.Embed(title=f"Plugin Not Installed:", color=0xff0000)
+    mbed.add_field (name="Status:", value=f"This account has not installed the Bot-Detector Plugin.", inline=False)
+    mbed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite", inline=False)
+    return mbed
+
+
+async def link_msg(joinedName, code):
+    mbed = discord.Embed(title=f"Linking '{joinedName}'':", color=0x0000ff)
+
+    mbed.add_field (name="STATUS", value=f"Request to link '{joinedName}'." + "\n" \
+        + f"Access Code: {code}", inline=False)
+
+    mbed.add_field (name="SETUP", value=f"Please read through these instructions." + "\n" \
+        + f"1. Open Old School Runescape through RuneLite." + "\n" \
+        + f"2. Login as: '{joinedName}'" + "\n" \
+        + f"3. Join the clan channel: 'Ferrariic'." + "\n" \
+        + f"4. Verify that a Plugin Admin or Plugin Moderator is present in the channel." + "\n" \
+        + f"5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-detector-commands." + "\n" \
+        + f"6. Type into the Clan Chat: '!Code {code}'." + "\n" \
+        + f"7. Type '!verify {joinedName}' in #bot-commands channel to confirm that you have been Verified." + "\n" \
+        + f"8. Verification Process Complete.", inline=False)
+
+    mbed.add_field (name="INFO", value=f"You may link multiple Runescape accounts via this method." + "\n" \
+        + f"1. If you change the name of your account(s) you must repeat this process with your new RSN(s)." + "\n" \
+        + f"2. In the event of a name change please allow some time for your data to be transferred over.", inline=False)
+
+    mbed.add_field (name="NOTICE", value=f"Do not delete this message." + "\n" \
+        + f"1. If this RSN was submitted in error, please type '!link <Your Correct RSN>'." + "\n" \
+        + f"2. This code will not expire, it is tied to your unique RSN:Discord Pair." + "\n" \
+        + f"3. If you are unable to become 'Verified' through this process, please contact an administrator for assistance.", inline=False)
+    return mbed
 
 def setup(bot):
     bot.add_cog(RSNLinkCommands(bot))
