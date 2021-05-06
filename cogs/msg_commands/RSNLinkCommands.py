@@ -22,9 +22,13 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="link", description=help_messages.link_help_msg)
+    @command(name="link", aliases=["pair"], description=help_messages.link_help_msg)
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
+
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
+            return
 
         joinedName = string_processing.joinParams(player_name)
 
@@ -44,7 +48,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
-        if verifyStatus == None:
+        if len(verifyStatus) == 0:
             pass
         else:
             
@@ -59,7 +63,7 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                     return
 
         try:
-            msgtxt = await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
+            await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
             mbed = await link_msg(joinedName=joinedName, code=code)
             await ctx.author.send(embed=mbed)
         except Exception as e:
@@ -70,6 +74,10 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @command(name="verify", description=help_messages.verify_help_msg)
     @check(checks.check_allowed_channel)
     async def verify_comand(self, ctx, *player_name):
+
+        if len(player_name) == 0:
+            await ctx.channel.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
+            return
 
         joinedName = string_processing.joinParams(player_name)
 
@@ -90,6 +98,27 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             mbed = await unverified_msg(joinedName)
 
         await ctx.channel.send(embed=mbed)
+
+    @command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
+    @check(checks.check_allowed_channel)
+    async def linked_comand(self, ctx):
+        linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
+
+        if len(linkedAccounts) == 0:
+            await ctx.author.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
+        else:
+            mbed = discord.Embed(color=0x00ff00)
+
+            names = ""
+            for acc in linkedAccounts:
+                names += f"{acc['name']}"
+                
+
+            mbed.add_field (name="Linked Accounts:", value=f"{names}", inline=False)
+
+            await ctx.author.send(embed=mbed)
+
+        return
 
 
 async def verified_msg(joinedName):
