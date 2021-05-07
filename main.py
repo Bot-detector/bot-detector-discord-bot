@@ -81,10 +81,10 @@ async def on_command_error(ctx, error):
     elif isinstance(error, discord.errors.Forbidden):
         return await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
     elif not isinstance(error, commands.CheckFailure):
-        print('Ignoring exception in command {}:'.format(ctx.command), file=error_file)
+        print(f"Ignoring exception in command {ctx.command}:", file=error_file)
         traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
         error_file.flush()
-        await ctx.channel.send('The command you\'ve entered could not be completed at this time.')
+        await ctx.channel.send("The command you've entered could not be completed at this time.")
 
 
 async def get_reaction_message(reaction_payload):
