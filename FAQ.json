@@ -1,5 +1,4 @@
 [{
-  "content": null,
   "embeds": [
     {
       "title": "Bot Detector Information",
@@ -14,11 +13,11 @@
         },
         {
           "name": "**How do we detect who is a bot?**",
-          "value": "Well, we could use a variety of different methods - the one that I chose was to group every player together that has similar stats, and if that group gets banned more frequently than other groups then it's probably likely that the rest of the group is pretty bot-like or suspicious. This could also include gold-farmers, RWTers, etc. Any group with a high ban rate is suspicious and would be reported to Tipoff@Jagex.com"
+          "value": "Well, we could use a variety of different methods - the one that I chose was to group every player together that has similar stats, and if that group gets banned more frequently than other groups then it's probably likely that the rest of the group is pretty bot-like or suspicious. This could also include gold-farmers, RWTers, etc. Any group with a high ban rate is suspicious and will be sent to Jagex."
         },
         {
           "name": "**How accurate is our system?**",
-          "value": "The report accuracy is changing all the time. You can always see where our current accuracy is at on our [website](https://www.osrsbotdetector.com/)."
+          "value": "The ban accuracy is changing all the time. You can always see where our current accuracy is at on our [website](https://www.osrsbotdetector.com/)."
         },
         {
           "name": "**How can I contribute to the project?**",
@@ -48,7 +47,7 @@
         },
         {
           "name": "What settings should I put on the plugin?",
-          "value": "That depends on what you want to do. \n\nSend names only after logout: You should use this if your internet is slow, it cuts down on the communication to our server.\n\nSend Every 'X' minutes: This is how often the names are sent to our server if you have the previous setting unchecked. It can be as long as you want, but a minimum of 5 minutes.\n\nEnable notifications: This acts like RuneLite notifications, if you are tabbed out it notifies you when names are sent to our server.\n\nRight-click 'Detect' players: this allows you to look up players in our server with a right click.\n\nEnable Anonymous Reporting: This links your account to the names your report. If this is unchecked the only thing we track is the Names Uploaded per session. If you want to know your total reports, how many bans came out of your reports, this needs to be unchecked."
+          "value": "That depends on what you want to do. \n\nSend names only after logout: You should use this if your internet is slow, it cuts down on the communication to our server.\n\nSend Every 'X' minutes: This is how often the names are sent to our server if you have the previous setting unchecked. It can be as long as you want, but a minimum of 5 minutes.\n\nEnable notifications: This acts like RuneLite notifications, if you are tabbed out it notifies you when names are sent to our server.\n\nRight-click 'Detect' players: this allows you to look up players in our server with a right click.\n\nEnable Anonymous Uploading: This links your account to the names you upload. If this is unchecked the only thing we track is the Names Uploaded per session. If you want to know your total uploads, how many bans came out of your uploads, this needs to be unchecked."
         }
       ]
     }
@@ -61,15 +60,15 @@
       "fields": [
         {
           "name": "Where can I see the global and personal stats?",
-          "value": "You can see our global stats on our [website](https://www.osrsbotdetector.com/).\nTo see your personal stats, dependant on you having disabled Anonymous Reporting, you can go to the icon on the RuneLite sidebar."
+          "value": "You can see our global stats on our [website](https://www.osrsbotdetector.com/).\nTo see your personal stats, dependant on you having disabled Anonymous Uploading, you can go to the icon on the RuneLite sidebar."
         },
         {
-            "name": "Why can't I see my report statistics with Anonymous Reporting enabled?",
-            "value": "We tie reports to the OSRS name of the user that submits them. With Anonymous Reporting enabled you send a shared identifier that all anonymous reporters utilize when submitting reports, so there is no way to attribute statistics to you."
+            "name": "Why can't I see my upload statistics with Anonymous Uploading enabled?",
+            "value": "We tie uploads to the OSRS name of the user that submits them. With Anonymous Uploading enabled you send a shared identifier that all anonymous uploaders utilize when submitting names, so there is no way to attribute statistics to you."
           },
         {
           "name": "What do each of the stats mean?",
-          "value": "Names Uploaded: Amount of names sent to our server during a single session.\nReports Made: Amount of names sent to our server all your sessions.\nConfirmed Bans: Number of confirmed bans by Jagex\nProbable Bans: Number of accounts that currently do not show up on the hiscores due to a variety of reasons (low total, actually banned but pending)\nIt is important to note that if you are doing anonymous reporting only Names Uploaded will show numbers."
+          "value": "Current Uploads: Amount of names sent to our server during a single session.\nTotal Uploads: Amount of names sent to our server all your sessions.\nConfirmed Bans: Number of confirmed bans by Jagex\nPossible Bans: Number of accounts that currently do not show up on the hiscores due to a variety of reasons (low total, actually banned but pending)\nIt is important to note that if you are doing anonymous uploading your stats will remain blank."
         }
       ]
     }
@@ -80,6 +79,10 @@
     {
       "title": "Miscellaneous Questions",
       "fields": [
+        {
+          "name": "Do I have to manually predict and flag players for them to be placed into the data set?",
+          "value": "The plugin will grab the data for every player that renders on your screen passively. You may also manually flag players for extra emphasis, but it is not necessary."
+        },
         {
           "name": "Does this replace manual in-game reporting?",
           "value": "No, reporting people in game is the best thing you can do and we urge you to continue using the in-game report feature. In-game reporting will give Jagex information to ban more players."
