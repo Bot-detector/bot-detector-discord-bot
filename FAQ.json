@@ -85,6 +85,10 @@
           "value": "No, reporting people in game is the best thing you can do and we urge you to continue using the in-game report feature. In-game reporting will give Jagex information to ban more players."
         },
         {
+          "name": "Do I need to manually detect people within the plugin?",
+          "value": "No, the plugin will scan everyone that your client renders. If the machine learning algorithm determines someone is a bot with a high threshold it will send them to Jagex. This should never be considered a replacement for the in-game reporting method."
+        },
+        {
           "name": "My friend shows up at a 3% mining bot, will I get him banned?",
           "value": "No, things lower than 30ish percent is the machine learning algorithm taking a wild guess. We manually curate the lists we send to Jagex, and typically only players labeled as a bot with 80%+ confidence are sent.\n**Even if a name is sent to Jagex, ultimately it is their decision to ban a player or not. We have no say in who ends up being banned.**"
         },
