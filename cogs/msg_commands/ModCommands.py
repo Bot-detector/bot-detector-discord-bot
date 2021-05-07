@@ -19,7 +19,7 @@ class ModCommands(Cog, name='Moderator Commands'):
     async def warn_command(self, ctx):
         mbed = await warn_msg()
         await ctx.channel.send(embed=mbed)
-        
+
 
     @command(name="updateallroles", hidden=True)
     @has_permissions(manage_roles=True)
@@ -31,15 +31,12 @@ class ModCommands(Cog, name='Moderator Commands'):
             pass
 
         listUsers = await discord_processing.get_discords_ids_with_links(token)
-        print(listUsers)
 
         for user in listUsers:
             try:
                 member = await ctx.guild.fetch_member(user['Discord_id'])
-                print(member)
 
                 linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
-                print(linkedAccounts)
 
                 if(len(linkedAccounts) == 0):
                     #how the heck did we get here
@@ -54,7 +51,6 @@ class ModCommands(Cog, name='Moderator Commands'):
                         verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["verified_rsn"], member.guild.roles)
                         await member.add_roles(verified_role)
 
-                current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
                 new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
 
                 if(new_role == False):
