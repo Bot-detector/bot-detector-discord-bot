@@ -14,10 +14,10 @@ async def check_patron(ctx):
     if result:
         return result
     else:
-        await ctx.channel.send("This is Patreon-Only command. It must be ran in #patron-chat-channel.")
+        await ctx.channel.send("This is Patreon-only command. It must be ran in <#830783778325528626>")
 
 
 def check_channels(ctx, channels):
-    return ctx.channel.id in channels or ctx.channel.type == 'dm'
+    return ctx.channel.id in channels or ctx.channel.type == "dm"
 
 
