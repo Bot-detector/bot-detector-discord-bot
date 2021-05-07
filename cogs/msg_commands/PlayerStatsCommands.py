@@ -288,8 +288,6 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         member = ctx.author
         linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
 
-        print(linkedAccounts)
-
         num_links = len(linkedAccounts)
 
         if num_links == 0:
