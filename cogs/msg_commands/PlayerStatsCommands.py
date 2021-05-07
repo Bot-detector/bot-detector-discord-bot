@@ -320,7 +320,16 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                             sheets.append(df)
                             names.append(account['name'])
 
-            totalSheet = pd.concat(sheets)
+            if len(sheets) > 0:
+                totalSheet = pd.concat(sheets)
+            else:
+                mbed = discord.Embed (
+                    description = f"We currently do not have data available for export for your linked accounts.",
+                    color = discord.Colour.dark_red()
+                )
+
+                await ctx.channel.send(embed=mbed)
+                return
 
             if filetype == 'excel':
                 writer = pd.ExcelWriter(f'{ctx.author.display_name}_bans.xlsx', engine='xlsxwriter')
