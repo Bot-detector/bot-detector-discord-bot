@@ -74,9 +74,8 @@ async def on_raw_reaction_add(payload):
 
 @bot.event
 async def on_command_error(ctx, error):
-    if ctx.command.qualified_name == help:
-        if isinstance(error, commands.CheckFailure):
-            return
+    if ctx.invoked_with == "help":
+        return
     elif isinstance(error, commands.CommandNotFound):
         return
     elif isinstance(error, discord.errors.Forbidden):
