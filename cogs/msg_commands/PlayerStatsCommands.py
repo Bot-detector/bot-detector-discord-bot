@@ -93,6 +93,9 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
             mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
             mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
+            if reports == 0:
+                            mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
+                            icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
             await ctx.channel.send(embed=mbed)
 
         else:
@@ -116,6 +119,10 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                         mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
                         mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
                         mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
+
+                        if reports == 0:
+                            mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
+                            icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
             
                         await ctx.channel.send(embed=mbed)
                     else:
