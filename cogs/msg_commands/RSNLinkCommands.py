@@ -136,9 +136,10 @@ async def unverified_msg(joinedName):
 
 
 async def installplugin_msg():
-    mbed = discord.Embed(title=f"Plugin Not Installed:", color=0xff0000)
-    mbed.add_field (name="Status:", value=f"This account has not installed the Bot-Detector Plugin.", inline=False)
-    mbed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite", inline=False)
+    mbed = discord.Embed(title=f"User Not Found:", color=0xff0000)
+    mbed.add_field (name="Status:", value=f"No reports exist from specified player.", inline=False)
+    mbed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\n" \
+        + "If you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to !link your account.", inline=False)
     mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117361316-e1f9e200-ae87-11eb-840b-3bad75e80ff6.png")
     return mbed
 
