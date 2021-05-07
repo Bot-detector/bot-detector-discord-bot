@@ -51,8 +51,12 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         if len(verifyStatus) == 0:
             pass
         else:
-            
-            isVerified = verifyStatus[0]['Verified_status'] 
+            for status in verifyStatus:
+                if int(status['Verified_status']) == 1:
+                    isVerified = 1
+                    break
+            else:
+                isVerified = 0
 
             if isVerified == 1:
                 owner_verified_info = await discord_processing.get_verified_player_info(playerName=joinedName, token=token)
@@ -89,8 +93,9 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
 
         try:
             for status in verifyStatus:
-                if status["Verified_status"] == 1:
+                if int(status['Verified_status']) == 1:
                     isVerified = True
+                    break
             else:
                 isVerified = False
 
