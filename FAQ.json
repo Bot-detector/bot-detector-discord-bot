@@ -7,7 +7,7 @@
       "fields": [
         {
           "name": "**Is this Plugin Malicious?**",
-          "value": "The only part that connects to your RuneLite client is the RuneLite plugin which is available on [Github](https://github.com/Ferrariic/bot-detector). The RuneLite developers won't allow anything that's even mildly suspect to enter the Plugin Hub - which is pretty great."
+          "value": "The only part that connects to your RuneLite client is the RuneLite plugin which is available on [Github](https://github.com/Bot-detector/bot-detector). The RuneLite developers won't allow anything that's even mildly suspect to enter the Plugin Hub - which is pretty great."
         },
         {
           "name": "**Why do I need a RuneLite client to capture OSRS names?**",
@@ -69,8 +69,12 @@
       "fields": [
         {
           "name": "Where can I see the global and personal stats?",
-          "value": "You can see our global stats on our [website](https://www.osrsbotdetector.com/#/).\nTo see your personal stats, dependant on you having uncheck anon reporting, you can go to the icon on the RuneLite sidebar."
+          "value": "You can see our global stats on our [website](https://www.osrsbotdetector.com/).\nTo see your personal stats, dependant on you having disabled Anonymous Reporting, you can go to the icon on the RuneLite sidebar."
         },
+        {
+            "name": "Why can't I see my report statistics with Anonymous Reporting enabled?",
+            "value": "We tie reports to the OSRS name of the user that submits them. With Anonymous Reporting enabled you send a shared identifier that all anonymous reporters utilize when submitting reports, so there is no way to attribute statistics to you."
+          },
         {
           "name": "What do each of the stats mean?",
           "value": "Names Uploaded: Amount of names sent to our server during a single session.\nReports Made: Amount of names sent to our server all your sessions.\nConfirmed Bans: Number of confirmed bans by Jagex\nProbable Bans: Number of accounts that currently do not show up on the hiscores due to a variety of reasons (low total, actually banned but pending)\nIt is important to note that if you are doing anonymous reporting only Names Uploaded will show numbers."
@@ -94,7 +98,7 @@
         },
         {
           "name": "My friend shows up at a 3% mining bot, will I get him banned?",
-          "value": "No, things lower than 30ish percent is the machine learning algorithm guessing cause it isn't sure. If they are above 80% it would think its a bot. Even if it does get sent, Jagex wont ban him unless they are confident he is a bot."
+          "value": "No, things lower than 30ish percent is the machine learning algorithm taking a wild guess. We manually curate the lists we send to Jagex, and typically only players labeled as a bot with 80%+ confidence are sent.\n**Even if a name is sent to Jagex, ultimately it is their decision to ban a player or not.**"
         },
         {
           "name": "I trained a bunch of a skill over the weekend in one shot, will this flag me?",
@@ -114,7 +118,7 @@
         },
         {
           "name": "How do I get RSN Verified",
-          "value": "Do the `!link [OSRS Username]` command in bot-detector. The BBB will tell you the next steps."
+          "value": "Use the `!link [OSRS Username]` command in <#825189024074563614>. Our bot will DM you the next steps."
         }
       ]
     }
