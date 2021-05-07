@@ -1,7 +1,10 @@
 from discord.ext.commands import Cog
 from discord.ext.commands import command, has_permissions
 import discord
+import aiohttp
 import os
+
+from discord.ext.commands.core import has_role
 
 import utils.discord_processing as discord_processing
 import utils.roles as roles
@@ -19,6 +22,40 @@ class ModCommands(Cog, name='Moderator Commands'):
     async def warn_command(self, ctx):
         mbed = await warn_msg()
         await ctx.channel.send(embed=mbed)
+
+
+    @has_role('Admin')
+    @command(name="updatefaq", hidden=True)
+    async def warn_command(self, ctx):
+        channel = ctx.guild.get_channel(837497081987989516)
+        await channel.purge()
+
+        url = f'https://raw.githubusercontent.com/Bot-detector/bot-detector-discord-bot/main/FAQ.json'
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                if r.status == 200:
+                    faqEntriesList = await r.json(content_type='text/plain; charset=utf-8')
+        try:
+            for entry in faqEntriesList:
+                
+                await channel.send(embed=self.generateEmbed(entry['embeds'][0]))
+        except Exception as e:
+            print(e)
+            return None
+
+    def generateEmbed(self, entry):
+        mbed = discord.Embed (
+                    title= entry['title'],
+                    color = discord.Color.gold()
+                )
+
+        fields = entry['fields']
+
+        for field in fields:
+            mbed.add_field(name=field['name'], value=field['value'], inline=False)
+
+        return mbed
 
 
     @command(name="updateallroles", hidden=True)
