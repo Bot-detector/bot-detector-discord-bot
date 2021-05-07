@@ -75,7 +75,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             if len(linkedAccounts) == 0:
                 mbed = discord.Embed (
                 description = f"Please include a player name or use the !link command to pair an OSRS account. "\
-                    + "Once you have paired at least once account you will no longer need to type a name."
+                    + "Once you have paired at least one account you will no longer need to type a name."
                 )
 
                 await ctx.channel.send(embed=mbed)
