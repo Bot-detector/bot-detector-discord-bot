@@ -88,7 +88,11 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
         verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
         try:
-            isVerified = verifyStatus[0]['Verified_status'] 
+            for status in verifyStatus:
+                if status["Verified_status"] == 1:
+                    isVerified = True
+            else:
+                isVerified = False
 
             if isVerified:
                 mbed = await verified_msg(joinedName)
