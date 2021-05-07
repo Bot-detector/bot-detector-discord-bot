@@ -28,7 +28,7 @@ class ModCommands(Cog, name="Moderator Commands"):
     @command(name="updatefaq", hidden=True)
     async def warn_command(self, ctx):
         channel = ctx.guild.get_channel(837497081987989516)
-        await channel.purge()
+        await channel.purge(limit=100)
 
         url = f"https://raw.githubusercontent.com/Bot-detector/bot-detector-discord-bot/main/FAQ.json"
 
