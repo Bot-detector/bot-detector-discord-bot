@@ -127,7 +127,6 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
     @check(checks.check_allowed_channel)
     async def rankup_command(self, ctx):
         member = ctx.author
-
         linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
 
         if(len(linkedAccounts) == 0):
@@ -238,8 +237,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         await pending_ctx.delete()
 
-    async def export_bans(self, ctx, params, filetype):
-        playerName = string_processing.joinParams(params)
+    async def export_bans(self, ctx, playerName, filetype):
         discord_id = ctx.author.id
 
         if not string_processing.is_valid_rsn(playerName):
@@ -286,15 +284,87 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                     await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
 
 
+    async def multi_account_export_bans(self, ctx, filetype):
+        member = ctx.author
+        linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
+
+        num_links = len(linkedAccounts)
+
+        if num_links == 0:
+                mbed = discord.Embed (
+                    title = "Ban Export Error",
+                    description = f"There are no OSRS accounts linked to your Discord ID. You must run !link <RSN> and pair at least one account.",
+                    color = discord.Colour.dark_red()
+                )
+
+                await ctx.channel.send(embed=mbed)
+
+        elif num_links == 1:
+            await self.export_bans(ctx, linkedAccounts[0]['name'], filetype)
+                
+        else:
+            #Multiple Accounts, For Real!
+            info_msg = await ctx.channel.send("Getting that data for you right now! One moment, please :)")
+
+            sheets = []
+            names = []
+
+            for account in linkedAccounts:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{account['name']}") as r:
+                        if r.status == 200:
+
+                            js = await r.json()
+                            df = pd.DataFrame(js)
+
+                            sheets.append(df)
+                            names.append(account['name'])
+
+            totalSheet = pd.concat(sheets)
+
+            if filetype == 'excel':
+                writer = pd.ExcelWriter(f'{ctx.author.display_name}_bans.xlsx', engine='xlsxwriter')
+
+                totalSheet.to_excel(writer, sheet_name="Total")
+
+                i = 0
+                while i < len(names):
+                    sheets[i].to_excel(writer, sheet_name=names[i])
+                    i+=1
+
+                writer.save()
+
+                filePath = f'{os.getcwd()}/{ctx.author.display_name}_bans.xlsx'
+                        
+            else:
+                totalSheet.to_csv(f'{ctx.author.display_name}_bans.csv')
+                filePath = f'{os.getcwd()}/{ctx.author.display_name}_bans.csv'
+
+
+            await ctx.author.send(file=discord.File(filePath))
+            os.remove(filePath)
+            await info_msg.edit(content=f"Your {filetype} file has been sent to your DMs.")
+            
+        return
+
     @command(name="excelban", aliases=["excelbans"], description=help_messages.excelban_help_msg)
     @check(checks.check_allowed_channel)
     async def excel_ban_command(self, ctx, *params):
-        await self.export_bans(ctx, params, 'excel')
+        if len(params) == 0:
+            await self.multi_account_export_bans(ctx, 'excel')
+        else:
+            playerName = string_processing.joinParams(params)
+            await self.export_bans(ctx, playerName, 'excel')
 
     @command(name="csvban", aliases=["csvbans"], description=help_messages.csvban_help_msg)
     @check(checks.check_allowed_channel)
     async def csv_ban_command(self, ctx, *params):
-        await self.export_bans(ctx, params, 'csv')
+        if len(params) == 0:
+             await self.multi_account_export_bans(ctx, 'csv')
+        else:
+            playerName = string_processing.joinParams(params)
+
+            await self.export_bans(ctx, playerName, 'csv')
 
 
 def setup(bot):

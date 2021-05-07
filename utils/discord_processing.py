@@ -19,14 +19,11 @@ async def get_player_verification_full_status(playerName, token):
 async def get_playerid_verification(playerName, token):
 
     url = f'{BASE_URL}/discord/verify/playerid/{token}/{playerName}'
-    print(url)
 
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as r:
             if r.status == 200:
                 playerIDverif = await r.json()
-
-    print(playerIDverif)
     
     try:
         return playerIDverif[0]
@@ -67,3 +64,14 @@ async def get_linked_accounts(discord_id, token):
                 linkedAccounts = await r.json()
 
     return linkedAccounts
+
+async def get_discords_ids_with_links(token):
+
+    url = f'{BASE_URL}/discord/get_all_linked_ids/{token}'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                discordIDList = await r.json()
+
+    return discordIDList

@@ -12,4 +12,5 @@ ipython
 OSRS_Hiscores
 aiohttp
 openpyxl
-pythonping
+xlsxwriter
+xlwt
