@@ -47,10 +47,10 @@ def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
     
     map_img = mpimg.imread(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png') 
 
-    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.5, cmap="winter_r", shade=True, bw=.07)
+    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.0, cmap="winter_r", shade=True, bw=.07)
     hmax.set(xlabel='Local X', ylabel='Local Y')
     
-    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.5, cmap="autumn_r", shade=True, bw=.07)
+    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.4, cmap="autumn_r", shade=True, bw=.07)
     hmax.set(xlabel='', ylabel='',title='')
     
     hmax.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
