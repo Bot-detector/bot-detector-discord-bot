@@ -1,19 +1,14 @@
 import os
 import atexit
-
+import traceback
 import discord
+print(discord.__version__)
 from discord.ext import commands
 from dotenv import load_dotenv
 from typing_extensions import TypeAlias
 
-print(discord.__version__)
-
 import reaction_commands as rc
 
-import checks as checks
-
-import sys
-import traceback
 
 #Log File
 error_file = open('error.log', 'w+')
