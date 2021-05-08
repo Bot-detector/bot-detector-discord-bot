@@ -18,7 +18,9 @@ class ModCommands(Cog, name="Moderator Commands"):
     def __init__(self, bot):
         self.bot = bot
 
-    @command(name="warn", aliases=["youvedoneitnow"], hidden=True)
+    @has_role("Admin")
+    @has_role("Moderator")
+    @command(name="warn", aliases=["youvedoneitnow"))
     async def warn_command(self, ctx):
         mbed = await warn_msg()
         await ctx.channel.send(embed=mbed)
