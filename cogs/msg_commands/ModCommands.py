@@ -22,7 +22,7 @@ class ModCommands(Cog, name="Moderator Commands"):
     @has_role("Moderator")
     @command(name="warn", aliases=["youvedoneitnow"])
     async def warn_command(self, ctx):
-        mbed = await warn_msg()
+        mbed = await self.warn_msg()
         await ctx.channel.send(embed=mbed)
 
 
@@ -103,7 +103,7 @@ class ModCommands(Cog, name="Moderator Commands"):
         
         return
 
-async def warn_msg():
+async def warn_msg(self):
     mbed = discord.Embed(title=f"WARNING", color=0xff0000)
     mbed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
