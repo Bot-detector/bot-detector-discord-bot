@@ -20,7 +20,7 @@ class ModCommands(Cog, name="Moderator Commands"):
 
     @has_role("Admin")
     @has_role("Moderator")
-    @command(name="warn", aliases=["youvedoneitnow"))
+    @command(name="warn", aliases=["youvedoneitnow"])
     async def warn_command(self, ctx):
         mbed = await warn_msg()
         await ctx.channel.send(embed=mbed)
