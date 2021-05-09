@@ -28,7 +28,7 @@ class ModCommands(Cog, name="Moderator Commands"):
 
     @has_role("Admin")
     @command(name="updatefaq", hidden=True)
-    async def warn_command(self, ctx):
+    async def updatefaq_command(self, ctx):
         channel = ctx.guild.get_channel(837497081987989516)
         await channel.purge(limit=100)
 
