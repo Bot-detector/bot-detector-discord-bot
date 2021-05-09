@@ -18,9 +18,8 @@ class ModCommands(Cog, name="Moderator Commands"):
     def __init__(self, bot):
         self.bot = bot
 
-    @has_role("Admin")
-    @has_role("Moderator")
-    @command(name="warn", aliases=["youvedoneitnow"))
+    @has_permissions(kick_members=True)
+    @command(name="warn", aliases=["youvedoneitnow"])
     async def warn_command(self, ctx):
         mbed = await warn_msg()
         await ctx.channel.send(embed=mbed)
@@ -28,7 +27,7 @@ class ModCommands(Cog, name="Moderator Commands"):
 
     @has_role("Admin")
     @command(name="updatefaq", hidden=True)
-    async def warn_command(self, ctx):
+    async def updatefaq_command(self, ctx):
         channel = ctx.guild.get_channel(837497081987989516)
         await channel.purge(limit=100)
 
@@ -107,7 +106,7 @@ async def warn_msg():
     mbed = discord.Embed(title=f"WARNING", color=0xff0000)
     mbed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
-    mbed.set_image(url="https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png")
+    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png")
     return mbed
 
 
