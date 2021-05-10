@@ -72,7 +72,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         if(len(params) == 0):
             linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
 
-            if len(linkedAccounts) == 0:
+            if linkedAccounts == None or len(linkedAccounts) == 0:
                 mbed = discord.Embed (
                 description = f"Please include a player name or use the !link command to pair an OSRS account. "\
                     + "Once you have paired at least one account you will no longer need to type a name."
