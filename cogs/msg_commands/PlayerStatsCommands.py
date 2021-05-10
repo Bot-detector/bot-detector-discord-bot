@@ -329,7 +329,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
             if len(sheets) > 0:
                 totalSheet = pd.concat(sheets)
-                totalSheet = totalSheet.drop_duplicates(subset="Player_id")
+                totalSheet = totalSheet.drop_duplicates(subset="Player_id", keep='last')
             else:
                 mbed = discord.Embed (
                     description = f"We currently do not have data available for export for your linked accounts.",
