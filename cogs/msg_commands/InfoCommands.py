@@ -1,10 +1,13 @@
+from discord.embeds import Embed
 from discord.ext.commands import Cog
 from discord.ext.commands import command, check
 
+import discord
 import datetime
 from datetime import timezone
 import checks
 import help_messages
+import utils.roles as roles
 
 class InfoCommands(Cog, name='General Info Commands'):
 
@@ -63,6 +66,26 @@ class InfoCommands(Cog, name='General Info Commands'):
     @check(checks.check_allowed_channel)
     async def issues_command(self, ctx):
         await ctx.channel.send('<#822851862016950282>')
+
+    @command(name="roles", aliases=["ranks"], description=help_messages.roles_help_msg)
+    @check(checks.check_allowed_channel)
+    async def roles_command(self, ctx):
+
+        bot_mbed = discord.Embed(title=f"Bot Hunter Roles")
+
+        for k, v in roles.bot_hunter_roles.items():
+            bot_mbed.add_field(name=v["role_name"], value=f"Confirmed Bans: {k:,d}", inline=True)
+
+        bot_mbed.add_field(name="Have enough for a new role?", value="Use `!rankup` in <#825189024074563614>", inline=False)
+
+        special_roles_mbed = discord.Embed(title=f"Special Roles")
+
+        for k, v in roles.special_roles.items():
+            role_description = v["description"]
+            special_roles_mbed.add_field(name=k, value=f"{role_description}", inline=False)
+
+        await ctx.channel.send(embed=bot_mbed)
+        await ctx.channel.send(embed=special_roles_mbed)
 
 
 def setup(bot):

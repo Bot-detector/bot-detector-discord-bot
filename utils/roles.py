@@ -27,7 +27,12 @@ bot_hunter_roles = {
 
 
 special_roles = {
-    "verified_rsn" : 831196988976529438
+    "Verified RSN" : {"role_id": 831196988976529438, "description": "Has linked at least one OSRS to their Discord ID using the !link command. Type `!help link` for more info."},
+    "Bot Detective" : {"role_id": 830507560783183888, "description": "Users who scout out emerging bot farms and gather data for analysis. These folks are passionate about stopping botting!"},
+    "Quality Tester" : {"role_id": 832866713342050304, "description": "A role for those that run the plugin from our source code to ensure our"\
+        +"final releases are up to snuff. A huge thank you to all of the QTs!" \
+        +"\n\nIf you are interested in become a Quality Tester please reach out to one of the devs. Alternatively, you can use the `!beta` command for more information."},
+    "New Developer" : {"role_id": 837766752166215683, "description": "Developers who are interested in contributing to the project."},
 }
 
 

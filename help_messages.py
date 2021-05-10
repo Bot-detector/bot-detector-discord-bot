@@ -34,6 +34,8 @@ invite_help_msg = f"Places an invite link to the Discord server in the chat. Fee
 
 issues_help_msg = f"Having an issue with the plugin? !issues puts a link to #plugin-issues into the chat, where you can let us know."
 
+roles_help_msg = f"Lists the Discord roles available to our users."
+
 
 ###########################
 # Bot Submissions Commands
