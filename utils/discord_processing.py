@@ -63,7 +63,10 @@ async def get_linked_accounts(discord_id, token):
             if r.status == 200:
                 linkedAccounts = await r.json()
 
-    return linkedAccounts
+    try:
+        return linkedAccounts
+    except:
+        return None
 
 async def get_discords_ids_with_links(token):
 

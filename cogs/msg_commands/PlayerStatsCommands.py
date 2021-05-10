@@ -72,7 +72,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
         if(len(params) == 0):
             linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
 
-            if len(linkedAccounts) == 0:
+            if linkedAccounts == None or len(linkedAccounts) == 0:
                 mbed = discord.Embed (
                 description = f"Please include a player name or use the !link command to pair an OSRS account. "\
                     + "Once you have paired at least one account you will no longer need to type a name."
@@ -146,12 +146,12 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             return
         else:
             for r in member.roles:
-                if r.id == roles.special_roles["verified_rsn"]:
+                if r.id == roles.special_roles["Verified RSN"]["role_id"]:
                     #awesome, you're verified.
                     break
 
             else:
-                verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["verified_rsn"], member.guild.roles)
+                verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
                 await member.add_roles(verified_role)
 
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
@@ -329,7 +329,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
             if len(sheets) > 0:
                 totalSheet = pd.concat(sheets)
-                totalSheet = totalSheet.drop_duplicates(subset="Player_id")
+                totalSheet = totalSheet.drop_duplicates(subset="Player_id", keep='last')
             else:
                 mbed = discord.Embed (
                     description = f"We currently do not have data available for export for your linked accounts.",
