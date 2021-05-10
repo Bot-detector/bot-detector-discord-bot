@@ -26,6 +26,8 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
     @check(checks.check_allowed_channel)
     async def link_command(self ,ctx, *player_name):
 
+        discord_id = ctx.author.id
+
         if len(player_name) == 0:
             await ctx.channel.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
             return
@@ -36,9 +38,6 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             await ctx.channel.send(joinedName  + " isn't a valid Runescape user name.")
             return
 
-        code = string_processing.id_generator()
-        discord_id = ctx.author.id
-
         verifyID = await discord_processing.get_playerid_verification(playerName=joinedName, token=token)
 
         if verifyID == None:
@@ -46,12 +45,12 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
             await ctx.channel.send(embed=mbed)
             return
 
-        verifyStatus = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
+        previousAttempts = await discord_processing.get_player_verification_full_status(playerName=joinedName, token=token)
 
-        if len(verifyStatus) == 0:
-            pass
+        if len(previousAttempts) == 0:
+            code = string_processing.id_generator()
         else:
-            for status in verifyStatus:
+            for status in previousAttempts:
                 if int(status['Verified_status']) == 1:
                     isVerified = 1
                     break
@@ -65,6 +64,8 @@ class RSNLinkCommands(Cog, name='RSN Link Commands'):
                     mbed = await verified_msg(joinedName)
                     await ctx.channel.send(embed=mbed)
                     return
+            elif isVerified == 0:
+                code = int(previousAttempts[len(previousAttempts) - 1]["Code"])
 
         try:
             await discord_processing.post_discord_player_info(discord_id=discord_id, player_id=verifyID, code=code, token=token)
