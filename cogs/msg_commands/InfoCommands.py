@@ -8,6 +8,7 @@ from datetime import timezone
 import checks
 import help_messages
 import utils.roles as roles
+import utils.discord_processing as discord_processing
 
 class InfoCommands(Cog, name='General Info Commands'):
 
@@ -86,6 +87,22 @@ class InfoCommands(Cog, name='General Info Commands'):
 
         await ctx.channel.send(embed=bot_mbed)
         await ctx.channel.send(embed=special_roles_mbed)
+
+    @command(name="labels", aliases=["botlabels"], description=help_messages.labels_help_msg)
+    #@check(checks.check_allowed_channel)
+    async def labels_command(self, ctx):
+        
+        labels = await discord_processing.get_player_labels()
+        print(labels)
+
+        labels_mbed = discord.Embed(title=f"Current Player Labels")
+
+        for l in labels:
+            labels_mbed.add_field(name=f"{l['label']}", value="...", inline=True)
+
+        labels_mbed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
+
+        await ctx.channel.send(embed=labels_mbed)
 
 
 def setup(bot):

@@ -29,7 +29,7 @@ bot_hunter_roles = {
 special_roles = {
     "Verified RSN" : {"role_id": 831196988976529438, "description": "Has linked at least one OSRS account to their Discord ID using the `!link` command. Type `!help link` for more info."},
     "Bot Detective" : {"role_id": 830507560783183888, "description": "Users who scout out emerging bot farms and gather data for analysis. These folks are passionate about stopping botting!"},
-    "Quality Tester" : {"role_id": 832866713342050304, "description": "A role for those that run the plugin from our source code to ensure our"\
+    "Quality Tester" : {"role_id": 832866713342050304, "description": "A role for those that run the plugin from our source code to ensure our "\
         +"final releases are up to snuff. A huge thank you to all of the QTs!" \
         +"\n\nIf you are interested in become a Quality Tester please reach out to one of the devs. Alternatively, you can use the `!beta` command for more information."},
     "New Developer" : {"role_id": 837766752166215683, "description": "Developers who are interested in contributing to the project."},
@@ -50,9 +50,9 @@ async def get_multi_player_contributions(verifiedPlayers):
             async with session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{playerName}") as r:
                 if r.status == 200:
                     js = await r.json()
-                    totalBans += int(js['bans'])
-                    totalPossibleBans += int(js['possible_bans'])
-                    totalReports += int(js['reports'])
+                    totalBans += int(js['total']['bans'])
+                    totalPossibleBans += int(js['total']['possible_bans'])
+                    totalReports += int(js['total']['reports'])
 
     return totalBans, totalPossibleBans, totalReports
 
@@ -77,7 +77,10 @@ async def get_bot_hunter_role(verifiedPlayers, member):
         else:
             role_key = kc_amounts[kc_placement - 1]
 
-        return discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+        new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+        next_role_amount = kc_amounts[kc_placement]
+
+        return new_role, bans, next_role_amount
 
 
 async def remove_old_roles(member):

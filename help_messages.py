@@ -36,6 +36,7 @@ issues_help_msg = f"Having an issue with the plugin? !issues puts a link to #plu
 
 roles_help_msg = f"Lists the Discord roles available to our users."
 
+labels_help_msg = f"Lists the player labels that the ML model currently will try to identify players as. These will change over time."
 
 ###########################
 # Bot Submissions Commands
