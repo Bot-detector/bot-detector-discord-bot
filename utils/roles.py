@@ -50,9 +50,9 @@ async def get_multi_player_contributions(verifiedPlayers):
             async with session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{playerName}") as r:
                 if r.status == 200:
                     js = await r.json()
-                    totalBans += int(js['bans'])
-                    totalPossibleBans += int(js['possible_bans'])
-                    totalReports += int(js['reports'])
+                    totalBans += int(js['total']['bans'])
+                    totalPossibleBans += int(js['total']['possible_bans'])
+                    totalReports += int(js['total']['reports'])
 
     return totalBans, totalPossibleBans, totalReports
 

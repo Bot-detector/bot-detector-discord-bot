@@ -110,9 +110,9 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 async with session.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName) as r:
                     if r.status == 200:
                         js = await r.json()
-                        reports = int(js['reports'])
-                        bans = int(js['bans'])
-                        possible_bans = int(js['possible_bans'])
+                        reports = int(js['total']['reports'])
+                        bans = int(js['total']['bans'])
+                        possible_bans = int(js['total']['possible_bans'])
 
                         mbed = discord.Embed(title=f"{playerName}'s Stats", color=0x00ff00)
 
