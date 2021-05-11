@@ -83,17 +83,37 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
             contributions =  await roles.get_multi_player_contributions(linkedAccounts)
 
-            bans = contributions[0]
-            possible_bans = contributions[1]
-            reports = contributions[2]
+            print(contributions)
+
+            total_bans = contributions["totalBans"]
+            total_possible_bans = contributions["totalPossibleBans"]
+            total_reports = contributions["totalReports"]
+            manual_reports = contributions["totalManualReports"]
+            manual_bans = contributions["totalManualBans"]
+            manual_incorrect = contributions["totalManualIncorrect"]
+                        
+            if manual_reports == 0:
+                report_accuracy = None
+            elif manual_incorrect == 0:
+                report_accuracy = 100.00
+            else:
+                report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
 
             mbed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
-            mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
-            mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
-            mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
+            mbed.add_field (name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
+            mbed.add_field (name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
+            mbed.add_field (name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
+
+            if report_accuracy is None:
+                pass
+            else:
+                mbed.add_field (name="Manual Reports Made:", value=f"{manual_reports:,d}", inline=False)
+                mbed.add_field (name="Report Accuracy:", value=f"{report_accuracy}%", inline=False)
+
             mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
-            if reports == 0:
+            
+            if total_reports == 0:
                             mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
                             icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
             await ctx.channel.send(embed=mbed)
@@ -110,19 +130,39 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 async with session.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName) as r:
                     if r.status == 200:
                         js = await r.json()
-                        reports = int(js['total']['reports'])
-                        bans = int(js['total']['bans'])
-                        possible_bans = int(js['total']['possible_bans'])
+
+                        manual_reports = int(js['manual']['reports'])
+                        manual_bans = int(js['manual']['bans'])
+                        manual_incorrect = int(js['manual']['incorrect_reports'])
+                        
+                        if manual_reports == 0:
+                            report_accuracy = None
+                        elif manual_incorrect == 0:
+                            report_accuracy = 100.00
+                        else:
+                            report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
+
+                        total_reports = int(js['total']['reports'])
+                        total_bans = int(js['total']['bans'])
+                        total_possible_bans = int(js['total']['possible_bans'])
 
                         mbed = discord.Embed(title=f"{playerName}'s Stats", color=0x00ff00)
 
-                        mbed.add_field (name="Reports Submitted:", value=f"{reports:,d}", inline=False)
-                        mbed.add_field (name="Possible Bans:", value=f"{possible_bans:,d}", inline=False)
-                        mbed.add_field (name="Confirmed Bans:", value=f"{bans:,d}", inline=False)
+                        mbed.add_field (name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
+                        mbed.add_field (name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
+                        mbed.add_field (name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
 
-                        if reports == 0:
+                        if report_accuracy is None:
+                            pass
+                        else:
+                            mbed.add_field (name="Manual Reports Made:", value=f"{manual_reports:,d}", inline=False)
+                            mbed.add_field (name="Report Accuracy:", value=f"{report_accuracy}%", inline=False)
+
+                        if total_reports == 0:
                             mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
                             icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
+
+                        mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
             
                         await ctx.channel.send(embed=mbed)
                     else:

@@ -39,9 +39,14 @@ special_roles = {
 #Gets bans from all accounts passed in
 async def get_multi_player_contributions(verifiedPlayers):
     
-    totalBans = 0
-    totalPossibleBans = 0
-    totalReports = 0
+    contributions = {
+        "totalBans": 0,
+        "totalPossibleBans": 0,
+        "totalReports": 0,
+        "totalManualReports": 0,
+        "totalManualBans": 0,
+        "totalManualIncorrect": 0
+    }
 
     for player in verifiedPlayers:
         playerName = player["name"]
@@ -50,17 +55,20 @@ async def get_multi_player_contributions(verifiedPlayers):
             async with session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{playerName}") as r:
                 if r.status == 200:
                     js = await r.json()
-                    totalBans += int(js['total']['bans'])
-                    totalPossibleBans += int(js['total']['possible_bans'])
-                    totalReports += int(js['total']['reports'])
+                    contributions["totalBans"] += int(js['total']['bans'])
+                    contributions["totalPossibleBans"] += int(js['total']['possible_bans'])
+                    contributions["totalReports"] += int(js['total']['reports'])
+                    contributions["totalManualReports"] = int(js['manual']['reports'])
+                    contributions["totalManualBans"] = int(js['manual']['bans'])
+                    contributions["totalManualIncorrect"] = int(js['manual']['incorrect_reports'])
 
-    return totalBans, totalPossibleBans, totalReports
+    return contributions
 
 
 async def get_bot_hunter_role(verifiedPlayers, member):
 
     contributions = await get_multi_player_contributions(verifiedPlayers)
-    bans = contributions[0]
+    bans = contributions["totalBans"]
 
     if(bans == 0):
         return False #No rank just yet
