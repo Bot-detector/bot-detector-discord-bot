@@ -98,7 +98,7 @@ class InfoCommands(Cog, name='General Info Commands'):
         labels_mbed = discord.Embed(title=f"Current Player Labels")
 
         for l in labels:
-            labels_mbed.add_field(name=f"{l['label']}", value="...", inline=True)
+            labels_mbed.add_field(name=f"{l['label']}", value="\u200b", inline=True)
 
         labels_mbed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
 
