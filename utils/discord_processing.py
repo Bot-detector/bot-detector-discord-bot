@@ -78,3 +78,18 @@ async def get_discords_ids_with_links(token):
                 discordIDList = await r.json()
 
     return discordIDList
+
+async def get_player_labels():
+
+    #url = f'{BASE_URL}/labels/get_player_labels'
+    url = f'https://osrsbotdetector.com/dev/labels/get_player_labels'
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as r:
+            if r.status == 200:
+                labels = await r.json()
+
+    try:
+        return labels
+    except:
+        return None

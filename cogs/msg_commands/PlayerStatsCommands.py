@@ -155,7 +155,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 await member.add_roles(verified_role)
 
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
-        new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
+        new_role, current_amount, next_role_amount = await roles.get_bot_hunter_role(linkedAccounts, member)
 
         if(new_role == False):
             mbed = discord.Embed (
@@ -181,7 +181,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
         else:
             mbed = discord.Embed (
-                    description = f"You are not yet eligible for a new role. I believe in you! Keep it up! :)",
+                    description = f"You are not yet eligible for a new role. Only **{next_role_amount - current_amount}** more confirmed bans and you'll be there! :D",
                     color = new_role.color
                 )
 

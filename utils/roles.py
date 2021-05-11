@@ -77,7 +77,10 @@ async def get_bot_hunter_role(verifiedPlayers, member):
         else:
             role_key = kc_amounts[kc_placement - 1]
 
-        return discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+        new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+        next_role_amount = kc_amounts[kc_placement]
+
+        return new_role, bans, next_role_amount
 
 
 async def remove_old_roles(member):
