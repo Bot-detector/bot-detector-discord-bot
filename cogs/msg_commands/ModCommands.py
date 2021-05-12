@@ -95,9 +95,12 @@ class ModCommands(Cog, name="Moderator Commands"):
 
                 if(isinstance(role_info, bool)):
                     pass
-                else:
+                elif(isinstance(role_info, tuple)):
                     await roles.remove_old_roles(member)
                     await member.add_roles(role_info[0])
+                else:
+                    await roles.remove_old_roles(member)
+                    await member.add_roles(role_info)
                     
 
         
