@@ -71,7 +71,9 @@ async def on_raw_reaction_add(payload):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         return
-    elif isinstance(error, discord.errors.Forbidden):
+    elif isinstance(error, commands.CommandInvokeError):
+        return await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
+    elif isinstance(error, commands.NoPrivateMessage):
         return await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
     elif not isinstance(error, commands.CheckFailure):
         print(f"Ignoring exception in command {ctx.command}:", file=error_file)

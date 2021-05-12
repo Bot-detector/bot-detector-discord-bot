@@ -71,6 +71,7 @@ class ModCommands(Cog, name="Moderator Commands"):
         listUsers = await discord_processing.get_discords_ids_with_links(token)
 
         for user in listUsers:
+            try:
                 member = await ctx.guild.fetch_member(user["Discord_id"])
                 print(member)
 
@@ -101,9 +102,10 @@ class ModCommands(Cog, name="Moderator Commands"):
                 else:
                     await roles.remove_old_roles(member)
                     await member.add_roles(role_info)
+            except Exception as d:
+                print(d)
+                pass
                     
-
-        
         return
 
 async def warn_msg():
