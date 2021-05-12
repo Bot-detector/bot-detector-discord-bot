@@ -73,6 +73,7 @@ class ModCommands(Cog, name="Moderator Commands"):
         for user in listUsers:
             try:
                 member = await ctx.guild.fetch_member(user["Discord_id"])
+                print(member)
 
                 linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
 
@@ -89,17 +90,22 @@ class ModCommands(Cog, name="Moderator Commands"):
                         verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
                         await member.add_roles(verified_role)
 
-                new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
+                role_info = await roles.get_bot_hunter_role(linkedAccounts, member)
 
-                if(new_role == False):
+                print(role_info)
+
+                if(isinstance(role_info, bool)):
                     pass
+                elif(isinstance(role_info, tuple)):
+                    await roles.remove_old_roles(member)
+                    await member.add_roles(role_info[0])
                 else:
                     await roles.remove_old_roles(member)
-                    await member.add_roles(new_role)
+                    await member.add_roles(role_info)
+            except Exception as d:
+                print(d)
+                pass
                     
-            except Exception as e:
-                    print(e)
-        
         return
 
 async def warn_msg():

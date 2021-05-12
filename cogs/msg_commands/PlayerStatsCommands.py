@@ -83,8 +83,6 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
 
             contributions =  await roles.get_multi_player_contributions(linkedAccounts)
 
-            print(contributions)
-
             total_bans = contributions["totalBans"]
             total_possible_bans = contributions["totalPossibleBans"]
             total_reports = contributions["totalReports"]
@@ -108,11 +106,11 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             if report_accuracy is None:
                 pass
             else:
-                mbed.add_field (name="Manual Reports Made:", value=f"{manual_reports:,d}", inline=False)
-                mbed.add_field (name="Report Accuracy:", value=f"{report_accuracy}%", inline=False)
+                mbed.add_field (name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
+                mbed.add_field (name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
 
             mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
-            
+
             if total_reports == 0:
                             mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
                             icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
@@ -155,8 +153,8 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                         if report_accuracy is None:
                             pass
                         else:
-                            mbed.add_field (name="Manual Reports Made:", value=f"{manual_reports:,d}", inline=False)
-                            mbed.add_field (name="Report Accuracy:", value=f"{report_accuracy}%", inline=False)
+                            mbed.add_field (name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
+                            mbed.add_field (name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
 
                         if total_reports == 0:
                             mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
@@ -186,6 +184,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             return
         else:
             for r in member.roles:
+                print(r)
                 if r.id == roles.special_roles["Verified RSN"]["role_id"]:
                     #awesome, you're verified.
                     break
