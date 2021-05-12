@@ -57,9 +57,9 @@ async def get_multi_player_contributions(verifiedPlayers):
                     totalBans += int(js['total']['bans'])
                     totalPossibleBans += int(js['total']['possible_bans'])
                     totalReports += int(js['total']['reports'])
-                    totalManualReports = int(js['manual']['reports'])
-                    totalManualBans = int(js['manual']['bans'])
-                    totalManualIncorrect = int(js['manual']['incorrect_reports'])
+                    totalManualReports += int(js['manual']['reports'])
+                    totalManualBans += int(js['manual']['bans'])
+                    totalManualIncorrect += int(js['manual']['incorrect_reports'])
 
 
     contributions = {
