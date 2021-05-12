@@ -71,7 +71,6 @@ class ModCommands(Cog, name="Moderator Commands"):
         listUsers = await discord_processing.get_discords_ids_with_links(token)
 
         for user in listUsers:
-            try:
                 member = await ctx.guild.fetch_member(user["Discord_id"])
 
                 linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
@@ -89,7 +88,7 @@ class ModCommands(Cog, name="Moderator Commands"):
                         verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
                         await member.add_roles(verified_role)
 
-                new_role = await roles.get_bot_hunter_role(linkedAccounts, member)
+                new_role, bans, next_role_ammount = await roles.get_bot_hunter_role(linkedAccounts, member)
 
                 if(new_role == False):
                     pass
@@ -97,8 +96,7 @@ class ModCommands(Cog, name="Moderator Commands"):
                     await roles.remove_old_roles(member)
                     await member.add_roles(new_role)
                     
-            except Exception as e:
-                    print(e)
+
         
         return
 
