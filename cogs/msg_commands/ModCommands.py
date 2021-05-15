@@ -1,66 +1,62 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command, has_permissions
-import discord
-import aiohttp
 import os
 
-from discord.ext.commands.core import has_role
+import aiohttp
+import discord
+from discord.ext import commands
+from dotenv import load_dotenv
 
 import utils.discord_processing as discord_processing
 import utils.roles as roles
 
-from dotenv import load_dotenv
+
 load_dotenv()
 token = os.getenv("API_AUTH_TOKEN")
 
-class ModCommands(Cog, name="Moderator Commands"):
-
+class ModCommands(commands.Cog, name="Moderator Commands"):
     def __init__(self, bot):
         self.bot = bot
 
-    @has_permissions(kick_members=True)
-    @command(name="warn", aliases=["youvedoneitnow"])
+
+    @commands.has_permissions(kick_members=True)
+    @commands.command(name="warn", aliases=["youvedoneitnow"])
     async def warn_command(self, ctx):
         mbed = await warn_msg()
-        await ctx.channel.send(embed=mbed)
+        await ctx.send(embed=mbed)
 
-
-    @has_role("Admin")
-    @command(name="updatefaq", hidden=True)
+    @commands.has_role("Admin")
+    @commands.command(name="updatefaq", hidden=True)
     async def updatefaq_command(self, ctx):
         channel = ctx.guild.get_channel(837497081987989516)
         await channel.purge(limit=100)
 
-        url = f"https://raw.githubusercontent.com/Bot-detector/bot-detector-discord-bot/main/FAQ.json"
+        url = "https://raw.githubusercontent.com/Bot-detector/bot-detector-discord-bot/main/FAQ.json"
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as r:
-                if r.status == 200:
-                    faqEntriesList = await r.json(content_type="text/plain; charset=utf-8")
+        async with self.bot.session.get(url) as r:
+            if r.status == 200:
+                faqEntriesList = await r.json(content_type="text/plain; charset=utf-8")
+
         try:
             for entry in faqEntriesList:
-                
                 await channel.send(embed=self.generateEmbed(entry["embeds"][0]))
         except Exception as e:
             print(e)
-            return None
+
 
     def generateEmbed(self, entry):
-        mbed = discord.Embed (
-                    title= entry["title"],
-                    color = discord.Color.gold()
-                )
+        embed = discord.Embed(
+            title=entry["title"],
+            color=discord.Color.gold()
+        )
 
         fields = entry["fields"]
-
         for field in fields:
-            mbed.add_field(name=field["name"], value=field["value"], inline=False)
+            embed.add_field(name=field["name"], value=field["value"], inline=False)
 
-        return mbed
+        return embed
 
 
-    @command(name="updateallroles", hidden=True)
-    @has_permissions(manage_roles=True)
+    @commands.command(name="updateallroles", hidden=True)
+    @commands.has_permissions(manage_roles=True)
     async def update_all_roles_command(self, ctx, spamChoice=""):
 
         if 'spam' in spamChoice:
@@ -68,16 +64,16 @@ class ModCommands(Cog, name="Moderator Commands"):
         else:
             pass
 
-        listUsers = await discord_processing.get_discords_ids_with_links(token)
+        listUsers = await discord_processing.get_discords_ids_with_links(self.bot.session, token)
 
         for user in listUsers:
             try:
                 member = await ctx.guild.fetch_member(user["Discord_id"])
                 print(member)
 
-                linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
+                linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
-                if(len(linkedAccounts) == 0):
+                if not len(linkedAccounts):
                     #how the heck did we get here
                     pass
                 else:
@@ -90,13 +86,13 @@ class ModCommands(Cog, name="Moderator Commands"):
                         verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
                         await member.add_roles(verified_role)
 
-                role_info = await roles.get_bot_hunter_role(linkedAccounts, member)
+                role_info = await roles.get_bot_hunter_role(self.bot.session, linkedAccounts, member)
 
                 print(role_info)
 
-                if(isinstance(role_info, bool)):
+                if (isinstance(role_info, bool)):
                     pass
-                elif(isinstance(role_info, tuple)):
+                elif (isinstance(role_info, tuple)):
                     await roles.remove_old_roles(member)
                     await member.add_roles(role_info[0])
                 else:
@@ -105,8 +101,7 @@ class ModCommands(Cog, name="Moderator Commands"):
             except Exception as d:
                 print(d)
                 pass
-                    
-        return
+
 
 async def warn_msg():
     mbed = discord.Embed(title=f"WARNING", color=0xff0000)
@@ -118,6 +113,3 @@ async def warn_msg():
 
 def setup(bot):
     bot.add_cog(ModCommands(bot))
-
-
-
