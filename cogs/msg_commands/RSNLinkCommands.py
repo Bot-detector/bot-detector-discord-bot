@@ -149,7 +149,7 @@ async def link_msg(joinedName, code) -> discord.Embed:
             4. Verify that a Plugin Admin or Plugin Moderator is present in the channel.
             5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-detector-commands.
             6. Type into the Clan Chat: '!Code {code}'.
-            7. Type '!verify {joinedName}' in #bot-commands channel to confirm that you have been Verified.
+            7. Type '!verify {joinedName}' in #bot-detector-commands channel to confirm that you have been Verified.
             8. Verification Process Complete.
         """)
     )

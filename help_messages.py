@@ -102,7 +102,7 @@ stats_help_msg = "Displays the project-wide reporting statistics. Also shows tot
 ###########################
 
 link_help_msg = "Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future. " \
-    + "Currently, linking allows you to vote on predictions with reactions in #bot-commands and receive your ban breakdowns with !excelban and !csvban. " \
+    + "Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban. " \
     +"\n\nYOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin."
 
 linked_help_msg = "The bot will DM you which OSRS accounts are linked to your Discord ID."
