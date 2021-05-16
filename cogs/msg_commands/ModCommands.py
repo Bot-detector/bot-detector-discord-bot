@@ -1,31 +1,26 @@
 import os
 
-import aiohttp
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-import utils.discord_processing as discord_processing
-import utils.roles as roles
+from utils import CommonCog, discord_processing, roles
 
 
 load_dotenv()
 token = os.getenv("API_AUTH_TOKEN")
 
-class ModCommands(commands.Cog, name="Moderator Commands"):
-    def __init__(self, bot):
-        self.bot = bot
-
+class ModCommands(CommonCog, name="Moderator Commands"):
 
     @commands.has_permissions(kick_members=True)
-    @commands.command(name="warn", aliases=["youvedoneitnow"])
-    async def warn_command(self, ctx):
+    @commands.command(aliases=["youvedoneitnow"])
+    async def warn(self, ctx):
         mbed = await warn_msg()
         await ctx.send(embed=mbed)
 
     @commands.has_role("Admin")
-    @commands.command(name="updatefaq", hidden=True)
-    async def updatefaq_command(self, ctx):
+    @commands.command(hidden=True)
+    async def updatefaq(self, ctx):
         channel = ctx.guild.get_channel(837497081987989516)
         await channel.purge(limit=100)
 
@@ -55,14 +50,12 @@ class ModCommands(commands.Cog, name="Moderator Commands"):
         return embed
 
 
-    @commands.command(name="updateallroles", hidden=True)
+    @commands.command(hidden=True)
     @commands.has_permissions(manage_roles=True)
-    async def update_all_roles_command(self, ctx, spamChoice=""):
+    async def updateallroles(self, ctx, spamChoice=""):
 
         if 'spam' in spamChoice:
-            await ctx.channel.send(f"{ctx.author.mention} You are a monster. I won't do it!!")
-        else:
-            pass
+            await ctx.send(f"{ctx.author.mention} You are a monster. I won't do it!!")
 
         listUsers = await discord_processing.get_discords_ids_with_links(self.bot.session, token)
 

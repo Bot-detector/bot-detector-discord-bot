@@ -5,17 +5,15 @@ import pandas as pd
 import utils.sql as sql
 from discord.ext import commands
 
-import checks
 import help_messages
+from utils import check_allowed_channel, CommonCog
 
 
-class BotSubmissionsCommands(commands.Cog, name="Bot Submissions Commands"):
-    def __init__(self, bot):
-        self.bot = bot
+class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
+    cog_check = check_allowed_channel
 
-    @commands.command(name="list", description=help_messages.list_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def list_command(self, ctx):
+    @commands.command(description=help_messages.list_help_msg)
+    async def list(self, ctx):
         msg = cleandoc("""
             Please send a link to a Pastebin URL containing your name list.
             Example: !submit https://pastebin.com/iw8MmUzg
@@ -38,30 +36,15 @@ class BotSubmissionsCommands(commands.Cog, name="Bot Submissions Commands"):
 
         await ctx.author.send(msg)
 
-    @commands.command(name="submit", description=help_messages.submit_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def submit_command(self, ctx, paste_url):
+    @commands.command(description=help_messages.submit_help_msg)
+    async def submit(self, ctx, paste_url):
         errors = "No Errors"
 
-        sqlLabelInsert = """
-            INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)
-        """
-
-        sqlPlayersInsert = """
-            INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)
-        """
-
-        sqlLabelID = """
-            SELECT ID FROM `labels_submitted` WHERE Label = %s
-        """
-
-        sqlPlayerID = """
-            SELECT ID FROM `players_submitted` WHERE Players = %s
-        """
-
-        sqlInsertPlayerLabel = """
-            INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)
-        """
+        sqlLabelID = "SELECT ID FROM `labels_submitted` WHERE Label = %s"
+        sqlPlayerID = "SELECT ID FROM `players_submitted` WHERE Players = %s"
+        sqlLabelInsert = "INSERT IGNORE `labels_submitted`(`Label`) VALUES (%s)"
+        sqlPlayersInsert = "INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)"
+        sqlInsertPlayerLabel = "INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)"
 
         try:
             paste_soup = sql.get_paste_data(paste_url)
@@ -76,10 +59,10 @@ class BotSubmissionsCommands(commands.Cog, name="Bot Submissions Commands"):
             errors = str(e)
 
         msg = cleandoc(f"""```diff
-        Paste Information Submitted
-        _____________________
-        Link: {paste_url}
-        Errors: {errors}
+            Paste Information Submitted
+            _____________________
+            Link: {paste_url}
+            Errors: {errors}
         ```""")
 
         recipient = self.bot.get_user(int(os.getenv('SUBMIT_RECIPIENT')))

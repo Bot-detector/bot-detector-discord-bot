@@ -1,6 +1,7 @@
-import discord
-import aiohttp
 import bisect
+
+import aiohttp
+import discord
 
 bot_hunter_roles = {
     1:       {"role_id": 825165287526498314, "role_name": "Bot Hunter I"}, # 1 Ban

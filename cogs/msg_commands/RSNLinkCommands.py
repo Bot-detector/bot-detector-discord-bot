@@ -1,33 +1,28 @@
 import os
 
 import discord
+
 from discord.ext import commands
 from dotenv import load_dotenv
 
-import checks
 import help_messages
-import utils.discord_processing as discord_processing
-import utils.string_processing as string_processing
+from utils import CommonCog, check_allowed_channel, discord_processing, string_processing
 
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
-class RSNLinkCommands(commands.Cog, name='RSN Link Commands'):
-    def __init__(self, bot):
-        self.bot = bot
+class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
+    cog_check = check_allowed_channel
 
-
-    @commands.command(name="link", aliases=["pair"], description=help_messages.link_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def link_command(self, ctx, *, joinedName=None):
+    @commands.command(aliases=["pair"], description=help_messages.link_help_msg)
+    async def link(self, ctx, *, joinedName=None):
         if not joinedName:
             return await ctx.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
 
-
         if not string_processing.is_valid_rsn(joinedName):
-            await ctx.channel.send(joinedName  + " isn't a valid Runescape user name.")
-            return
+            return await ctx.send(f"{joinedName} isn't a valid Runescape user name.")
+
 
         verifyID = await discord_processing.get_playerid_verification(self.bot.session, playerName=joinedName, token=token)
 
@@ -66,7 +61,6 @@ class RSNLinkCommands(commands.Cog, name='RSN Link Commands'):
 
 
     @commands.command(name="verify", description=help_messages.verify_help_msg)
-    @commands.check(checks.check_allowed_channel)
     async def verify_comand(self, ctx, *, joinedName=None):
         if not joinedName:
             return await ctx.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
@@ -94,7 +88,6 @@ class RSNLinkCommands(commands.Cog, name='RSN Link Commands'):
         await ctx.send(embed=mbed)
 
     @commands.command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
-    @commands.check(checks.check_allowed_channel)
     async def linked_comand(self, ctx):
         linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 

@@ -1,19 +1,17 @@
 from inspect import cleandoc
 
-import aiohttp
 import discord
 from discord.ext import commands
 
-import checks
 import help_messages
+from utils import CommonCog, checks
 
-class ProjectStatsCommands(commands.Cog, name='Project Stats Commands'):
-    def __init__(self, bot):
-        self.bot = bot
 
-    @commands.command(name="stats", description=help_messages.stats_help_msg)
+class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
+
+    @commands.command(description=help_messages.stats_help_msg)
     @commands.check(checks.check_allowed_channel)
-    async def stats_command(self, ctx):
+    async def stats(self, ctx):
         playersTracked = ""
         totalBans = ""
         totalReports = ""
@@ -48,7 +46,7 @@ class ProjectStatsCommands(commands.Cog, name='Project Stats Commands'):
 
 
 async def project_stats(playersTracked, totalReports, totalBans, activeInstalls):
-    mbed = discord.Embed(title=f"Bot Detector Plugin", color=0x00ff00)
+    mbed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
     mbed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
             Players Analyzed: {playersTracked:,}"
             Jagex Reports: {totalReports:,}"

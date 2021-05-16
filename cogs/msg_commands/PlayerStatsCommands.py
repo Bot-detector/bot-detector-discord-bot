@@ -7,26 +7,20 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from OSRS_Hiscores import Hiscores
 
-import checks
 import help_messages
-import utils.discord_processing as discord_processing
-import utils.roles as roles
-import utils.string_processing as string_processing
+import utils
+from utils import discord_processing, roles, check_allowed_channel
 
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
+class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
+    cog_check = check_allowed_channel
 
-class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
-    def __init__(self, bot):
-        self.bot = bot
-
-
-    @commands.command(name="lookup", aliases=["hiscores"], description=help_messages.lookup_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def hiscores_lookup(self, ctx, *, username):
-        if not string_processing.is_valid_rsn(username):
+    @commands.command(aliases=["hiscores"], description=help_messages.lookup_help_msg)
+    async def lookup(self, ctx, *, username):
+        if not utils.is_valid_rsn(username):
             return await ctx.send(f"{username} is not a valid RSN")
 
         try:
@@ -60,9 +54,8 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
         await intro_msg.delete()
 
 
-    @commands.command(name="kc", aliases=["killcount"], description=help_messages.kc_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def kc_command(self, ctx, *, player_name=None):
+    @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
+    async def kc(self, ctx, *, player_name=None):
         if not player_name:
             linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
@@ -85,7 +78,7 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
             manual_bans = contributions["totalManualBans"]
             manual_incorrect = contributions["totalManualIncorrect"]
 
-        elif string_processing.is_valid_rsn(player_name):
+        elif utils.is_valid_rsn(player_name):
             async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
                 if r.status != 200:
                     return await ctx.send(f"Couldn't grab the !kc for {player_name}")
@@ -128,9 +121,8 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
-    @commands.command(name="rankup", aliases=["updaterank"], description=help_messages.rankup_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def rankup_command(self, ctx):
+    @commands.command(aliases=["updaterank"], description=help_messages.rankup_help_msg)
+    async def rankup(self, ctx):
         member = ctx.author
         linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
@@ -184,13 +176,12 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
 
 
 
-    @commands.command(name="predict", aliases=["detect"], description=help_messages.predict_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def predict_command(self, ctx, *, player_name):
-        pending_ctx = await ctx.send("Searching the database for the predicted username.")
+    @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
+    async def predict(self, ctx, *, player_name):
+        pending_msg = await ctx.send("Searching the database for the predicted username.")
         await ctx.trigger_typing()
 
-        if not string_processing.is_valid_rsn(player_name):
+        if not utils.is_valid_rsn(player_name):
             if len(player_name) < 1:
                 await ctx.send(f"Please enter a valid Runescape user name.")
                 return
@@ -211,8 +202,8 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
 
         msg = cleandoc(f"""```diff
             + Name: {name}
-            {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
-            {string_processing.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
+            {utils.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
+            {utils.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
             + ID: {player_id}
             ============
             Prediction Breakdown\n\n
@@ -220,7 +211,7 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
 
         for predict in secondaries:
             msg += cleandoc(f"""
-                {string_processing.plus_minus(predict[0], 'Real_Player')}  {predict[0]}:
+                {utils.plus_minus(predict[0], 'Real_Player')}  {predict[0]}:
                 {predict[1] * 100:.2f}%"\n"
             """)
 
@@ -228,16 +219,14 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
             Click the reactions below to give feedback on the above prediction:
         """)
 
-        my_msg = await ctx.send(msg)
-        await my_msg.add_reaction('✔️')
-        await my_msg.add_reaction('❌')
-
-        await pending_ctx.delete()
+        proper_message = await pending_msg.edit(content=msg)
+        await proper_message.add_reaction("✔️")
+        await proper_message.add_reaction("❌")
 
     async def export_bans(self, ctx, playerName, filetype):
         discord_id = ctx.author.id
 
-        if not string_processing.is_valid_rsn(playerName):
+        if not utils.is_valid_rsn(playerName):
             return await ctx.send(f"{playerName} isn't a valid Runescape user name.")
 
         status = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=playerName, token=token)
@@ -313,7 +302,7 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
                 totalSheet = pd.concat(sheets)
                 totalSheet = totalSheet.drop_duplicates(subset="Player_id", keep='last')
             else:
-                mbed = discord.Embed (
+                mbed = discord.Embed(
                     description = "We currently do not have data available for export for your linked accounts.",
                     color = discord.Colour.dark_red()
                 )
@@ -344,17 +333,15 @@ class PlayerStatsCommands(commands.Cog, name='Player Stats Commands'):
             await info_msg.edit(content=f"Your {filetype} file has been sent to your DMs.")
 
 
-    @commands.command(name="excelban", aliases=["excelbans"], description=help_messages.excelban_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def excel_ban_command(self, ctx, *, player_name=None):
+    @commands.command(aliases=["excelbans"], description=help_messages.excelban_help_msg)
+    async def excelban(self, ctx, *, player_name=None):
         if not player_name:
             await self.multi_account_export_bans(ctx, 'excel')
         else:
             await self.export_bans(ctx, player_name, 'excel')
 
-    @commands.command(name="csvban", aliases=["csvbans"], description=help_messages.csvban_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def csv_ban_command(self, ctx, *, player_name=None):
+    @commands.command(aliases=["csvbans"], description=help_messages.csvban_help_msg)
+    async def csvban(self, ctx, *, player_name=None):
         if not player_name:
             await self.multi_account_export_bans(ctx, 'csv')
         else:

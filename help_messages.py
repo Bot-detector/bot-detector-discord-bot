@@ -106,7 +106,7 @@ excelban_help_msg = clean("""
 
 csvban_help_msg = clean("""
     You must link your Discord account with an OSRS account in order to use this command. You will only be able
-    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted 
+    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
     which have resulted in bans in a .csv file format.
 """)
 
@@ -124,8 +124,8 @@ stats_help_msg = "Displays the project-wide reporting statistics. Also shows tot
 link_help_msg = clean("""
     Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future.
     Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban.
-    
-    
+
+
     YOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin
 """)
 

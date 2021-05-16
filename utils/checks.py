@@ -20,15 +20,11 @@ patron_roles = {
 }
 
 
-def check_channels(ctx, channels):
-    return not ctx.guild or ctx.channel.id in channels
-
 def check_allowed_channel(ctx):
-    return check_channels(ctx, allowed_channels + patron_channels)
-
+    return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
 
 async def check_patron(ctx):
-    result = check_channels(ctx, patron_channels) and set(role.id for role in ctx.author.roles) & patron_roles
+    result = set(role.id for role in ctx.author.roles) & patron_roles
 
     if result:
         return result

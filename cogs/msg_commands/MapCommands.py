@@ -6,33 +6,29 @@ import pandas as pd
 from discord.ext import commands
 from dotenv import load_dotenv
 
-import checks
 import help_messages
-import utils.map_processing as map_processing
-import utils.string_processing as string_processing
+from utils import map_processing, string_processing, CommonCog, checks
 
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
-class MapCommands(commands.Cog, name='Map Commands'):
-    def __init__(self, bot):
-        self.bot = bot
+class MapCommands(CommonCog, name='Map Commands'):
+    cog_check = checks.check_allowed_channel
 
-
-    @commands.command(name="region", description=help_messages.region_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def region_command(self, ctx, *params):
-        regionName = " ".join(params)
+    @commands.command(description=help_messages.region_help_msg)
+    async def region(self, ctx, *, regionName):
         dataRegion = await map_processing.getHeatmapRegion(self.bot.session, regionName, token)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
         if len(dfRegion) == 0:
-            mbed = discord.Embed (
-                description = f"\"{regionName}\" does not correspond with any of our labeled regions." \
-                    + " It is possible that we just need to add it. Please let us know if so!",
-                color = discord.Colour.dark_red()
+            mbed = discord.Embed(
+                color=discord.Colour.dark_red(),
+                description = cleandoc(f"""
+                    "{regionName}" does not correspond with any of our labeled regions.
+                    It is possible that we just need to add it. Please let us know if so!
+                """),
             )
 
             return await ctx.send(embed=mbed)
@@ -43,19 +39,19 @@ class MapCommands(commands.Cog, name='Map Commands'):
 
             msg = cleandoc(f"""```diff
                 Input: {regionName}
-                Selection From: {', '.join([str(elem) for elem in dfRegion['region_name'].values])}
+                Selection From: {', '.join(str(elem) for elem in dfRegion['region_name'].values)}
                 Selected: {regionTrueName}
-                ```""")
+            ```""")
         else:
             msg = "```diff\n- More than 30 Regions selected. Please refine your search.```"
 
         await ctx.send(msg)
 
 
-    @commands.command(name="heatmap", description=help_messages.heatmap_help_msg)
+    @commands.command(description=help_messages.heatmap_help_msg)
     @commands.check(checks.check_patron)
-    async def heatmap_command(self, ctx, *params):
-        if len(params) == 0:
+    async def heatmap(self, ctx, *params):
+        if not params:
             return await ctx.send("Please enter a region name or region ID.")
 
         info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
@@ -78,13 +74,12 @@ class MapCommands(commands.Cog, name='Map Commands'):
                     await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
 
         else:
-            joinedParams = " ".join(params)
-            regionName = joinedParams
+            regionName = " ".join(params)
             dataRegion = await map_processing.getHeatmapRegion(self.bot.session, regionName, token)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
-            if len(dfRegion) == 0:
+            if not len(dfRegion):
                 mbed = discord.Embed(
                     description = cleandoc(f"""
                         "{regionName}" does not correspond with any of our labeled regions.
@@ -119,9 +114,8 @@ class MapCommands(commands.Cog, name='Map Commands'):
             await info_msg.delete()
 
 
-    @commands.command(name="map", description=help_messages.map_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def map_command(self, ctx, *, joinedParams=None):
+    @commands.command(description=help_messages.map_help_msg)
+    async def map(self, ctx, *, joinedParams=None):
         if not joinedParams:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -155,9 +149,8 @@ class MapCommands(commands.Cog, name='Map Commands'):
         await ctx.send(msg)
 
 
-    @commands.command(name="coords", description=help_messages.coords_help_msg)
-    @commands.check(checks.check_allowed_channel)
-    async def coords_command(self, ctx, x, y, z, zoom):
+    @commands.command(description=help_messages.coords_help_msg)
+    async def coords(self, ctx, x, y, z, zoom):
         BASE_URL = "https://raw.githubusercontent.com/Explv/osrs_map_tiles/master/"
         msg = f"{BASE_URL}{z}/{zoom}/{y}/{x}.png"
 
