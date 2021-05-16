@@ -1,3 +1,5 @@
+from inspect import cleandoc as clean
+
 ###########################
 # Fun Commands
 ###########################
@@ -23,8 +25,10 @@ rules_help_msg = "Shows a link to our rules channel. Be sure to read them carefu
 
 website_help_msg = "Shows a link to our website."
 
-beta_help_msg = "Don't want to wait for official releases to come out for new features? Want to help us test the plugin? This guide will teach you how to " \
-    + "build the plugin for our source code."
+beta_help_msg = clean("""
+    Don't want to wait for official releases to come out for new features? Want to help us test the plugin? This guide will teach you how to
+    build the plugin for our source code."
+""")
 
 patreon_help_msg = "Shows a link to ur Patreon page. Patrons get access to exclusuive channels and the !heatmap command."
 
@@ -42,24 +46,32 @@ labels_help_msg = "Lists the player labels that the ML model currently will try 
 # Bot Submissions Commands
 ###########################
 
-list_help_msg = "This will tell the bot to send you a DM detailing how to submit " \
-    + "a list of player names for review via Pastebin.com.\nThis assists us in developing new bot labels."
+list_help_msg = clean("""
+    This will tell the bot to send you a DM detailing how to submit
+    a list of player names for review via Pastebin.com.
+    This assists us in developing new bot labels.
+""")
 
-submit_help_msg = "Usage: !submit <pastebin URL> Submit a list of names with a label for us to review. " \
-    + "Use the !list command for formatting rules."
-
+submit_help_msg = clean("""
+    Usage: !submit <pastebin URL> Submit a list of names with a label for us to review.
+    Use the !list command for formatting rules.
+""")
 
 ###########################
 # Map Commands
 ###########################
 
-region_help_msg = "Usage: !region <region name> Searches for region names that contain the provided region name substring " \
-    + "and returns a list of matching regions. If the search returns more than 30 entries then you will need to refine your search."
+region_help_msg = clean("""
+    Usage: !region <region name> Searches for region names that contain the provided region name substring
+    and returns a list of matching regions. If the search returns more than 30 entries then you will need to refine your search.
+""")
 
 map_help_msg = "Usage: !map <region name OR region ID> Displays a photo of the region requested in the command."
 
-heatmap_help_msg = "PATREON ONLY - Usage: !heatmap <region name> Displays a map of a region with an overlay that shows the intensities of " \
-    + "confirmed bots (warm colors) and confirmed players (cool colors) seen in that region. Must be ran in #patreon-chat-channel"
+heatmap_help_msg = clean("""
+    PATREON ONLY - Usage: !heatmap <region name> Displays a map of a region with an overlay that shows the intensities of
+    confirmed bots (warm colors) and confirmed players (cool colors) seen in that region. Must be ran in #patreon-chat-channel
+""")
 
 coords_help_msg = "EXPERIMENTAL - Usage: !coords <x y z zoom> More details to come."
 
@@ -67,28 +79,36 @@ coords_help_msg = "EXPERIMENTAL - Usage: !coords <x y z zoom> More details to co
 ###########################
 # Player Stats Commands
 ###########################
-
 lookup_help_msg = "Usage: !lookup <player name> Places a table in chat show the hiscores entries for a player."
 
-kc_help_msg = "Usage: !kc <player name> Shows how many reports (passive and manual) a player has submitted through our plugin " \
-    + "and home many possible and confirmed bans have resulted from those reports."
+kc_help_msg = clean("""
+    Usage: !kc <player name> Shows how many reports (passive and manual) a player has submitted through our plugin
+    and home many possible and confirmed bans have resulted from those reports.
+""")
 
-rankup_help_msg = "Have you been an absolute reaper of bots, and you want your Discord role to reflect it? Calling this command will " \
-    + "tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with your Discord " \
-    + "ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role."
+rankup_help_msg = clean("""
+    Have you been an absolute reaper of bots, and you want your Discord role to reflect it? Calling this command will
+    tell the bot to try and update your Bot Hunter Role. You MUST have used !link to pair at least one OSRS account with your Discord
+    ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role.
+""")
 
-predict_help_msg = "Usage: !predict <player name> Runs the player through our machine learning model " \
-    + "and displays the classifications the ML model assigns to the player. Note that any line with a confidence below "\
-    + "75% is insignificant."
+predict_help_msg = clean(r"""
+    Usage: !predict <player name> Runs the player through our machine learning model
+    and displays the classifications the ML model assigns to the player. Note that any line with a confidence below
+    75% is insignificant.
+""")
 
-excelban_help_msg = "You must link your Discord account with an OSRS account in order to use this command. You will only be able "\
-    + "to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted "\
-    + "which have resulted in bans in an .xlsx file format."
+excelban_help_msg = clean("""
+    You must link your Discord account with an OSRS account in order to use this command. You will only be able
+    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
+    which have resulted in bans in an .xlsx file format.
+""")
 
-csvban_help_msg = "You must link your Discord account with an OSRS account in order to use this command. You will only be able "\
-    + "to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted "\
-    + "which have resulted in bans in a .csv file format."
-
+csvban_help_msg = clean("""
+    You must link your Discord account with an OSRS account in order to use this command. You will only be able
+    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
+    which have resulted in bans in a .csv file format.
+""")
 
 ###########################
 # Project Stats Commands
@@ -101,9 +121,13 @@ stats_help_msg = "Displays the project-wide reporting statistics. Also shows tot
 # RSN Link Commands
 ###########################
 
-link_help_msg = "Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future. " \
-    + "Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban. " \
-    +"\n\nYOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin."
+link_help_msg = clean("""
+    Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future.
+    Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban.
+
+
+    YOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin
+""")
 
 linked_help_msg = "The bot will DM you which OSRS accounts are linked to your Discord ID."
 

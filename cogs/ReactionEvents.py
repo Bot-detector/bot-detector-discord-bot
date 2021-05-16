@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
 
-class ReactionHandling(commands.Cog):
-    def __init__(self, bot):
-        self.bot = bot
+from utils import CommonCog
 
+
+class ReactionHandling(CommonCog):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
