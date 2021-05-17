@@ -7,7 +7,8 @@ patron_channels = (
     830783778325528626,
     833479046821052436,
     834307018406756352,
-    834307467793399808
+    834307467793399808,
+    843355044485136387
 )
 
 
@@ -16,11 +17,12 @@ patron_roles = {
     818528428851855361,
     830782790786220104,
     822589202964152370,
-    837324705472053299
+    837324705472053299,
+    843356013973078037
 }
 
 
-def check_allowed_channel(ctx):
+async def check_allowed_channel(self, ctx):
     return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
 
 async def check_patron(ctx):

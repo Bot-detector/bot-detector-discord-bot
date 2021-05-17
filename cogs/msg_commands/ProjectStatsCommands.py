@@ -8,9 +8,9 @@ from utils import CommonCog, checks
 
 
 class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
+    cog_check = checks.check_allowed_channel
 
     @commands.command(description=help_messages.stats_help_msg)
-    @commands.check(checks.check_allowed_channel)
     async def stats(self, ctx):
         playersTracked = ""
         totalBans = ""
@@ -48,9 +48,9 @@ class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
 async def project_stats(playersTracked, totalReports, totalBans, activeInstalls):
     mbed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
     mbed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
-            Players Analyzed: {playersTracked:,}"
-            Jagex Reports: {totalReports:,}"
-            Bans: {totalBans:,}"
+            Players Analyzed: {playersTracked:,}
+            Jagex Reports: {totalReports:,}
+            Bans: {totalBans:,}
             Active Installs: {activeInstalls:,}
         """)
     )

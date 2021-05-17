@@ -1,6 +1,7 @@
 import os
 from inspect import cleandoc
 
+import json
 import discord
 import pandas as pd
 from discord.ext import commands
@@ -24,7 +25,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.send(f"{username} is not a valid RSN")
 
         try:
-            username = rsn
             username_parsed = username.replace(" ", "_")
             intro_msg = await ctx.send("Searching for User... If there is no response, there was no account found.")
             user = Hiscores(username_parsed, 'N')
@@ -69,14 +69,20 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.send(embed=embed)
 
-            contributions = await roles.get_multi_player_contributions(self.bot.session, linkedAccounts)
+            async with self.bot.session.post(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+                if r.status != 200:
+                    print(r.status)
+                    return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
-            total_bans = contributions["totalBans"]
-            total_possible_bans = contributions["totalPossibleBans"]
-            total_reports = contributions["totalReports"]
-            manual_reports = contributions["totalManualReports"]
-            manual_bans = contributions["totalManualBans"]
-            manual_incorrect = contributions["totalManualIncorrect"]
+                js = await r.json()
+
+            manual_reports = int(js['manual']['reports'])
+            manual_bans = int(js['manual']['bans'])
+            manual_incorrect = int(js['manual']['incorrect_reports'])
+
+            total_reports = int(js['total']['reports'])
+            total_bans = int(js['total']['bans'])
+            total_possible_bans = int(js['total']['possible_bans'])
 
         elif utils.is_valid_rsn(player_name):
             async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
@@ -192,8 +198,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
             if r.status != 200:
                 return await ctx.send(f"I couldn't get a prediction for {player_name} :(")
+            
+            js = await r.json()
+        
 
-        js = await r.json()
         name =        js['player_name']
         prediction =  js['prediction_label']
         player_id =   js['player_id']
@@ -212,7 +220,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         for predict in secondaries:
             msg += cleandoc(f"""
                 {utils.plus_minus(predict[0], 'Real_Player')}  {predict[0]}:
-                {predict[1] * 100:.2f}%"\n"
+                {predict[1] * 100:.2f}%\n
             """)
 
         msg += cleandoc("""```
@@ -345,7 +353,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         if not player_name:
             await self.multi_account_export_bans(ctx, 'csv')
         else:
-            await self.export_bans(ctx, playerName, 'csv')
+            await self.export_bans(ctx, player_name, 'csv')
 
 
 def setup(bot):

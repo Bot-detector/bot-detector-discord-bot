@@ -63,7 +63,7 @@ class MapCommands(CommonCog, name='Map Commands'):
             mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
 
             if not mapWasGenerated:
-                await self.map_command(ctx, *params)
+                await self.map_command(ctx, params)
                 await ctx.send("We have no data on this region yet.")
             else:
                 try:
@@ -119,7 +119,7 @@ class MapCommands(CommonCog, name='Map Commands'):
         if not joinedParams:
             return await ctx.send("Please enter a region name or region ID.")
 
-        if params[0].isdigit():
+        if joinedParams.isdigit():
             region_id = joinedParams
             msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region_id}.png"
 
@@ -145,14 +145,6 @@ class MapCommands(CommonCog, name='Map Commands'):
                 msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region_id}.png"
             else:
                 msg = "```diff\n- More than 30 Regions selected. Please refine your search.```"
-
-        await ctx.send(msg)
-
-
-    @commands.command(description=help_messages.coords_help_msg)
-    async def coords(self, ctx, x, y, z, zoom):
-        BASE_URL = "https://raw.githubusercontent.com/Explv/osrs_map_tiles/master/"
-        msg = f"{BASE_URL}{z}/{zoom}/{y}/{x}.png"
 
         await ctx.send(msg)
 

@@ -23,6 +23,7 @@ EASTER_EGGS = {
     "25 buttholes": "hahahahahaha w0w!",
     "tedious": "Theeeee collection log",
     "a q p": "( ͡° ͜ʖ ͡°)",
+    "LTT": "https://www.lttstore.com/"
 }
 
 
@@ -51,6 +52,16 @@ async def on_ready():
 
 
 @bot.event
+async def on_connect():
+    print("Bot connected successfully.")
+
+
+@bot.event
+async def on_disconnect():
+    print("Bot disconnected.")
+
+
+@bot.event
 async def on_message(message):
     await bot.process_commands(message)
 
@@ -68,16 +79,18 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, (commands.CommandInvokeError, commands.NoPrivateMessage)):
         await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
-    else:
-        print(f"Ignoring exception in command {ctx.command}:", file=error_file)
-        traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
-        error_file.flush()
-        await ctx.send("The command you've entered could not be completed at this time.")
+    
+    print(f"Ignoring exception in command {ctx.command}:", file=error_file)
+    traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
+    error_file.flush()
+    await ctx.send("The command you've entered could not be completed at this time.")
+
 
 @atexit.register
 def shutdown():
     error_file.close()
     print("Bot is going night-night.")
+    asyncio.run(bot.close())
 
 
 # Recursively loads cogs from /cogs
@@ -94,6 +107,9 @@ for folder in os.listdir("cogs"):
 async def startup():
     async with aiohttp.ClientSession() as session:
         bot.session = session
-        await bot.start(os.getenv('TOKEN'))
+        bot.loop = asyncio.get_event_loop()
+        await bot.login(os.getenv('TOKEN'))
+        await bot.connect(reconnect=True)
+
 
 asyncio.run(startup())
