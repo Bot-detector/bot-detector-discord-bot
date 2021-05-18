@@ -7,20 +7,16 @@ from utils import CommonCog
 class ReactionHandling(CommonCog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        if payload.member.id == self.bot.user.id:
-            return
-        else:
-            pass
+        if payload.member.id != self.bot.user.id:
+            if payload.emoji.name == '✅':
+                vote = 1
+            elif payload.emoji.name == '❌':
+                vote = -1
+            else:
+                #Thanks for the enthusiasm, but not what we're looking for.
+                return
 
-        if payload.emoji.name == '✅':
-            vote = 1
-        elif payload.emoji.name == '❌':
-            vote = -1
-        else:
-            #Thanks for the enthusiasm, but not what we're looking for.
-            return
-
-        await self.add_prediction_feedback(payload, vote)
+            await self.add_prediction_feedback(payload, vote)
 
 
 
