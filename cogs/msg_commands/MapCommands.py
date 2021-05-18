@@ -48,7 +48,7 @@ class MapCommands(CommonCog, name='Map Commands'):
         await ctx.send(msg)
 
 
-    @commands.command(description=help_messages.heatmap_help_msg)
+    @commands.command(aliases=["hm"], description=help_messages.heatmap_help_msg)
     @commands.check(checks.check_patron)
     async def heatmap(self, ctx, *, region):
         if not region:

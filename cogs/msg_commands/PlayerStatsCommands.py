@@ -56,7 +56,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
     async def kc(self, ctx, *, player_name=None):
-        print(f"{ctx.author.display_name}")
         await ctx.trigger_typing()
         if not player_name:
             linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
