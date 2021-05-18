@@ -76,8 +76,11 @@ class MapCommands(CommonCog, name='Map Commands'):
 
         else:
             dataRegion = await map_processing.getHeatmapRegion(self.bot.session, region, token)
+            print(dataRegion)
             dfDataRegion = pd.DataFrame(dataRegion)
+            print(dfDataRegion)
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
+            print(dfRegion)
 
             if not len(dfRegion):
                 embed = discord.Embed(
