@@ -27,8 +27,8 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
         verifyID = await discord_processing.get_playerid_verification(self.bot.session, playerName=joinedName, token=token)
 
         if verifyID is None:
-            mbed = await installplugin_msg()
-            return await ctx.send(embed=mbed)
+            embed = await installplugin_msg()
+            return await ctx.send(embed=embed)
 
         previousAttempts = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=joinedName, token=token)
 
@@ -46,8 +46,8 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
                 owner_verified_info = await discord_processing.get_verified_player_info(self.bot.session, playerName=joinedName, token=token)
                 ownerID = owner_verified_info['Discord_id']
                 if ownerID == ctx.author.id:
-                    mbed = await verified_msg(joinedName)
-                    return await ctx.send(embed=mbed)
+                    embed = await verified_msg(joinedName)
+                    return await ctx.send(embed=embed)
 
             elif isVerified == 0:
                 code = int(previousAttempts[len(previousAttempts) - 1]["Code"])
@@ -78,13 +78,13 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
                 isVerified = False
 
             if isVerified:
-                mbed = await verified_msg(joinedName)
+                embed = await verified_msg(joinedName)
             else:
-                mbed = await unverified_msg(joinedName)
+                embed = await unverified_msg(joinedName)
         except:
-            mbed = await unverified_msg(joinedName)
+            embed = await unverified_msg(joinedName)
 
-        await ctx.send(embed=mbed)
+        await ctx.send(embed=embed)
 
     @commands.command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
     async def linked_comand(self, ctx):
@@ -102,27 +102,27 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
 
 
 async def verified_msg(joinedName):
-    mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0x00ff00)
-    mbed.add_field (name="Verified:", value=f"{joinedName} is Verified.", inline=False)
-    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117238120-538b4f00-adfa-11eb-9c58-d5500af7d215.png")
-    return mbed
+    embed = discord.Embed(title=f"{joinedName}'s Status:", color=0x00ff00)
+    embed.add_field (name="Verified:", value=f"{joinedName} is Verified.", inline=False)
+    embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117238120-538b4f00-adfa-11eb-9c58-d5500af7d215.png")
+    return embed
 
 
 async def unverified_msg(joinedName):
-    mbed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
-    mbed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
-    mbed.add_field (name="Next Steps:", value=f"Please type '!link {joinedName}'", inline=False)
-    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png")
-    return mbed
+    embed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
+    embed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
+    embed.add_field (name="Next Steps:", value=f"Please type '!link {joinedName}'", inline=False)
+    embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png")
+    return embed
 
 
 async def installplugin_msg():
-    mbed = discord.Embed(title=f"User Not Found:", color=0xff0000)
-    mbed.add_field (name="Status:", value=f"No reports exist from specified player.", inline=False)
-    mbed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\n" \
+    embed = discord.Embed(title=f"User Not Found:", color=0xff0000)
+    embed.add_field (name="Status:", value=f"No reports exist from specified player.", inline=False)
+    embed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\n" \
         + "If you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to !link your account.", inline=False)
-    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117361316-e1f9e200-ae87-11eb-840b-3bad75e80ff6.png")
-    return mbed
+    embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117361316-e1f9e200-ae87-11eb-840b-3bad75e80ff6.png")
+    return embed
 
 
 async def link_msg(joinedName, code) -> discord.Embed:

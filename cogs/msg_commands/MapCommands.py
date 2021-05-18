@@ -23,7 +23,7 @@ class MapCommands(CommonCog, name='Map Commands'):
         dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
         if len(dfRegion) == 0:
-            mbed = discord.Embed(
+            embed = discord.Embed(
                 color=discord.Colour.dark_red(),
                 description = cleandoc(f"""
                     "{regionName}" does not correspond with any of our labeled regions.
@@ -31,7 +31,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                 """),
             )
 
-            return await ctx.send(embed=mbed)
+            return await ctx.send(embed=embed)
 
 
         if len(dfRegion) < 30:
@@ -80,7 +80,7 @@ class MapCommands(CommonCog, name='Map Commands'):
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
             if not len(dfRegion):
-                mbed = discord.Embed(
+                embed = discord.Embed(
                     description = cleandoc(f"""
                         "{region}" does not correspond with any of our labeled regions.
                         It is possible that we just need to add it. Please let us know if so!
@@ -128,7 +128,7 @@ class MapCommands(CommonCog, name='Map Commands'):
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
             if len(dfRegion) == 0:
-                mbed = discord.Embed (
+                embed = discord.Embed (
                     description = cleandoc(f"""
                         "{region}" does not correspond with any of our labeled regions.
                         It is possible that we just need to add it. Please let us know if so!
@@ -136,7 +136,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                     color=discord.Colour.dark_red()
                 )
 
-                return await ctx.send(embed=mbed)
+                return await ctx.send(embed=embed)
 
             if len(dfRegion) < 30:
                 regionTrueName, region_id = map_processing.Autofill(dfRegion, region)

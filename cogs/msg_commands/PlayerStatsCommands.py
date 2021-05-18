@@ -277,13 +277,13 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         num_links = len(linkedAccounts)
 
         if num_links == 0:
-            mbed = discord.Embed (
+            embed = discord.Embed (
                 title = "Ban Export Error",
                 description = f"There are no OSRS accounts linked to your Discord ID. You must run !link <RSN> and pair at least one account.",
                 color = discord.Colour.dark_red()
             )
 
-            await ctx.send(embed=mbed)
+            await ctx.send(embed=embed)
 
         elif num_links == 1:
             await self.export_bans(ctx, linkedAccounts[0]['name'], filetype)
@@ -308,12 +308,12 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 totalSheet = pd.concat(sheets)
                 totalSheet = totalSheet.drop_duplicates(subset="Player_id", keep='last')
             else:
-                mbed = discord.Embed(
+                embed = discord.Embed(
                     description = "We currently do not have data available for export for your linked accounts.",
                     color = discord.Colour.dark_red()
                 )
 
-                return await ctx.send(embed=mbed)
+                return await ctx.send(embed=embed)
 
             if filetype == 'excel':
                 writer = pd.ExcelWriter(f'{ctx.author.display_name}_bans.xlsx', engine='xlsxwriter')

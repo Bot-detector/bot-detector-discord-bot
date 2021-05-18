@@ -47,33 +47,33 @@ class InfoCommands(CommonCog, name='General Info Commands'):
 
     @commands.command(aliases=["ranks"], description=help_messages.roles_help_msg)
     async def roles(self, ctx):
-        bot_mbed = discord.Embed(title=f"Bot Hunter Roles")
+        bot_embed = discord.Embed(title=f"Bot Hunter Roles")
 
         for k, v in roles.bot_hunter_roles.items():
-            bot_mbed.add_field(name=v["role_name"], value=f"Confirmed Bans: {k:,d}", inline=True)
+            bot_embed.add_field(name=v["role_name"], value=f"Confirmed Bans: {k:,d}", inline=True)
 
-        bot_mbed.add_field(name="Have enough for a new role?", value="Use `!rankup` in <#825189024074563614>", inline=False)
-        special_roles_mbed = discord.Embed(title="Special Roles")
+        bot_embed.add_field(name="Have enough for a new role?", value="Use `!rankup` in <#825189024074563614>", inline=False)
+        special_roles_embed = discord.Embed(title="Special Roles")
 
         for k, v in roles.special_roles.items():
             role_description = v["description"]
-            special_roles_mbed.add_field(name=k, value=f"{role_description}", inline=False)
+            special_roles_embed.add_field(name=k, value=f"{role_description}", inline=False)
 
-        await ctx.send(embed=bot_mbed)
-        await ctx.send(embed=special_roles_mbed)
+        await ctx.send(embed=bot_embed)
+        await ctx.send(embed=special_roles_embed)
 
     @commands.command(aliases=["botlabels"], description=help_messages.labels_help_msg)
     async def labels(self, ctx):
         labels = await utils.get_player_labels(self.bot.session)
 
-        labels_mbed = discord.Embed(title="Current Player Labels")
+        labels_embed = discord.Embed(title="Current Player Labels")
 
         for l in labels:
-            labels_mbed.add_field(name=f"{l['label']}", value="\u200b", inline=True)
+            labels_embed.add_field(name=f"{l['label']}", value="\u200b", inline=True)
 
-        labels_mbed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
+        labels_embed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
 
-        await ctx.send(embed=labels_mbed)
+        await ctx.send(embed=labels_embed)
 
 
 def setup(bot):

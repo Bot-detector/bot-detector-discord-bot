@@ -41,13 +41,13 @@ class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
                 activeInstalls = "N/A"
 
 
-        mbed = await project_stats(playersTracked, totalReports, totalBans, activeInstalls)
-        await ctx.send(embed=mbed)
+        embed = await project_stats(playersTracked, totalReports, totalBans, activeInstalls)
+        await ctx.send(embed=embed)
 
 
 async def project_stats(playersTracked, totalReports, totalBans, activeInstalls):
-    mbed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
-    mbed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
+    embed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
+    embed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
             Players Analyzed: {playersTracked:,}
             Jagex Reports: {totalReports:,}
             Bans: {totalBans:,}
@@ -55,8 +55,8 @@ async def project_stats(playersTracked, totalReports, totalBans, activeInstalls)
         """)
     )
 
-    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117360948-60a24f80-ae87-11eb-8a5a-7ba57f85deb2.png")
-    return mbed
+    embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117360948-60a24f80-ae87-11eb-8a5a-7ba57f85deb2.png")
+    return embed
 
 
 def setup(bot):

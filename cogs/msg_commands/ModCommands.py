@@ -15,8 +15,8 @@ class ModCommands(CommonCog, name="Moderator Commands"):
     @commands.has_permissions(kick_members=True)
     @commands.command(aliases=["youvedoneitnow"])
     async def warn(self, ctx):
-        mbed = await warn_msg()
-        await ctx.send(embed=mbed)
+        embed = await warn_msg()
+        await ctx.send(embed=embed)
 
     @commands.has_role("Admin")
     @commands.command(hidden=True)
@@ -92,11 +92,11 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
 
 async def warn_msg():
-    mbed = discord.Embed(title=f"WARNING", color=0xff0000)
-    mbed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
+    embed = discord.Embed(title=f"WARNING", color=0xff0000)
+    embed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
-    mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png")
-    return mbed
+    embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png")
+    return embed
 
 
 def setup(bot):
