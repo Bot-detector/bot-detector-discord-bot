@@ -56,6 +56,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
     async def kc(self, ctx, *, player_name=None):
+        print(f"{ctx.author.display_name}")
         await ctx.trigger_typing()
         if not player_name:
             linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
@@ -83,6 +84,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             total_reports = int(js['total']['reports'])
             total_bans = int(js['total']['bans'])
             total_possible_bans = int(js['total']['possible_bans'])
+            
+            embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
             async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
@@ -98,6 +101,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             total_reports = int(js['total']['reports'])
             total_bans = int(js['total']['bans'])
             total_possible_bans = int(js['total']['possible_bans'])
+
+            embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
         else:
             return await ctx.send(f"{player_name} isn't a valid Runescape user name.")
 
@@ -108,7 +113,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         else:
             report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
 
-        embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
         embed.add_field(name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
         embed.add_field(name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
         embed.add_field(name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
