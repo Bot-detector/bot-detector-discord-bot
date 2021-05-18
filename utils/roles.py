@@ -1,6 +1,6 @@
-import discord
-import aiohttp
 import bisect
+import json
+import discord
 
 bot_hunter_roles = {
     1:       {"role_id": 825165287526498314, "role_name": "Bot Hunter I"}, # 1 Ban
@@ -23,7 +23,7 @@ bot_hunter_roles = {
     750000:  {"role_id": 825168881059758083, "role_name": "Bot Hunter XVIII"}, # 750000 Bans
     1000000: {"role_id": 825169438835081216, "role_name": 'Bot Hunter XIX'}, # 1000000 Ban
     2000000: {"role_id": 825169641491791902, "role_name": "Bot Hunter XX"} # 2000000 Bans
-}  
+}
 
 
 special_roles = {
@@ -37,71 +37,42 @@ special_roles = {
 
 
 #Gets bans from all accounts passed in
-async def get_multi_player_contributions(verifiedPlayers):
-    
-    totalBans=  0
-    totalPossibleBans = 0
-    totalReports = 0
-    totalManualReports = 0
-    totalManualBans = 0
-    totalManualIncorrect = 0
-    
+async def get_multi_player_bans(session, verifiedPlayers):
 
-    for player in verifiedPlayers:
-        playerName = player["name"]
+    async with session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(verifiedPlayers)) as r:
+        if r.status != 200:
+            return #TODO Figure out what to do here haha
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{playerName}") as r:
-                if r.status == 200:
-                    js = await r.json()
-                    totalBans += int(js['total']['bans'])
-                    totalPossibleBans += int(js['total']['possible_bans'])
-                    totalReports += int(js['total']['reports'])
-                    totalManualReports += int(js['manual']['reports'])
-                    totalManualBans += int(js['manual']['bans'])
-                    totalManualIncorrect += int(js['manual']['incorrect_reports'])
+        js = await r.json()
+        return int(js['total']['bans'])
 
 
-    contributions = {
-        "totalBans": totalBans,
-        "totalPossibleBans": totalPossibleBans,
-        "totalReports": totalReports,
-        "totalManualReports": totalManualReports,
-        "totalManualBans": totalManualBans,
-        "totalManualIncorrect": totalManualIncorrect
-    }
 
-    return contributions
+async def get_bot_hunter_role(session, verifiedPlayers, member):
+    bans = await get_multi_player_bans(session, verifiedPlayers)
 
-
-async def get_bot_hunter_role(verifiedPlayers, member):
-
-    contributions = await get_multi_player_contributions(verifiedPlayers)
-    bans = contributions["totalBans"]
-
-    if(bans == 0):
+    if bans == 0:
         return False #No rank just yet
-    elif(bans == 1):
+    elif bans == 1:
         return discord.utils.find(lambda r: r.id == bot_hunter_roles[1]["role_id"], member.guild.roles)
+
+    kc_amounts = list(bot_hunter_roles.keys())
+    kc_placement = bisect.bisect(kc_amounts, bans)
+
+    if kc_amounts[kc_placement] == bans:
+        role_key = kc_amounts[kc_placement]
+    elif kc_amounts[kc_placement + 1] == bans:
+        role_key = kc_amounts[kc_placement + 1]
     else:
-        kc_amounts = list(bot_hunter_roles.keys())
-        kc_placement = bisect.bisect(kc_amounts, bans)
+        role_key = kc_amounts[kc_placement - 1]
 
-        if kc_amounts[kc_placement] == bans:
-            role_key = kc_amounts[kc_placement]
-        elif kc_amounts[kc_placement + 1] == bans:
-            role_key = kc_amounts[kc_placement + 1]
-        else:
-            role_key = kc_amounts[kc_placement - 1]
+    new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+    next_role_amount = kc_amounts[kc_placement]
 
-        new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
-        next_role_amount = kc_amounts[kc_placement]
-
-        return new_role, bans, next_role_amount
+    return new_role, bans, next_role_amount
 
 
 async def remove_old_roles(member):
-
     old_roles = member.roles
 
     for role in old_roles:
