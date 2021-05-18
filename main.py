@@ -63,7 +63,7 @@ async def on_disconnect():
 
 @bot.event
 async def on_message(message):
-    if message.author.id != bot.user.id:
+    if message.author != bot.user:
         await bot.process_commands(message)
 
         # Easter eggs
