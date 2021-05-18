@@ -1,4 +1,3 @@
-import asyncio
 import os
 from inspect import cleandoc
 

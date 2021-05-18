@@ -70,4 +70,3 @@ class ReactionHandling(CommonCog):
 
 def setup(bot):
     bot.add_cog(ReactionHandling(bot))
-    pass
