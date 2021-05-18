@@ -50,39 +50,39 @@ class MapCommands(CommonCog, name='Map Commands'):
 
     @commands.command(description=help_messages.heatmap_help_msg)
     @commands.check(checks.check_patron)
-    async def heatmap(self, ctx, *params):
-        if not params:
+    async def heatmap(self, ctx, *, region):
+        if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
         info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
         await ctx.trigger_typing()
 
-        if params[0].isdigit():
-            region_id = params[0]
-            regionTrueName = f"Region ID: {region_id}"
-            mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
+        if region.isdigit():
+            regionTrueName = f"Region ID: {region}"
+            mapWasGenerated = await self.runAnalysis(regionTrueName, region)
 
             if not mapWasGenerated:
-                await self.map_command(ctx, params)
+                await self.map(ctx=ctx, region=region)
+
+                    
                 await ctx.send("We have no data on this region yet.")
             else:
                 try:
-                    await ctx.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
-                    await map_processing.CleanupImages(region_id)
+                    await ctx.send(file=discord.File(f'{os.getcwd()}/{region}.png'))
+                    await map_processing.CleanupImages(region)
                 except:
                     await ctx.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                     await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
 
         else:
-            regionName = " ".join(params)
-            dataRegion = await map_processing.getHeatmapRegion(self.bot.session, regionName, token)
+            dataRegion = await map_processing.getHeatmapRegion(self.bot.session, region, token)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
             if not len(dfRegion):
                 mbed = discord.Embed(
                     description = cleandoc(f"""
-                        "{regionName}" does not correspond with any of our labeled regions.
+                        "{region}" does not correspond with any of our labeled regions.
                         It is possible that we just need to add it. Please let us know if so!
                     """),
                     color=discord.Colour.dark_red()
@@ -91,11 +91,11 @@ class MapCommands(CommonCog, name='Map Commands'):
                 return await ctx.send(embed=mbed)
 
             if len(dfRegion)<30:
-                regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
+                regionTrueName, region_id = map_processing.Autofill(dfRegion, region)
                 mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
 
                 if not mapWasGenerated:
-                    await self.map_command(ctx, *params)
+                    await self.map(ctx=ctx, region=region)
                     await ctx.send("We have no data on this region yet.")
 
                 else:
@@ -115,24 +115,22 @@ class MapCommands(CommonCog, name='Map Commands'):
 
 
     @commands.command(description=help_messages.map_help_msg)
-    async def map(self, ctx, *, joinedParams=None):
-        if not joinedParams:
+    async def map(self, ctx, *, region=None):
+        if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
-        if joinedParams.isdigit():
-            region_id = joinedParams
-            msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region_id}.png"
+        if region.isdigit():
+            msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region}.png"
 
         else:
-            regionName = joinedParams
-            dataRegion = await map_processing.getHeatmapRegion(self.bot.session, regionName, token)
+            dataRegion = await map_processing.getHeatmapRegion(self.bot.session, region, token)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = map_processing.displayDuplicates(dfDataRegion)
 
             if len(dfRegion) == 0:
                 mbed = discord.Embed (
                     description = cleandoc(f"""
-                        "{regionName}" does not correspond with any of our labeled regions.
+                        "{region}" does not correspond with any of our labeled regions.
                         It is possible that we just need to add it. Please let us know if so!
                     """),
                     color=discord.Colour.dark_red()
@@ -141,7 +139,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                 return await ctx.send(embed=mbed)
 
             if len(dfRegion) < 30:
-                regionTrueName, region_id = map_processing.Autofill(dfRegion, regionName)
+                regionTrueName, region_id = map_processing.Autofill(dfRegion, region)
                 msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region_id}.png"
             else:
                 msg = "```diff\n- More than 30 Regions selected. Please refine your search.```"
@@ -166,19 +164,10 @@ class MapCommands(CommonCog, name='Map Commands'):
         else:
             dfLocalBan = pd.DataFrame()
 
-
-        if 'confirmed_player' in df.columns:
-            player_mask = (df['confirmed_player'] == 1)
-            df_player = df[player_mask].copy()
-            dfLocalReal = map_processing.convertGlobaltoLocal(region_id, df_player)
-
-        else:
-            dfLocalReal = pd.DataFrame()
-
-        if dfLocalBan.empty or dfLocalReal.empty:
+        if dfLocalBan.empty:
             return False
 
-        map_processing.plotheatmap(dfLocalBan, dfLocalReal, region_id, regionTrueName)
+        map_processing.plotheatmap(dfLocalBan, region_id, regionTrueName)
         return True
 
 

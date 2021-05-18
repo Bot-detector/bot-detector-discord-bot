@@ -30,11 +30,8 @@ class ModCommands(CommonCog, name="Moderator Commands"):
             if r.status == 200:
                 faqEntriesList = await r.json(content_type="text/plain; charset=utf-8")
 
-        try:
-            for entry in faqEntriesList:
-                await channel.send(embed=self.generateEmbed(entry["embeds"][0]))
-        except Exception as e:
-            print(e)
+        for entry in faqEntriesList:
+            await channel.send(embed=self.generateEmbed(entry["embeds"][0]))
 
 
     def generateEmbed(self, entry):
@@ -62,7 +59,6 @@ class ModCommands(CommonCog, name="Moderator Commands"):
         for user in listUsers:
             try:
                 member = await ctx.guild.fetch_member(user["Discord_id"])
-                print(member)
 
                 linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
@@ -81,8 +77,6 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
                 role_info = await roles.get_bot_hunter_role(self.bot.session, linkedAccounts, member)
 
-                print(role_info)
-
                 if (isinstance(role_info, bool)):
                     pass
                 elif (isinstance(role_info, tuple)):
@@ -93,6 +87,7 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                     await member.add_roles(role_info)
             except Exception as d:
                 print(d)
+                #TODO Handle members who have verified but left our Discord server
                 pass
 
 

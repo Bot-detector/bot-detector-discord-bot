@@ -6,7 +6,7 @@ from discord.ext import commands
 
 import help_messages
 import utils
-from utils import CommonCog, check_allowed_channel
+from utils import CommonCog, check_allowed_channel, roles
 
 
 class InfoCommands(CommonCog, name='General Info Commands'):
@@ -33,18 +33,8 @@ class InfoCommands(CommonCog, name='General Info Commands'):
         await ctx.send('https://www.patreon.com/bot_detector')
 
     @commands.command(description=help_messages.github_help_msg)
-    async def github(self, ctx, repo):
-        repos = {
-            "core": "https://github.com/Bot-detector/Bot-Detector-Core-Files",
-            "plugin": "https://github.com/Bot-detector/bot-detector",
-            "discord": "https://github.com/Bot-detector/bot-detector-discord-bot",
-            "website": "https://github.com/Bot-detector/Bot-Detector-Web"
-        }
-
-        not_found_text = f"{repo} isn't a valid GitHub repository name. Try 'Core' or 'Plugin'."
-        repo_url = repos.get(repo.lower(), not_found_text)
-
-        await ctx.send(repo_url)
+    async def github(self, ctx):
+        await ctx.send("https://github.com/Bot-detector")
 
 
     @commands.command(description=help_messages.invite_help_msg)
@@ -75,7 +65,6 @@ class InfoCommands(CommonCog, name='General Info Commands'):
     @commands.command(aliases=["botlabels"], description=help_messages.labels_help_msg)
     async def labels(self, ctx):
         labels = await utils.get_player_labels(self.bot.session)
-        print(labels)
 
         labels_mbed = discord.Embed(title="Current Player Labels")
 

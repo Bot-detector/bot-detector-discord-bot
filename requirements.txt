@@ -10,3 +10,4 @@ pandas
 OSRS_Hiscores
 aiohttp
 xlsxwriter
+Pillow

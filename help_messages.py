@@ -32,7 +32,7 @@ beta_help_msg = clean("""
 
 patreon_help_msg = "Shows a link to ur Patreon page. Patrons get access to exclusuive channels and the !heatmap command."
 
-github_help_msg = "Usage: !github < core | plugin | discord | website > Shows a link to one of our repositories depending on which repo name you enter."
+github_help_msg = "Provides a link to our organization's Github page that has a list of all of our repositories. Feel free to check out the code!"
 
 invite_help_msg = "Places an invite link to the Discord server in the chat. Feel free to invite your friends!"
 

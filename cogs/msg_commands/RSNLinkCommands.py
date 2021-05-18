@@ -1,7 +1,7 @@
 import os
+from inspect import cleandoc
 
 import discord
-
 from discord.ext import commands
 from dotenv import load_dotenv
 
@@ -52,12 +52,11 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
             elif isVerified == 0:
                 code = int(previousAttempts[len(previousAttempts) - 1]["Code"])
 
-        try:
-            await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, player_id=verifyID, code=code, token=token)
-            mbed = await link_msg(joinedName=joinedName, code=code)
-            await ctx.author.send(embed=mbed)
-        except Exception as e:
-            print(e)
+
+        await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, player_id=verifyID, code=code, token=token)
+        embed = await link_msg(joinedName=joinedName, code=code)
+        await ctx.author.send(embed=embed)
+
 
 
     @commands.command(name="verify", description=help_messages.verify_help_msg)
@@ -99,7 +98,7 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
             names = "\n".join(acc['name'] for acc in linkedAccounts)
             embed.add_field (name="Linked Accounts:", value=f"{names}", inline=False)
 
-            await ctx.author.send(embed=mbed)
+            await ctx.author.send(embed=embed)
 
 
 async def verified_msg(joinedName):

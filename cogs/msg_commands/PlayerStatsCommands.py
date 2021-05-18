@@ -69,9 +69,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.send(embed=embed)
 
-            async with self.bot.session.post(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+            async with self.bot.session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
                 if r.status != 200:
-                    print(r.status)
                     return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
                 js = await r.json()
@@ -141,7 +140,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.send(embed=embed)
 
         for r in member.roles:
-            print(r)
             if r.id == roles.special_roles["Verified RSN"]["role_id"]:
                 #awesome, you're verified.
                 break
@@ -256,7 +254,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
             if r.status != 200:
                 return await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
-                js = await r.json()
+            js = await r.json()
 
             df = pd.DataFrame(js)
             if filetype == 'excel':

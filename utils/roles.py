@@ -1,6 +1,5 @@
 import bisect
-
-import aiohttp
+import json
 import discord
 
 bot_hunter_roles = {
@@ -38,44 +37,19 @@ special_roles = {
 
 
 #Gets bans from all accounts passed in
-async def get_multi_player_contributions(session, verifiedPlayers):
-    totalBans = 0
-    totalPossibleBans = 0
-    totalReports = 0
-    totalManualReports = 0
-    totalManualBans = 0
-    totalManualIncorrect = 0
+async def get_multi_player_bans(session, verifiedPlayers):
 
+    async with session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(verifiedPlayers)) as r:
+        if r.status != 200:
+            return #TODO Figure out what to do here haha
 
-    for player in verifiedPlayers:
-        playerName = player["name"]
+        js = await r.json()
+        return int(js['total']['bans'])
 
-        async with session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{playerName}") as r:
-            if r.status == 200:
-                js = await r.json()
-                totalBans += int(js['total']['bans'])
-                totalPossibleBans += int(js['total']['possible_bans'])
-                totalReports += int(js['total']['reports'])
-                totalManualReports += int(js['manual']['reports'])
-                totalManualBans += int(js['manual']['bans'])
-                totalManualIncorrect += int(js['manual']['incorrect_reports'])
-
-
-    contributions = {
-        "totalBans": totalBans,
-        "totalPossibleBans": totalPossibleBans,
-        "totalReports": totalReports,
-        "totalManualReports": totalManualReports,
-        "totalManualBans": totalManualBans,
-        "totalManualIncorrect": totalManualIncorrect
-    }
-
-    return contributions
 
 
 async def get_bot_hunter_role(session, verifiedPlayers, member):
-    contributions = await get_multi_player_contributions(session, verifiedPlayers)
-    bans = contributions["totalBans"]
+    bans = await get_multi_player_bans(session, verifiedPlayers)
 
     if bans == 0:
         return False #No rank just yet
