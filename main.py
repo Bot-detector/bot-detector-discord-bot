@@ -23,7 +23,7 @@ EASTER_EGGS = {
     "25 buttholes": "hahahahahaha w0w!",
     "tedious": "Theeeee collection log",
     "a q p": "( ͡° ͜ʖ ͡°)",
-    "LTT": "https://www.lttstore.com/"
+    "ltt": "https://www.lttstore.com"
 }
 
 
@@ -63,13 +63,16 @@ async def on_disconnect():
 
 @bot.event
 async def on_message(message):
-    await bot.process_commands(message)
+    if message.author.id == bot.user.id:
+        pass
+    else:
+        await bot.process_commands(message)
 
-    # Easter eggs
-    lowercase_msg = message.content.lower()
-    for trigger in EASTER_EGGS:
-        if trigger in lowercase_msg:
-            await message.channel.send(EASTER_EGGS[trigger])
+        # Easter eggs
+        lowercase_msg = message.content.lower()
+        for trigger in EASTER_EGGS:
+            if trigger in lowercase_msg:
+                await message.channel.send(EASTER_EGGS[trigger])
 
 
 @bot.event
