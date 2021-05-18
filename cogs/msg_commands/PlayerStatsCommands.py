@@ -56,6 +56,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
     async def kc(self, ctx, *, player_name=None):
+        await ctx.trigger_typing()
         if not player_name:
             linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
@@ -128,6 +129,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
     @commands.command(aliases=["updaterank"], description=help_messages.rankup_help_msg)
     async def rankup(self, ctx):
+        await ctx.trigger_typing()
         member = ctx.author
         linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
@@ -182,8 +184,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
     async def predict(self, ctx, *, player_name):
-        await ctx.trigger_typing()
+        
         pending_msg = await ctx.send("Searching the database for the predicted username.")
+        await ctx.trigger_typing()
 
         if not utils.is_valid_rsn(player_name):
             if len(player_name) < 1:
@@ -225,7 +228,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         msg += "```"
 
-        await pending_msg.edit(content=msg)
+        await pending_msg.delete()
+        await ctx.send(msg)
 
         #TODO Add back in the feedback reactions. Right now I can only get the first one added to load.
 
