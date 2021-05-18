@@ -74,10 +74,11 @@ async def on_message(message):
 
 @bot.event
 async def on_command_error(ctx, error):
+    print(error)
     if isinstance(error, (commands.CommandNotFound, commands.CheckFailure)):
         return
 
-    if isinstance(error, (commands.CommandInvokeError, commands.NoPrivateMessage)):
+    if isinstance(error, (discord.Forbidden, commands.NoPrivateMessage)):
         await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
     
     print(f"Ignoring exception in command {ctx.command}:", file=error_file)

@@ -5,10 +5,14 @@ from utils import CommonCog
 
 
 class ReactionHandling(CommonCog):
-
     @commands.Cog.listener()
-    async def on_raw_reaction_add(payload: discord.RawReactionActionEvent):
-        if payload.emoji.name == '✔️':
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+        if payload.member.id == self.bot.user.id:
+            return
+        else:
+            pass
+
+        if payload.emoji.name == '✅':
             vote = 1
         elif payload.emoji.name == '❌':
             vote = -1
@@ -21,7 +25,7 @@ class ReactionHandling(CommonCog):
 
 
     async def get_reaction_message(self, reaction_payload: discord.RawReactionActionEvent):
-        guild = bot.get_guild(reaction_payload.guild_id)
+        guild = self.bot.get_guild(reaction_payload.guild_id)
         channel = guild.get_channel(reaction_payload.channel_id)
         message = await channel.fetch_message(reaction_payload.message_id)
 
@@ -66,3 +70,4 @@ class ReactionHandling(CommonCog):
 
 def setup(bot):
     bot.add_cog(ReactionHandling(bot))
+    pass

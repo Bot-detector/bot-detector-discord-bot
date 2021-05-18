@@ -1,3 +1,4 @@
+import asyncio
 import os
 from inspect import cleandoc
 
@@ -182,8 +183,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
     async def predict(self, ctx, *, player_name):
-        pending_msg = await ctx.send("Searching the database for the predicted username.")
         await ctx.trigger_typing()
+        pending_msg = await ctx.send("Searching the database for the predicted username.")
 
         if not utils.is_valid_rsn(player_name):
             if len(player_name) < 1:
@@ -198,7 +199,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 return await ctx.send(f"I couldn't get a prediction for {player_name} :(")
             
             js = await r.json()
-        
 
         name =        js['player_name']
         prediction =  js['prediction_label']
@@ -212,22 +212,23 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             {utils.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
             + ID: {player_id}
             ============
-            Prediction Breakdown\n\n
+            Prediction Breakdown
         """)
+
+        msg += "\n"
 
         for predict in secondaries:
             msg += cleandoc(f"""
-                {utils.plus_minus(predict[0], 'Real_Player')}  {predict[0]}:
-                {predict[1] * 100:.2f}%\n
+                {utils.plus_minus(predict[0], 'Real_Player')} {predict[0]}: {predict[1] * 100:.2f}%
             """)
 
-        msg += cleandoc("""```
-            Click the reactions below to give feedback on the above prediction:
-        """)
+            msg += "\n"
 
-        proper_message = await pending_msg.edit(content=msg)
-        await proper_message.add_reaction("✔️")
-        await proper_message.add_reaction("❌")
+        msg += "```"
+
+        await pending_msg.edit(content=msg)
+
+        #TODO Add back in the feedback reactions. Right now I can only get the first one added to load.
 
     async def export_bans(self, ctx, playerName, filetype):
         discord_id = ctx.author.id
