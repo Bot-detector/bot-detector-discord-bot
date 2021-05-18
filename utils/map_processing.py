@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import PIL
+import urllib
 
 
 def convertGlobaltoLocal(regionid, df):
@@ -31,24 +33,17 @@ def convertGlobaltoLocal(regionid, df):
     dfLocal['local_y'] = df['y_coord'] - yLocalOrigin
     return dfLocal
 
-def plotheatmap(dfLocalBan, dfLocalReal, regionid, regionname):
+def plotheatmap(dfLocalBan, regionid, regionname):
     sns.set(style="ticks", context="notebook")
     plt.style.use("seaborn-white")
     plt.figure(figsize = (5,5))
 
-    map_img = mpimg.imread(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png')
+    map_img = PIL.Image.open(urllib.request.urlopen(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png'))
 
-    hmax = sns.kdeplot(x = dfLocalReal.local_x, y = dfLocalReal.local_y, alpha=.0, cmap="winter_r", shade=True, bw=.07)
-    hmax.set(xlabel='Local X', ylabel='Local Y')
-
-    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.4, cmap="autumn_r", shade=True, bw=.07)
+    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.4, cmap="autumn_r", shade=True, bw_method=0.1)
     hmax.set(xlabel='', ylabel='',title='')
 
     hmax.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
-
-    hmax.tick_params(axis='x', which='both', bottom='off',top='off',labelbottom='off')
-    hmax.set_xticklabels([''])
-    hmax.set_yticklabels([''])
 
     plt.imshow(map_img, zorder=0, extent=[0.0, 64.0, 0.0, 64.0])
     plt.axis('off')
@@ -63,12 +58,13 @@ async def CleanupImages(region_id):
 
 async def getHeatmapRegion(session, regionName, token):
     json = {"region" : regionName}
-    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}/{regionName}'
 
     async with session.get(url,json=json) as r:
         if r.status == 200:
             data = await r.json()
             return data
+            
 
 async def getHeatmapData(session, region_id, token):
     json = {"region_id" : region_id}
