@@ -88,7 +88,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                     color=discord.Colour.dark_red()
                 )
 
-                return await ctx.send(embed=mbed)
+                return await ctx.send(embed=embed)
 
             if len(dfRegion)<30:
                 regionTrueName, region_id = map_processing.Autofill(dfRegion, region)
