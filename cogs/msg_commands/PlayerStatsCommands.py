@@ -1,47 +1,35 @@
-from discord.ext.commands import Cog
-from discord.ext.commands import command, check, has_permissions
-
 import os
+from inspect import cleandoc
+
+import json
 import discord
-import aiohttp
-from OSRS_Hiscores import Hiscores
-from discord.ext.commands.converter import MemberConverter
-from discord.utils import _string_width
-import checks
-import utils.roles as roles
-import help_messages
 import pandas as pd
-
-import utils.string_processing as string_processing
-import utils.discord_processing as discord_processing
-
+from discord.ext import commands
 from dotenv import load_dotenv
+from OSRS_Hiscores import Hiscores
+
+import help_messages
+import utils
+from utils import discord_processing, roles, check_allowed_channel
+
+
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
 
+class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
+    cog_check = check_allowed_channel
 
-class PlayerStatsCommands(Cog, name='Player Stats Commands'):
-
-    def __init__(self, bot):
-        self.bot = bot
-
-    @command(name="lookup", aliases=["hiscores"], description=help_messages.lookup_help_msg)
-    @check(checks.check_allowed_channel)
-    async def hiscores_lookup(self, ctx, *param):
-
-        rsn = string_processing.joinParams(param)
-
-        if(not string_processing.is_valid_rsn(rsn)):
-            await ctx.channel.send(rsn + " is not a valid RSN")
-            return
+    @commands.command(aliases=["hiscores"], description=help_messages.lookup_help_msg)
+    async def lookup(self, ctx, *, username):
+        if not utils.is_valid_rsn(username):
+            return await ctx.send(f"{username} is not a valid RSN")
 
         try:
-            username = rsn
             username_parsed = username.replace(" ", "_")
             intro_msg = await ctx.send("Searching for User... If there is no response, there was no account found.")
             user = Hiscores(username_parsed, 'N')
 
-            skills_list = [ 'Attack',           'Hitpoints',    'Mining', 
+            skills_list = [ 'Attack',           'Hitpoints',    'Mining',
                             'Strength',         'Agility',      'Smithing',
                             'Defense',          'Herblore',     'Fishing',
                             'Ranged',           'Thieving',     'Cooking',
@@ -50,333 +38,282 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                             'Runecrafting',     'Slayer',       'Farming',
                             'Construction',     'Hunter',       'Total' ]
 
-            embedvar = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
+            embed = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
 
             for skill in skills_list:
-                embedvar.add_field( name=f"{skill} - {user.skill(skill.lower())}", 
-                                    value=f"EXP - {int(user.skill(skill.lower(), 'experience')):,d}", 
-                                    inline=True )
-            
-            await ctx.channel.send(embed=embedvar)
+                embed.add_field(name=f"{skill} - {user.skill(skill.lower())}",
+                                   value=f"EXP - {int(user.skill(skill.lower(), 'experience')):,d}",
+                                   inline=True)
+
+            await ctx.send(embed=embed)
 
         except Exception as e:
-            await ctx.channel.send("Something went terribly wrong. :(")
+            await ctx.send("Something went terribly wrong. :(")
+            raise e
 
         await intro_msg.delete()
 
 
-    @command(name="kc", aliases=["killcount"], description=help_messages.kc_help_msg)
-    @check(checks.check_allowed_channel)
-    async def kc_command(self, ctx, *params):
+    @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
+    async def kc(self, ctx, *, player_name=None):
+        if not player_name:
+            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
-        if(len(params) == 0):
-            linkedAccounts = await discord_processing.get_linked_accounts(ctx.author.id, token)
-
-            if linkedAccounts == None or len(linkedAccounts) == 0:
-                mbed = discord.Embed (
-                description = f"Please include a player name or use the !link command to pair an OSRS account. "\
-                    + "Once you have paired at least one account you will no longer need to type a name."
+            if not linkedAccounts:
+                embed = discord.Embed(
+                    description=cleandoc(f"""
+                        Please include a player name or use the !link command to pair an OSRS account.
+                        Once you have paired at least one account you will no longer need to type a name.
+                    """)
                 )
 
-                await ctx.channel.send(embed=mbed)
-                return
+                return await ctx.send(embed=embed)
 
-            contributions =  await roles.get_multi_player_contributions(linkedAccounts)
+            async with self.bot.session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+                if r.status != 200:
+                    return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
-            total_bans = contributions["totalBans"]
-            total_possible_bans = contributions["totalPossibleBans"]
-            total_reports = contributions["totalReports"]
-            manual_reports = contributions["totalManualReports"]
-            manual_bans = contributions["totalManualBans"]
-            manual_incorrect = contributions["totalManualIncorrect"]
-                        
-            if manual_reports == 0:
-                report_accuracy = None
-            elif manual_incorrect == 0:
-                report_accuracy = 100.00
-            else:
-                report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
+                js = await r.json()
 
-            mbed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
+            manual_reports = int(js['manual']['reports'])
+            manual_bans = int(js['manual']['bans'])
+            manual_incorrect = int(js['manual']['incorrect_reports'])
 
-            mbed.add_field (name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
-            mbed.add_field (name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
-            mbed.add_field (name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
+            total_reports = int(js['total']['reports'])
+            total_bans = int(js['total']['bans'])
+            total_possible_bans = int(js['total']['possible_bans'])
 
-            if report_accuracy is None:
-                pass
-            else:
-                mbed.add_field (name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
-                mbed.add_field (name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
+        elif utils.is_valid_rsn(player_name):
+            async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
+                if r.status != 200:
+                    return await ctx.send(f"Couldn't grab the !kc for {player_name}")
 
-            mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
+                js = await r.json()
 
-            if total_reports == 0:
-                            mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
-                            icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
-            await ctx.channel.send(embed=mbed)
+            manual_reports = int(js['manual']['reports'])
+            manual_bans = int(js['manual']['bans'])
+            manual_incorrect = int(js['manual']['incorrect_reports'])
 
+            total_reports = int(js['total']['reports'])
+            total_bans = int(js['total']['bans'])
+            total_possible_bans = int(js['total']['possible_bans'])
         else:
+            return await ctx.send(f"{player_name} isn't a valid Runescape user name.")
 
-            playerName = string_processing.joinParams(params)
+        if manual_reports == 0:
+            report_accuracy = None
+        elif manual_incorrect == 0:
+            report_accuracy = 100.00
+        else:
+            report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
 
-            if not string_processing.is_valid_rsn(playerName):
-                await ctx.channel.send(playerName + " isn't a valid Runescape user name.")
-                return
+        embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
+        embed.add_field(name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
+        embed.add_field(name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
+        embed.add_field(name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
 
-            async with aiohttp.ClientSession() as session:
-                async with session.get("https://www.osrsbotdetector.com/api/stats/contributions/" + playerName) as r:
-                    if r.status == 200:
-                        js = await r.json()
+        if report_accuracy is not None:
+            embed.add_field(name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
+            embed.add_field(name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
 
-                        manual_reports = int(js['manual']['reports'])
-                        manual_bans = int(js['manual']['bans'])
-                        manual_incorrect = int(js['manual']['incorrect_reports'])
-                        
-                        if manual_reports == 0:
-                            report_accuracy = None
-                        elif manual_incorrect == 0:
-                            report_accuracy = 100.00
-                        else:
-                            report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
+        embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
 
-                        total_reports = int(js['total']['reports'])
-                        total_bans = int(js['total']['bans'])
-                        total_possible_bans = int(js['total']['possible_bans'])
+        if total_reports == 0:
+            embed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.",
+            icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
 
-                        mbed = discord.Embed(title=f"{playerName}'s Stats", color=0x00ff00)
-
-                        mbed.add_field (name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
-                        mbed.add_field (name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
-                        mbed.add_field (name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
-
-                        if report_accuracy is None:
-                            pass
-                        else:
-                            mbed.add_field (name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
-                            mbed.add_field (name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
-
-                        if total_reports == 0:
-                            mbed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.", 
-                            icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
-
-                        mbed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
-            
-                        await ctx.channel.send(embed=mbed)
-                    else:
-                        await ctx.channel.send(f"Couldn't grab the !kc for {playerName}")
+        await ctx.send(embed=embed)
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
-    @command(name="rankup", aliases=["updaterank"], description=help_messages.rankup_help_msg)
-    @check(checks.check_allowed_channel)
-    async def rankup_command(self, ctx):
+    @commands.command(aliases=["updaterank"], description=help_messages.rankup_help_msg)
+    async def rankup(self, ctx):
         member = ctx.author
-        linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
+        linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
-        if(len(linkedAccounts) == 0):
-            mbed = discord.Embed (
-                description = f"You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so.",
+        if not len(linkedAccounts):
+            embed = discord.Embed (
+                description = "You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so.",
                 color = discord.Colour.dark_red()
             )
 
-            await ctx.channel.send(embed=mbed)
-            return
-        else:
-            for r in member.roles:
-                print(r)
-                if r.id == roles.special_roles["Verified RSN"]["role_id"]:
-                    #awesome, you're verified.
-                    break
+            return await ctx.send(embed=embed)
 
-            else:
-                verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
-                await member.add_roles(verified_role)
+        for r in member.roles:
+            if r.id == roles.special_roles["Verified RSN"]["role_id"]:
+                #awesome, you're verified.
+                break
+
+        else:
+            verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
+            await member.add_roles(verified_role)
 
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
-        new_role, current_amount, next_role_amount = await roles.get_bot_hunter_role(linkedAccounts, member)
+        new_role, current_amount, next_role_amount = await roles.get_bot_hunter_role(self.bot.session, linkedAccounts, member)
 
-        if(new_role == False):
-            mbed = discord.Embed (
-                description = f"You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
+        if new_role is False:
+            embed = discord.Embed(
+                description = "You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
                 color = discord.Colour.dark_red()
             )
 
-            await ctx.channel.send(embed=mbed)
-            return
+            return await ctx.send(embed=embed)
 
         await roles.remove_old_roles(member)
         await member.add_roles(new_role)
 
-        if new_role is not current_role:
-            mbed = discord.Embed (
-                    description = f"{ctx.author.display_name}, you are now a {new_role}!",
-                    color = new_role.color
-                )
-
-            mbed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
-
-            await ctx.channel.send(embed=mbed)
-
-        else:
-            mbed = discord.Embed (
+        if new_role == current_role:
+            embed = discord.Embed(
                     description = f"You are not yet eligible for a new role. Only **{next_role_amount - current_amount}** more confirmed bans and you'll be there! :D",
                     color = new_role.color
-                )
+            )
 
-            await ctx.channel.send(embed=mbed)
-        
-        return
+            return await ctx.send(embed=embed)
+
+        embed = discord.Embed(
+            description=f"{ctx.author.display_name}, you are now a {new_role}!",
+            color=new_role.color
+        )
+
+        embed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
+        await ctx.send(embed=embed)
 
 
-    @command(name="predict", aliases=["detect"], description=help_messages.predict_help_msg)
-    @check(checks.check_allowed_channel)
-    async def predict_command(self, ctx, *params):
-        playerName = string_processing.joinParams(params)
 
-        pending_ctx = await ctx.channel.send("Searching the database for the predicted username.")
+    @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
+    async def predict(self, ctx, *, player_name):
+        await ctx.trigger_typing()
+        pending_msg = await ctx.send("Searching the database for the predicted username.")
 
-        if not string_processing.is_valid_rsn(playerName):
-            if len(playerName) < 1:
-                await ctx.channel.send(f"Please enter a valid Runescape user name.")
+        if not utils.is_valid_rsn(player_name):
+            if len(player_name) < 1:
+                await ctx.send(f"Please enter a valid Runescape user name.")
                 return
-            else: 
-                await ctx.channel.send(f"{playerName} isn't a valid Runescape user name.")
+            else:
+                await ctx.send(f"{player_name} isn't a valid Runescape user name.")
                 return
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://www.osrsbotdetector.com/api/site/prediction/" + playerName) as r:
-                if r.status == 200:
-                    js = await r.json()
-                    name =        js['player_name']
-                    prediction =  js['prediction_label']
-                    player_id =   js['player_id']
-                    confidence =  js['prediction_confidence']
-                    secondaries = js['secondary_predictions']
+        async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
+            if r.status != 200:
+                return await ctx.send(f"I couldn't get a prediction for {player_name} :(")
+            
+            js = await r.json()
 
-                    msg = "```diff\n" \
-                        + "+" + " Name: " + str(name) + "\n" \
-                        + str(string_processing.plus_minus(prediction, 'Real_Player')) + " Prediction: " + str(prediction) + "\n" \
-                        + str(string_processing.plus_minus(confidence, 0.75) + " Confidence: " + f"{round(confidence * 100, 2)}%") + "\n" \
-                        + "+" + " ID: " + str(player_id) + "\n" \
-                        + "============\n" \
-                        + "Prediction Breakdown \n\n"
+        name =        js['player_name']
+        prediction =  js['prediction_label']
+        player_id =   js['player_id']
+        confidence =  js['prediction_confidence']
+        secondaries = js['secondary_predictions']
 
-                    
-                    for predict in secondaries:
-                        msg += str(string_processing.plus_minus(predict[0], 'Real_Player')) + " " + str(predict[0]) + ": " \
-                            + f"{round(predict[1] * 100, 2)}%"
-                        msg += "\n"
+        msg = cleandoc(f"""```diff
+            + Name: {name}
+            {utils.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
+            {utils.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
+            + ID: {player_id}
+            ============
+            Prediction Breakdown
+        """)
 
-                    msg += "```\n"
+        msg += "\n"
 
-                    msg += "Click the reactions below to give feedback on the above prediction:"
-                        
-                    my_msg = await ctx.channel.send(msg)
+        for predict in secondaries:
+            msg += cleandoc(f"""
+                {utils.plus_minus(predict[0], 'Real_Player')} {predict[0]}: {predict[1] * 100:.2f}%
+            """)
 
-                    await my_msg.add_reaction('✔️')
-                    await my_msg.add_reaction('❌')
+            msg += "\n"
 
-                else:
-                    await ctx.channel.send(f"I couldn't get a prediction for {playerName} :(")
-                    return
+        msg += "```"
 
-        await pending_ctx.delete()
+        await pending_msg.edit(content=msg)
+
+        #TODO Add back in the feedback reactions. Right now I can only get the first one added to load.
 
     async def export_bans(self, ctx, playerName, filetype):
         discord_id = ctx.author.id
 
-        if not string_processing.is_valid_rsn(playerName):
-            await ctx.channel.send(playerName + " isn't a valid Runescape user name.")
-            return
+        if not utils.is_valid_rsn(playerName):
+            return await ctx.send(f"{playerName} isn't a valid Runescape user name.")
 
-        status = await discord_processing.get_player_verification_full_status(playerName=playerName, token=token)
-        
+        status = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=playerName, token=token)
+
         try:
             owner_id = status[0]['Discord_id']
             verified = status[0]['Verified_status']
         except:
-            await ctx.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
-            return
+            return await ctx.send(f"Please verify your ownership of: '{playerName}'. Type `!link {playerName}' in this channel.")
 
         if discord_id != owner_id:
-            await ctx.channel.send("Please verify your ownership of: '" +  playerName + "'. Type `!link " + playerName + "' in this channel.")
-            return
-        
+            return await ctx.send(f"Please verify your ownership of: '{playerName}'. Type `!link {playerName}' in this channel.")
+
         if verified == 0:
-            await ctx.channel.send("You must complete the verification process for: '" + playerName + "'. Please check your DMs for a previously sent verification token.")
-            return
+            return await ctx.send(f"You must complete the verification process for: '{playerName}'. Please check your DMs for a previously sent verification token.")
 
-        info_msg = await ctx.channel.send("Getting that data for you right now! One moment, please :)")
+        info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
-                if r.status == 200:
+        async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
+            if r.status != 200:
+                return await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
+            js = await r.json()
 
-                    js = await r.json()
-                    df = pd.DataFrame(js)
+            df = pd.DataFrame(js)
+            if filetype == 'excel':
+                df.to_excel(f"{playerName}_bans.xlsx")
+                filePath = f'{os.getcwd()}/{playerName}_bans.xlsx'
+            else:
+                df.to_csv(f"{playerName}_bans.csv")
+                filePath = f'{os.getcwd()}/{playerName}_bans.csv'
 
-                    if filetype == 'excel':
-                        df.to_excel(f"{playerName}_bans.xlsx")
-                        filePath = f'{os.getcwd()}/{playerName}_bans.xlsx'
-                    else:
-                        df.to_csv(f"{playerName}_bans.csv")
-                        filePath = f'{os.getcwd()}/{playerName}_bans.csv'
+            await ctx.author.send(file=discord.File(filePath))
+            os.remove(filePath)
+            await info_msg.edit(content=f"Your {filetype} file for {playerName} has been sent to your DMs.")
 
-                    await ctx.author.send(file=discord.File(filePath))
-                    os.remove(filePath)
-                    await info_msg.edit(content=f"Your {filetype} file for {playerName} has been sent to your DMs.")
-                else:
-                    await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
 
 
     async def multi_account_export_bans(self, ctx, filetype):
         member = ctx.author
-        linkedAccounts = await discord_processing.get_linked_accounts(member.id, token)
+        linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
         num_links = len(linkedAccounts)
 
         if num_links == 0:
-                mbed = discord.Embed (
-                    title = "Ban Export Error",
-                    description = f"There are no OSRS accounts linked to your Discord ID. You must run !link <RSN> and pair at least one account.",
-                    color = discord.Colour.dark_red()
-                )
+            embed = discord.Embed (
+                title = "Ban Export Error",
+                description = f"There are no OSRS accounts linked to your Discord ID. You must run !link <RSN> and pair at least one account.",
+                color = discord.Colour.dark_red()
+            )
 
-                await ctx.channel.send(embed=mbed)
+            await ctx.send(embed=embed)
 
         elif num_links == 1:
             await self.export_bans(ctx, linkedAccounts[0]['name'], filetype)
-                
+
         else:
             #Multiple Accounts, For Real!
-            info_msg = await ctx.channel.send("Getting that data for you right now! One moment, please :)")
+            info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
             sheets = []
             names = []
 
             for account in linkedAccounts:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{account['name']}") as r:
-                        if r.status == 200:
+                async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{account['name']}") as r:
+                    if r.status == 200:
+                        js = await r.json()
+                        df = pd.DataFrame(js)
 
-                            js = await r.json()
-                            df = pd.DataFrame(js)
-
-                            sheets.append(df)
-                            names.append(account['name'])
+                        sheets.append(df)
+                        names.append(account['name'])
 
             if len(sheets) > 0:
                 totalSheet = pd.concat(sheets)
                 totalSheet = totalSheet.drop_duplicates(subset="Player_id", keep='last')
             else:
-                mbed = discord.Embed (
-                    description = f"We currently do not have data available for export for your linked accounts.",
+                embed = discord.Embed(
+                    description = "We currently do not have data available for export for your linked accounts.",
                     color = discord.Colour.dark_red()
                 )
 
-                await ctx.channel.send(embed=mbed)
-                return
+                return await ctx.send(embed=embed)
 
             if filetype == 'excel':
                 writer = pd.ExcelWriter(f'{ctx.author.display_name}_bans.xlsx', engine='xlsxwriter')
@@ -391,7 +328,7 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
                 writer.save()
 
                 filePath = f'{os.getcwd()}/{ctx.author.display_name}_bans.xlsx'
-                        
+
             else:
                 totalSheet.to_csv(f'{ctx.author.display_name}_bans.csv')
                 filePath = f'{os.getcwd()}/{ctx.author.display_name}_bans.csv'
@@ -400,27 +337,21 @@ class PlayerStatsCommands(Cog, name='Player Stats Commands'):
             await ctx.author.send(file=discord.File(filePath))
             os.remove(filePath)
             await info_msg.edit(content=f"Your {filetype} file has been sent to your DMs.")
-            
-        return
 
-    @command(name="excelban", aliases=["excelbans"], description=help_messages.excelban_help_msg)
-    @check(checks.check_allowed_channel)
-    async def excel_ban_command(self, ctx, *params):
-        if len(params) == 0:
+
+    @commands.command(aliases=["excelbans"], description=help_messages.excelban_help_msg)
+    async def excelban(self, ctx, *, player_name=None):
+        if not player_name:
             await self.multi_account_export_bans(ctx, 'excel')
         else:
-            playerName = string_processing.joinParams(params)
-            await self.export_bans(ctx, playerName, 'excel')
+            await self.export_bans(ctx, player_name, 'excel')
 
-    @command(name="csvban", aliases=["csvbans"], description=help_messages.csvban_help_msg)
-    @check(checks.check_allowed_channel)
-    async def csv_ban_command(self, ctx, *params):
-        if len(params) == 0:
-             await self.multi_account_export_bans(ctx, 'csv')
+    @commands.command(aliases=["csvbans"], description=help_messages.csvban_help_msg)
+    async def csvban(self, ctx, *, player_name=None):
+        if not player_name:
+            await self.multi_account_export_bans(ctx, 'csv')
         else:
-            playerName = string_processing.joinParams(params)
-
-            await self.export_bans(ctx, playerName, 'csv')
+            await self.export_bans(ctx, player_name, 'csv')
 
 
 def setup(bot):
