@@ -70,8 +70,7 @@ async def get_discords_ids_with_links(session: aiohttp.ClientSession, token):
     return discordIDList
 
 async def get_player_labels(session: aiohttp.ClientSession):
-    #url = f'{BASE_URL}/labels/get_player_labels'
-    url = f'https://osrsbotdetector.com/dev/labels/get_player_labels'
+    url = f'{BASE_URL}/labels/get_player_labels'
 
     async with session.get(url) as r:
         if r.status == 200:
