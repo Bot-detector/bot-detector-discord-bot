@@ -23,7 +23,7 @@ EASTER_EGGS = {
     "25 buttholes": "hahahahahaha w0w!",
     "tedious": "Theeeee collection log",
     "a q p": "( ͡° ͜ʖ ͡°)",
-    "LTT": "https://www.lttstore.com/"
+    "ltt": "https://www.lttstore.com/"
 }
 
 
