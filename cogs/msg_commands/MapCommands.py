@@ -162,11 +162,8 @@ class MapCommands(CommonCog, name='Map Commands'):
             dfLocalBan = map_processing.convertGlobaltoLocal(region_id, df_ban)
 
         else:
-            dfLocalBan = pd.DataFrame()
-
-        if dfLocalBan.empty:
             return False
-
+            
         map_processing.plotheatmap(dfLocalBan, region_id, regionTrueName)
         return True
 

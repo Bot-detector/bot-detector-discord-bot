@@ -2,7 +2,6 @@
 import os
 from datetime import date
 
-import matplotlib.image as mpimg
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -29,8 +28,8 @@ def convertGlobaltoLocal(regionid, df):
     xLocalOrigin = x_startSW + xshiftnormal*gridShiftLocal
     yLocalOrigin = y_startSW + ycolumnglobal*yshiftnormal + 1
 
-    dfLocal['local_x'] = df['x_coord'] - xLocalOrigin
-    dfLocal['local_y'] = df['y_coord'] - yLocalOrigin
+    dfLocal['local_x'] = (df['x_coord'] - xLocalOrigin) * 4
+    dfLocal['local_y'] = (df['y_coord'] - yLocalOrigin) * 4
     return dfLocal
 
 def plotheatmap(dfLocalBan, regionid, regionname):
@@ -40,12 +39,12 @@ def plotheatmap(dfLocalBan, regionid, regionname):
 
     map_img = PIL.Image.open(urllib.request.urlopen(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png'))
 
-    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, alpha=.4, cmap="autumn_r", shade=True, bw_method=0.05)
+    hmax = sns.kdeplot(x = dfLocalBan.local_x, y = dfLocalBan.local_y, gridsize=256, alpha=.5, cmap="autumn_r", shade=True, bw_method=0.075)
     hmax.set(xlabel='', ylabel='',title='')
 
     hmax.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
 
-    plt.imshow(map_img, zorder=0, extent=[0.0, 64.0, 0.0, 64.0])
+    plt.imshow(map_img, zorder=0, extent=[0.0, 256.0, 0.0, 256.0])
     plt.axis('off')
     plt.savefig(f'{os.getcwd()}/{regionid}.png', bbox_inches='tight',pad_inches = 0)
     plt.figure().clear()
