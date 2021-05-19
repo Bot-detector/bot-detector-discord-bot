@@ -67,12 +67,12 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                     pass
                 else:
                     for r in member.roles:
-                        if r.id == roles.special_roles["Verified RSN"]["role_id"]:
+                        if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
                             #awesome, you're verified.
                             break
 
                     else:
-                        verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
+                        verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
                         await member.add_roles(verified_role)
 
                 role_info = await roles.get_bot_hunter_role(self.bot.session, linkedAccounts, member)

@@ -145,12 +145,12 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.send(embed=embed)
 
         for r in member.roles:
-            if r.id == roles.special_roles["Verified RSN"]["role_id"]:
+            if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
                 #awesome, you're verified.
                 break
 
         else:
-            verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Verified RSN"]["role_id"], member.guild.roles)
+            verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
             await member.add_roles(verified_role)
 
         current_role = discord.utils.find(lambda r: 'Bot Hunter' in r.name, member.roles)
