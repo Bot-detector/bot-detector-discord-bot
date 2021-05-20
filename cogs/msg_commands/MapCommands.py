@@ -157,14 +157,8 @@ class MapCommands(CommonCog, name='Map Commands'):
             return False
 
         if 'confirmed_ban' in df.columns:
-            ban_mask = (df['confirmed_ban'] == 1)
-            df_ban = df[ban_mask].copy()
-            dfLocalBan = map_processing.convertGlobaltoLocal(region_id, df_ban)
-
-        else:
-            return False
+            map_processing.plotheatmap(df, region_id, regionTrueName)
             
-        map_processing.plotheatmap(dfLocalBan, region_id, regionTrueName)
         return True
 
 
