@@ -38,7 +38,7 @@ def plotheatmap(dfLocalBan, regionid, regionname):
 
     hmap = sns.kdeplot(data=dfLocalBan, x='x_coord', y='y_coord', weights='confirmed_ban',
                     gridsize=256, alpha=.625, levels=256, antialiased=True,
-                    cmap='autumn_r', fill=True, bw_method=.05)
+                    cmap='gnuplot_r', fill=True, bw_method=.05)
     hmap.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
 
     plt.savefig(f'{regionid}.png', bbox_inches='tight', pad_inches = 0)
