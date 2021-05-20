@@ -62,8 +62,7 @@ async def getHeatmapRegion(session, regionName, token):
 
 async def getHeatmapData(session, region_id, token):
     json = {"region_id" : region_id}
-    #url = f'https://www.osrsbotdetector.com/api/discord/heatmap/{token}'
-    url = f'http://localhost:5000/discord/heatmap/{token}'
+    url = f'https://www.osrsbotdetector.com/api/discord/heatmap/{token}'
 
     async with session.get(url,json=json) as r:
         if r.status == 200:
