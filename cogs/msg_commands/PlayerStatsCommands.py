@@ -258,7 +258,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
-        async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{playerName}") as r:
+        async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}/{playerName}") as r:
             if r.status != 200:
                 return await info_msg.edit(content=f"Could not grab the banned bots {filetype} file for {playerName}.")
             js = await r.json()
@@ -303,7 +303,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             names = []
 
             for account in linkedAccounts:
-                async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}/{account['name']}") as r:
+                async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}/{account['name']}") as r:
                     if r.status == 200:
                         js = await r.json()
                         df = pd.DataFrame(js)
