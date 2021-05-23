@@ -2,6 +2,7 @@ import os
 from inspect import cleandoc
 
 import discord
+from discord import file
 import pandas as pd
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -59,17 +60,16 @@ class MapCommands(CommonCog, name='Map Commands'):
 
         if region.isdigit():
             regionTrueName = f"Region ID: {region}"
-            mapWasGenerated = await self.runAnalysis(regionTrueName, region)
+            mapFilePath = await self.runAnalysis(regionTrueName, region)
 
-            if not mapWasGenerated:
+            if not mapFilePath:
                 await self.map(ctx=ctx, region=region)
 
                     
                 await ctx.send("We have no data on this region yet.")
             else:
                 try:
-                    await ctx.send(file=discord.File(f'{os.getcwd()}/{region}.png'))
-                    await map_processing.CleanupImages(region)
+                    await ctx.send(file=discord.File(mapFilePath))
                 except:
                     await ctx.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                     await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
@@ -92,17 +92,15 @@ class MapCommands(CommonCog, name='Map Commands'):
 
             if len(dfRegion)<30:
                 regionTrueName, region_id = map_processing.Autofill(dfRegion, region)
-                mapWasGenerated = await self.runAnalysis(regionTrueName, region_id)
+                mapFilePath = await self.runAnalysis(regionTrueName, region_id)
 
-                if not mapWasGenerated:
+                if not mapFilePath:
                     await self.map(ctx=ctx, region=region)
                     await ctx.send("We have no data on this region yet.")
 
                 else:
                     try:
-                        await ctx.send(file=discord.File(f'{os.getcwd()}/{region_id}.png'))
-                        await map_processing.CleanupImages(region_id)
-
+                        await ctx.send(file=discord.File(mapFilePath))
                     except:
                         await ctx.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                         await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
@@ -111,7 +109,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                 msg = ">30 Regions selected. Please refine your search."
                 await ctx.send(msg)
 
-            await info_msg.delete()
+        await info_msg.delete()
 
 
     @commands.command(description=help_messages.map_help_msg)
@@ -149,7 +147,16 @@ class MapCommands(CommonCog, name='Map Commands'):
 
     # Analysis run for map_processing Heatmap
     async def runAnalysis(self, regionTrueName, region_id):
+        filename = map_processing.getFileName(region_id=region_id)
+        
+        if map_processing.heatmapExists(filename=filename):
+            #Found a heatmap of the region with today's date.
+            return filename
+        else:
+            map_processing.cleanOldHeatmaps(region_id=region_id)
+
         region_id = int(region_id)
+
         data = await map_processing.getHeatmapData(self.bot.session, region_id, token)
         df = pd.DataFrame(data)
 
@@ -157,9 +164,9 @@ class MapCommands(CommonCog, name='Map Commands'):
             return False
 
         if 'confirmed_ban' in df.columns:
-            map_processing.plotheatmap(df, region_id, regionTrueName)
+            map_processing.plotheatmap(dfLocalBan=df, regionid=region_id, filename=filename)
             
-        return True
+        return filename
 
 
 def setup(bot):

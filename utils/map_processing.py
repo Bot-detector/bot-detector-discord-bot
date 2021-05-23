@@ -8,6 +8,7 @@ import seaborn as sns
 import pandas as pd
 import PIL
 import urllib
+import fnmatch
 import math
 from datetime import date
 
@@ -16,7 +17,7 @@ def region_to_wp(regionId, regionX, regionY, plane):
     return ((regionId >> 8) << 6) + regionX, ((regionId & 0xff) << 6) + regionY, plane
 
 
-def plotheatmap(dfLocalBan, regionid, regionname):
+def plotheatmap(dfLocalBan, regionid, filename):
     origin_wp = region_to_wp(regionid, 0, 0, 0)
     bounds_x = (origin_wp[0] - 0.5, origin_wp[0] + 63.5)
     bounds_y = (origin_wp[1] - 0.5, origin_wp[1] + 63.5)
@@ -41,13 +42,13 @@ def plotheatmap(dfLocalBan, regionid, regionname):
                     cmap='gnuplot_r', fill=True, bw_method=.05)
     hmap.legend([f'Bot Detector Plugin: {date.today()}'],labelcolor='white',loc='lower right')
 
-    plt.savefig(f'{regionid}.png', bbox_inches='tight', pad_inches = 0)
+    plt.savefig(filename, bbox_inches='tight', pad_inches = 0)
     plt.figure().clear()
     plt.close('all')
 
 
-async def CleanupImages(regionid):
-    os.remove(f'{os.getcwd()}/{regionid}.png')
+async def CleanupImages(filename):
+    os.remove(filename)
 
 
 async def getHeatmapRegion(session, regionName, token):
@@ -72,6 +73,18 @@ async def getHeatmapData(session, region_id, token):
 def displayDuplicates(df):
     dfRegion = df.drop_duplicates(subset=['region_name'], keep='first')
     return dfRegion
+
+def cleanOldHeatmaps(region_id):
+    for file in os.listdir('.'):
+        if fnmatch.fnmatch(file, f"{region_id}*.png"):
+            os.remove(file)
+
+def heatmapExists(filename):
+    return os.path.exists(filename)
+
+def getFileName(region_id):
+    date_str = date.today().strftime("%d-%m-%Y")
+    return f"{region_id}_{date_str}.png"
 
 def Autofill(dfRegion, regionName):
     regionShort = []
