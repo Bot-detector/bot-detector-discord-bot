@@ -166,7 +166,6 @@ class MapCommands(CommonCog, name='Map Commands'):
         if 'confirmed_ban' in df.columns:
             try:
                 map_processing.plotheatmap(dfLocalBan=df, regionid=region_id, filename=filename)
-                print("beep")
             except ValueError:
                 map_processing.plotPixelHeatMap(dfLocalBan=df, regionid=region_id, filename=filename)
             except Exception:
