@@ -46,6 +46,43 @@ def plotheatmap(dfLocalBan, regionid, filename):
     plt.figure().clear()
     plt.close('all')
 
+def plotPixelHeatMap(dfLocalBan, regionid, filename):
+    origin_wp = region_to_wp(regionid, 0, 0, 0)
+    dfLocalBan['confirmed_ban'] = dfLocalBan['confirmed_ban'].apply(lambda x : math.log(x + 1))
+
+    np_arr = np.empty((64,64))
+    np_arr[:] = np.NaN
+    for i, row in dfLocalBan.iterrows():
+        x_ind = int(row['x_coord']) - origin_wp[0]
+        y_ind = int(row['y_coord']) - origin_wp[1]
+        if (0 <= x_ind <= 63 and 0 <= y_ind <= 63):
+            np_arr[y_ind, x_ind] = row['confirmed_ban']
+
+    map_img = PIL.Image.open(urllib.request.urlopen(f'https://raw.githubusercontent.com/Bot-detector/OSRS-Visible-Region-Images/main/Region_Maps/{regionid}.png'))
+
+    plt.style.use('seaborn-white')
+    px = 1/plt.rcParams['figure.dpi']  # pixel in inches
+    plt.subplots(figsize=(512*px, 512*px))
+    plt.subplots_adjust(top = 1, bottom = 0, right = 1, left = 0, hspace = 0, wspace = 0)
+    plt.margins(0,0)
+    plt.axis('off')
+
+    hmap = sns.heatmap(data=np_arr, cmap='gnuplot_r',
+                    cbar=False, square=True,
+                    alpha = 0.5)
+    hmap.invert_yaxis()
+    hmap.set_xlim([0, 64])
+    hmap.set_ylim([0, 64])
+    hmap.imshow(map_img, aspect=hmap.get_aspect(),
+                extent=[0, 64, 0, 64], zorder=0)
+
+    hmap.legend([f'Bot Detector Plugin: {date.today()}'],
+                labelcolor='white',loc='lower right')
+
+    plt.savefig(filename, bbox_inches='tight', pad_inches = 0)
+    plt.figure().clear()
+    plt.close('all')
+
 
 async def CleanupImages(filename):
     os.remove(filename)
