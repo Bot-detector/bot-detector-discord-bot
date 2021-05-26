@@ -5,6 +5,8 @@ name: Python application
 
 on:
   push:
+    paths-ignore:
+      - 'FAQ.json'
     branches: [ main ]
     
 jobs:
