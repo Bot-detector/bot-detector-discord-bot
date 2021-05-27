@@ -73,7 +73,6 @@ async def on_message(message):
 
 @bot.event
 async def on_command_error(ctx, error):
-    print(error)
     error = getattr(error, "original", error)
 
     if isinstance(error, (discord.Forbidden, commands.NoPrivateMessage)):
@@ -85,7 +84,21 @@ async def on_command_error(ctx, error):
         traceback.format_exception(type(error), error, error.__traceback__, file=bot.error_file)
         bot.error_file.flush()
         await ctx.send("The command you've entered could not be completed at this time.")
+        await send_error_message(ctx, error)
 
+
+async def send_error_message(ctx, error):
+    error_embed = discord.Embed (
+        title = "Discord Bot Encountered an Error",
+        color = discord.Colour.dark_red()
+    )
+
+    error_embed.add_field(name="Author", value=f"{ctx.author}", inline=False)
+    error_embed.add_field(name="Command", value=f"{ctx.invoked_with}", inline=False)
+    error_embed.add_field(name="Message Link", value=f"https://discord.com/channels/{ctx.message.guild.id}/{ctx.message.channel.id}/{ctx.message.id}")
+    error_embed.add_field(name="Error", value=f"{error}", inline=False)
+
+    await bot.get_channel(847578925857112064).send(embed=error_embed)
 
 
 # Recursively loads cogs from /cogs
