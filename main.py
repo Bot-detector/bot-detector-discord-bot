@@ -1,5 +1,4 @@
 import asyncio
-import atexit
 import os
 import traceback
 from inspect import cleandoc
@@ -13,7 +12,6 @@ from dotenv import load_dotenv
 
 # Load files
 load_dotenv()
-error_file = open('error.log', 'w+')
 
 
 # Define constants
@@ -76,23 +74,18 @@ async def on_message(message):
 @bot.event
 async def on_command_error(ctx, error):
     print(error)
-    if isinstance(error, (commands.CommandNotFound, commands.CheckFailure)):
-        return
+    error = getattr(error, "original", error)
 
     if isinstance(error, (discord.Forbidden, commands.NoPrivateMessage)):
         await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
-    
-    print(f"Ignoring exception in command {ctx.command}:", file=error_file)
-    traceback.print_exception(type(error), error, error.__traceback__, file=error_file)
-    error_file.flush()
-    await ctx.send("The command you've entered could not be completed at this time.")
+    elif isinstance(error, (commands.CommandNotFound, commands.CheckFailure)):
+        return
+    else:
+        print(f"Ignoring exception in command {ctx.command}:", file=bot.error_file)
+        traceback.format_exception(type(error), error, error.__traceback__, file=bot.error_file)
+        bot.error_file.flush()
+        await ctx.send("The command you've entered could not be completed at this time.")
 
-
-@atexit.register
-def shutdown():
-    error_file.close()
-    print("Bot is going night-night.")
-    asyncio.run(bot.close())
 
 
 # Recursively loads cogs from /cogs
@@ -108,10 +101,14 @@ for folder in os.listdir("cogs"):
 
 async def startup():
     async with aiohttp.ClientSession() as session:
-        bot.session = session
-        bot.loop = asyncio.get_event_loop()
-        await bot.login(os.getenv('TOKEN'))
-        await bot.connect(reconnect=True)
+        with open('error.log', 'w+') as error_file:
+            bot.session = session
+            bot.error_file = error_file
+            bot.loop = asyncio.get_event_loop()
 
+            await bot.start(os.getenv("TOKEN"))
+
+    print("Bot is going night-night.")
+    await bot.close()
 
 asyncio.run(startup())
