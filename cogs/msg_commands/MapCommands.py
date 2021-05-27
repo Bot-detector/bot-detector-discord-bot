@@ -65,7 +65,7 @@ class MapCommands(CommonCog, name='Map Commands'):
             if not mapFilePath:
                 await self.map(ctx=ctx, region=region)
 
-                    
+
                 await ctx.send("We have no data on this region yet.")
             else:
                 try:
@@ -148,7 +148,7 @@ class MapCommands(CommonCog, name='Map Commands'):
     # Analysis run for map_processing Heatmap
     async def runAnalysis(self, regionTrueName, region_id):
         filename = map_processing.getFileName(region_id=region_id)
-        
+
         if map_processing.heatmapExists(filename=filename):
             #Found a heatmap of the region with today's date.
             return filename
@@ -170,7 +170,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                 map_processing.plotPixelHeatMap(dfLocalBan=df, regionid=region_id, filename=filename)
             except Exception:
                 return False
-            
+
         return filename
 
 

@@ -83,7 +83,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             total_reports = int(js['total']['reports'])
             total_bans = int(js['total']['bans'])
             total_possible_bans = int(js['total']['possible_bans'])
-            
+
             embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
@@ -187,7 +187,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
     async def predict(self, ctx, *, player_name):
-        
+
         pending_msg = await ctx.send("Searching the database for the predicted username.")
         await ctx.trigger_typing()
 
@@ -202,7 +202,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
             if r.status != 200:
                 return await ctx.send(f"I couldn't get a prediction for {player_name} :(")
-            
+
             js = await r.json()
 
         name =        js['player_name']

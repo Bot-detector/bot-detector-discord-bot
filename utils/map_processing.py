@@ -96,7 +96,7 @@ async def getHeatmapRegion(session, regionName, token):
         if r.status == 200:
             data = await r.json()
             return data
-            
+
 
 async def getHeatmapData(session, region_id, token):
     json = {"region_id" : region_id}
