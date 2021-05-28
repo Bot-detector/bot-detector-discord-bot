@@ -66,13 +66,14 @@ class MapCommands(CommonCog, name='Map Commands'):
                 await self.map(ctx=ctx, region=region)
 
 
-                await ctx.send("We have no data on this region yet.", content=f"{ctx.author.mention}")
+                await ctx.reply("We have no data on this region yet.")
             else:
                 try:
-                    await ctx.send(file=discord.File(mapFilePath), content=f"{ctx.author.mention}")
-                except:
-                    await ctx.send(f"{ctx.author.mention} Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
-                    await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
+                    await ctx.reply(file=discord.File(mapFilePath))
+                except Exception as e:
+                    print(e)
+                    await ctx.reply("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                    await ctx.reply('https://i.redd.it/lel3o4e2hhp11.jpg')
 
         else:
             dataRegion = await map_processing.getHeatmapRegion(self.bot.session, region, token)
@@ -88,7 +89,7 @@ class MapCommands(CommonCog, name='Map Commands'):
                     color=discord.Colour.dark_red()
                 )
 
-                return await ctx.send(embed=embed)
+                return await ctx.reply(embed=embed)
 
             if len(dfRegion)<30:
                 regionTrueName, region_id = map_processing.Autofill(dfRegion, region)
@@ -96,18 +97,18 @@ class MapCommands(CommonCog, name='Map Commands'):
 
                 if not mapFilePath:
                     await self.map(ctx=ctx, region=region)
-                    await ctx.send("We have no data on this region yet.", content=f"{ctx.author.mention}")
+                    await ctx.reply("We have no data on this region yet.")
 
                 else:
                     try:
-                        await ctx.send(file=discord.File(mapFilePath), content=f"{ctx.author.mention}")
+                        await ctx.reply(file=discord.File(mapFilePath))
                     except:
-                        await ctx.send(f"{ctx.author.mention} Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
-                        await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
+                        await ctx.reply("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                        await ctx.reply('https://i.redd.it/lel3o4e2hhp11.jpg')
 
             else:
                 msg = ">30 Regions selected. Please refine your search."
-                await ctx.send(msg)
+                await ctx.reply(msg)
 
         await info_msg.delete()
 
