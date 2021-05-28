@@ -5,12 +5,12 @@ import discord
 from discord.ext import commands
 
 import help_messages
-from utils import CommonCog, check_allowed_channel, override_allowed_channel
+from utils import CommonCog, check_allowed_channel
 
 
 class FunCommands(CommonCog, name="Fun Commands"):
-    cog_check = check_allowed_channel
 
+    @commands.check(check_allowed_channel)
     @commands.command(description=help_messages.poke_help_msg)
     async def poke(self, ctx):
         ping_api = subprocess.check_call(['ping','-c1','www.osrsbotdetector.com'])
@@ -24,10 +24,10 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
 
     @commands.command()
-    @commands.check(override_allowed_channel)
     async def panic(self, ctx):
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
+    @commands.check(check_allowed_channel)
     @commands.command(name="meow", description=help_messages.meow_help_msg)
     async def meow(self, ctx):
         url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
@@ -39,6 +39,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
 
+    @commands.check(check_allowed_channel)
     @commands.command(description=help_messages.woof_help_msg)
     async def woof(self, ctx):
         url = "https://some-random-api.ml/img/dog"
@@ -50,6 +51,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Who let the dogs out?")
 
+    @commands.check(check_allowed_channel)
     @commands.command(aliases=["bird"], description=help_messages.birb_help_msg)
     async def birb(self, ctx):
         url = "http://shibe.online/api/birds"
@@ -61,6 +63,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Birds all flew away. :(")
 
+    @commands.check(check_allowed_channel)
     @commands.command(aliases=["rabbit", "bun"], description=help_messages.bunny_help_msg)
     async def bunny(self, ctx):
         url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
