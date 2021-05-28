@@ -23,7 +23,7 @@ patron_roles = {
 
 
 async def check_allowed_channel(self, ctx):
-    if ctx.command == "panic":
+    if str(ctx.command) == "panic":
         return True
     else:
         return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
