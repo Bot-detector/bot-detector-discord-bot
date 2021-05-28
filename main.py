@@ -20,8 +20,8 @@ EASTER_EGGS = {
     "a round of wintertodt is about to begin": "Chop chop!",
     "25 buttholes": "hahahahahaha w0w!",
     "tedious": "Theeeee collection log",
+    "ltt": "https://www.lttstore.com",
     "a q p": "( ͡° ͜ʖ ͡°)",
-    "ltt": "https://www.lttstore.com"
 }
 
 
@@ -80,25 +80,23 @@ async def on_command_error(ctx, error):
     elif isinstance(error, (commands.CommandNotFound, commands.CheckFailure)):
         return
     else:
-        print(f"Ignoring exception in command {ctx.command}:", file=bot.error_file)
-        traceback.format_exception(type(error), error, error.__traceback__, file=bot.error_file)
+        error_traceback = traceback.format_exception(type(error), error, error.__traceback__)
+        print(f"Ignoring exception in command {ctx.command}:\n", *error_traceback, file=bot.error_file)
         bot.error_file.flush()
-        await ctx.send("The command you've entered could not be completed at this time.")
-        await send_error_message(ctx, error)
+
+        await asyncio.gather(
+            send_error_message(ctx, error, error_traceback),
+            ctx.send("The command you've entered could not be completed at this time.")
+        )
 
 
-async def send_error_message(ctx, error):
-    error_embed = discord.Embed (
-        title = "Discord Bot Encountered an Error",
-        color = discord.Colour.dark_red()
-    )
+async def send_error_message(ctx, error, tb):
+    # Cleandoc was being really annoying for this, would be multiline str but was having issues.
+    error_message =  f"`{ctx.author}` running `{ctx.command}` caused `{error.__class__.__name__}`\n"
+    error_message += f"Message Link: {ctx.message.jump_url}\n"
+    error_message += f"```{''.join(tb)}```"
 
-    error_embed.add_field(name="Author", value=f"{ctx.author}", inline=False)
-    error_embed.add_field(name="Command", value=f"{ctx.invoked_with}", inline=False)
-    error_embed.add_field(name="Message Link", value=f"https://discord.com/channels/{ctx.message.guild.id}/{ctx.message.channel.id}/{ctx.message.id}")
-    error_embed.add_field(name="Error", value=f"{error}", inline=False)
-
-    await bot.get_channel(847578925857112064).send(embed=error_embed)
+    await bot.get_channel(847578925857112064).send(error_message)
 
 
 # Recursively loads cogs from /cogs
