@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 import help_messages
-from utils import CommonCog, check_allowed_channel
+from utils import CommonCog, check_allowed_channel, override_allowed_channel
 
 
 class FunCommands(CommonCog, name="Fun Commands"):
@@ -24,6 +24,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
 
     @commands.command()
+    @commands.check(override_allowed_channel)
     async def panic(self, ctx):
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 

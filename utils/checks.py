@@ -25,6 +25,9 @@ patron_roles = {
 async def check_allowed_channel(self, ctx):
     return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
 
+async def override_allowed_channel(self):
+    return True
+
 async def check_patron(ctx):
     result = set(role.id for role in ctx.author.roles) & patron_roles
 
