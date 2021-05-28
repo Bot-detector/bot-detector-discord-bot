@@ -66,12 +66,12 @@ class MapCommands(CommonCog, name='Map Commands'):
                 await self.map(ctx=ctx, region=region)
 
 
-                await ctx.send("We have no data on this region yet.")
+                await ctx.send("We have no data on this region yet.", content=f"{ctx.author.mention}")
             else:
                 try:
                     await ctx.send(file=discord.File(mapFilePath), content=f"{ctx.author.mention}")
                 except:
-                    await ctx.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                    await ctx.send(f"{ctx.author.mention} Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                     await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
 
         else:
@@ -96,13 +96,13 @@ class MapCommands(CommonCog, name='Map Commands'):
 
                 if not mapFilePath:
                     await self.map(ctx=ctx, region=region)
-                    await ctx.send("We have no data on this region yet.")
+                    await ctx.send("We have no data on this region yet.", content=f"{ctx.author.mention}")
 
                 else:
                     try:
                         await ctx.send(file=discord.File(mapFilePath), content=f"{ctx.author.mention}")
                     except:
-                        await ctx.send("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
+                        await ctx.send(f"{ctx.author.mention} Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                         await ctx.send('https://i.redd.it/lel3o4e2hhp11.jpg')
 
             else:
