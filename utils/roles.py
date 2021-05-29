@@ -52,22 +52,23 @@ async def get_bot_hunter_role(session, verifiedPlayers, member):
     bans = await get_multi_player_bans(session, verifiedPlayers)
 
     if bans == 0:
-        return False #No rank just yet
+        return False, 0, None #No rank just yet
     elif bans < 5:
-        return discord.utils.find(lambda r: r.id == bot_hunter_roles[1]["role_id"], member.guild.roles)
-
-    kc_amounts = list(bot_hunter_roles.keys())
-    kc_placement = bisect.bisect(kc_amounts, bans)
-
-    if kc_amounts[kc_placement] == bans:
-        role_key = kc_amounts[kc_placement]
-    elif kc_amounts[kc_placement + 1] == bans:
-        role_key = kc_amounts[kc_placement + 1]
+        new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[1]["role_id"], member.guild.roles)
+        next_role_amount = 5
     else:
-        role_key = kc_amounts[kc_placement - 1]
+        kc_amounts = list(bot_hunter_roles.keys())
+        kc_placement = bisect.bisect(kc_amounts, bans)
 
-    new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
-    next_role_amount = kc_amounts[kc_placement]
+        if kc_amounts[kc_placement] == bans:
+            role_key = kc_amounts[kc_placement]
+        elif kc_amounts[kc_placement + 1] == bans:
+            role_key = kc_amounts[kc_placement + 1]
+        else:
+            role_key = kc_amounts[kc_placement - 1]
+
+        new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[role_key]["role_id"], member.guild.roles)
+        next_role_amount = kc_amounts[kc_placement]
 
     return new_role, bans, next_role_amount
 
