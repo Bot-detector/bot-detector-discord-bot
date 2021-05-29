@@ -52,7 +52,7 @@ async def get_bot_hunter_role(session, verifiedPlayers, member):
     bans = await get_multi_player_bans(session, verifiedPlayers)
 
     if bans == 0:
-        return False, 0, None #No rank just yet
+        return False, 0, 1 #No rank just yet
     elif bans < 5:
         new_role = discord.utils.find(lambda r: r.id == bot_hunter_roles[1]["role_id"], member.guild.roles)
         next_role_amount = 5
