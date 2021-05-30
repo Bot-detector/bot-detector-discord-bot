@@ -77,6 +77,10 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, (discord.Forbidden, commands.NoPrivateMessage)):
         await ctx.send("I couldn't send this information to you via direct message. Are your DMs enabled?")
+    elif isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send(f"You missed the argument `{error.param.name}` for this command!")
+    elif isinstance(error, commands.UserInputError):
+        await ctx.send(f"I can't understand this command message! Please check `!help {ctx.command}`")
     elif isinstance(error, (commands.CommandNotFound, commands.CheckFailure)):
         return
     else:
