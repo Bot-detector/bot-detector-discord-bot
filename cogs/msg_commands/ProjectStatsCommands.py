@@ -49,8 +49,8 @@ async def project_stats(playersTracked, totalReports, totalBans, activeInstalls)
     embed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
     embed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
             Players Analyzed: {playersTracked:,}
-            Confirmations Requested: {totalReports:,}
-            Bans: {totalBans:,}
+            Confirmed Players: {(totalReports-totalBans):,}
+            Confirmed Bans: {totalBans:,}
             Active Installs: {activeInstalls:,}
         """)
     )
