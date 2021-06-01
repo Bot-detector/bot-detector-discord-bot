@@ -55,8 +55,11 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+
+            await ctx.reply("Your list has been received. Thank you!")
         except Exception as e:
             errors = str(e)
+            await ctx.reply("There was an error parsing your list submission.")
 
         msg = cleandoc(f"""```diff
             Paste Information Submitted
@@ -67,6 +70,8 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
 
         recipient = self.bot.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
         await recipient.send(msg)
+        
+        
 
 
 def setup(bot):
