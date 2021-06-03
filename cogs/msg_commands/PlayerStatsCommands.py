@@ -70,7 +70,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.send(embed=embed)
 
-            async with self.bot.session.get(url="http://localhost:5000/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+            async with self.bot.session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
                 if r.status != 200:
                     return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
@@ -240,8 +240,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         discord_id = ctx.author.id
 
         req_payload = {
-            "discord_id": 796730758303187004,#discord_id,
-            "display_name": "7 7 mafia"#ctx.author.display_name
+            "discord_id": discord_id,
+            "display_name": ctx.author.display_name
         }
 
         info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
