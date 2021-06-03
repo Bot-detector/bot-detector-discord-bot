@@ -238,24 +238,26 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     async def export_bans(self, ctx, file_type):
         discord_id = ctx.author.id
+        display_name = ctx.author.display_name
 
         req_payload = {
             "discord_id": discord_id,
-            "display_name": ctx.author.display_name
+            "display_name": display_name
         }
 
         info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
         async with self.bot.session.get(
             url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}", 
-            json=json.dumps(req_payload)) as r:
+            json=json.dumps(req_payload)
+        ) as r:
 
             if r.status != 200:
                 js = await r.json()
                 await info_msg.delete()
                 return await ctx.reply(f"{js['error']}")
             else:
-                file_name = f"{ctx.author.display_name}_bans"
+                file_name = f"{display_name}_bans"
 
                 with open(file=file_name+".xlsx", mode="wb") as out_file:
                     while True:
