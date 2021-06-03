@@ -247,7 +247,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
         async with self.bot.session.get(
-            url=f"http://localhost:5000/discord/player_bans/{token}", 
+            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}", 
             json=json.dumps(req_payload)) as r:
 
             if r.status != 200:
