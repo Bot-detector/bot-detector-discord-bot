@@ -33,7 +33,11 @@ class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
                 totalBans = "N/A"
                 totalReports = "N/A"
 
+<<<<<<< HEAD
         async with self.bot.session.get("https://api.runelite.net/runelite-1.7.11/pluginhub") as r:
+=======
+        async with self.bot.session.get("https://api.runelite.net/runelite-1.7.11.1/pluginhub") as r:
+>>>>>>> main
             if r.status == 200:
                 js = await r.json()
                 activeInstalls = js['bot-detector']

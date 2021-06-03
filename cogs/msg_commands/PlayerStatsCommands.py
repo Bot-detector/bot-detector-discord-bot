@@ -58,7 +58,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def kc(self, ctx, *, player_name=None):
         await ctx.trigger_typing()
         if not player_name:
-            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, "181946881474166784", token)
+            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
             if not linkedAccounts:
                 embed = discord.Embed(
@@ -70,7 +70,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.send(embed=embed)
 
-            async with self.bot.session.get(url="http://localhost:5000/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+            async with self.bot.session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
                 if r.status != 200:
                     return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
@@ -238,24 +238,26 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     async def export_bans(self, ctx, file_type):
         discord_id = ctx.author.id
+        display_name = ctx.author.display_name
 
         req_payload = {
-            "discord_id": 796730758303187004,#discord_id,
-            "display_name": "7 7 mafia"#ctx.author.display_name
+            "discord_id": discord_id,
+            "display_name": display_name
         }
 
         info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
 
         async with self.bot.session.get(
-            url=f"http://localhost:5000/discord/player_bans/{token}", 
-            json=json.dumps(req_payload)) as r:
+            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}", 
+            json=json.dumps(req_payload)
+        ) as r:
 
             if r.status != 200:
                 js = await r.json()
                 await info_msg.delete()
                 return await ctx.reply(f"{js['error']}")
             else:
-                file_name = f"{ctx.author.display_name}_bans"
+                file_name = f"{display_name}_bans"
 
                 with open(file=file_name+".xlsx", mode="wb") as out_file:
                     while True:
