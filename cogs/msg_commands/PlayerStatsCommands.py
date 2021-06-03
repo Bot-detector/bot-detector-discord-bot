@@ -58,7 +58,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def kc(self, ctx, *, player_name=None):
         await ctx.trigger_typing()
         if not player_name:
-            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, "181946881474166784", token)
+            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
             if not linkedAccounts:
                 embed = discord.Embed(
