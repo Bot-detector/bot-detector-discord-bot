@@ -131,12 +131,10 @@ def get_paste_names(paste_soup):
         if L:
             Set.add(line)
 
-    List = Set
-
-    if len(List) == 0:
+    if len(Set) == 0:
         raise MissingNamesError
 
-    return List
+    return Set
 
 def get_paste_label(paste_soup):
     label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()

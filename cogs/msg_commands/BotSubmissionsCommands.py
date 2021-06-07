@@ -36,6 +36,7 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
 
         await ctx.author.send(msg)
 
+
     @commands.command(description=help_messages.submit_help_msg)
     async def submit(self, ctx, paste_url):
         errors = "No Errors"
@@ -72,11 +73,9 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             Errors: {errors}
         ```""")
 
-        recipient = self.bot.get_user(int(os.getenv('SUBMIT_RECIPIENT')))
+        recipient = await self.bot.fetch_user(int(os.getenv('SUBMIT_RECIPIENT')))
         await recipient.send(msg)
         
         
-
-
 def setup(bot):
     bot.add_cog(BotSubmissionsCommands(bot))
