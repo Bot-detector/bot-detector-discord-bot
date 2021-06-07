@@ -57,6 +57,10 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
             await ctx.reply("Your list has been received. Thank you!")
+        except sql.MissingNamesError:
+            await ctx.reply("The Pastebin list you've submitted appears to be empty.")
+        except sql.InvalidPasteTitleError:
+            await ctx.reply("The Pastebin title submitted was invalid. Please remove any special characters and try again.")
         except Exception as e:
             errors = str(e)
             await ctx.reply("There was an error parsing your list submission.")
