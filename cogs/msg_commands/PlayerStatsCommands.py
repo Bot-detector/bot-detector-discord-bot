@@ -63,16 +63,21 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             if not linkedAccounts:
                 embed = discord.Embed(
                     description=cleandoc(f"""
-                        Please include a player name or use the !link command to pair an OSRS account.
-                        Once you have paired at least one account you will no longer need to type a name.
+                        It doesn't look like you have any OSRS accounts linked to your Discord ID.\n\n
+                        Please specify an OSRS username (ex: `!kc Seltzer Bro`) or use `!link YourRSN` to link an OSRS account to your Discord account. Once you have at least one accout linked the `!kc` command will automatically know to pull your own "killcount".
+                        You *do not* need to link an account before using this command.
+
+                        You can `!link` multiple accounts to get your combined "killcount" if you use the plugin on multiple accounts.
+
+                        For more information type `!help link`
                     """)
                 )
 
-                return await ctx.send(embed=embed)
+                return await ctx.reply(embed=embed)
 
             async with self.bot.session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
                 if r.status != 200:
-                    return await ctx.send(f"Couldn't grab the !kc for {ctx.author.display_name}")
+                    return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
                 js = await r.json()
 
@@ -89,7 +94,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         elif utils.is_valid_rsn(player_name):
             async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
                 if r.status != 200:
-                    return await ctx.send(f"Couldn't grab the !kc for {player_name}")
+                    return await ctx.reply(f"Couldn't grab the !kc for {player_name}")
 
                 js = await r.json()
 
@@ -103,7 +108,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
             embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
         else:
-            return await ctx.send(f"{player_name} isn't a valid Runescape user name.")
+            return await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
 
         if manual_reports == 0:
             report_accuracy = None
@@ -126,7 +131,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             embed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.",
             icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
 
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
