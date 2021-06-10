@@ -22,11 +22,11 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     @commands.command(aliases=["hiscores"], description=help_messages.lookup_help_msg)
     async def lookup(self, ctx, *, username):
         if not utils.is_valid_rsn(username):
-            return await ctx.send(f"{username} is not a valid RSN")
+            return await ctx.reply(f"{username} is not a valid RSN")
 
         try:
             username_parsed = username.replace(" ", "_")
-            intro_msg = await ctx.send("Searching for User... If there is no response, there was no account found.")
+            intro_msg = await ctx.reply("Searching for User... If there is no response, there was no account found.")
             user = Hiscores(username_parsed, 'N')
 
             skills_list = [ 'Attack',           'Hitpoints',    'Mining',
@@ -45,10 +45,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                                    value=f"EXP - {int(user.skill(skill.lower(), 'experience')):,d}",
                                    inline=True)
 
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
 
         except Exception as e:
-            await ctx.send("Something went terribly wrong. :(")
+            await ctx.reply("Something went terribly wrong. :(")
             raise e
 
         await intro_msg.delete()
@@ -143,11 +143,11 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if not len(linkedAccounts):
             embed = discord.Embed (
-                description = "You must pair at least one OSRS account with your Discord ID before using this command. Please use the !link command to do so.",
+                description = "You must pair at least one OSRS account with your Discord ID before using this command, otherwise I'm not sure how many \"kills\" you have. Please use the !link command to do so.",
                 color = discord.Colour.dark_red()
             )
 
-            return await ctx.send(embed=embed)
+            return await ctx.reply(embed=embed)
 
         for r in member.roles:
             if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
@@ -167,7 +167,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 color = discord.Colour.dark_red()
             )
 
-            return await ctx.send(embed=embed)
+            return await ctx.reply(embed=embed)
 
         await roles.remove_old_roles(member)
         await member.add_roles(new_role)
@@ -178,7 +178,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     color = new_role.color
             )
 
-            return await ctx.send(embed=embed)
+            return await ctx.reply(embed=embed)
 
         embed = discord.Embed(
             description=f"{ctx.author.display_name}, you are now a {new_role}!",
@@ -186,27 +186,27 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         )
 
         embed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
-        await ctx.send(embed=embed)
+        await ctx.reply(embed=embed)
 
 
 
     @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
     async def predict(self, ctx, *, player_name):
 
-        pending_msg = await ctx.send("Searching the database for the predicted username.")
+        pending_msg = await ctx.reply("Searching the database for the predicted username.")
         await ctx.trigger_typing()
 
         if not utils.is_valid_rsn(player_name):
             if len(player_name) < 1:
-                await ctx.send(f"Please enter a valid Runescape user name.")
+                await ctx.reply(f"Please enter a valid Runescape user name.")
                 return
             else:
-                await ctx.send(f"{player_name} isn't a valid Runescape user name.")
+                await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
                 return
 
         async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
             if r.status != 200:
-                return await ctx.send(f"I couldn't get a prediction for {player_name} :(")
+                return await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
 
             js = await r.json()
 
@@ -237,7 +237,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         msg += "```"
 
         await pending_msg.delete()
-        await ctx.send(msg)
+        await ctx.reply(msg)
 
         #TODO Add back in the feedback reactions. Right now I can only get the first one added to load.
 
@@ -250,7 +250,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             "display_name": display_name
         }
 
-        info_msg = await ctx.send("Getting that data for you right now! One moment, please :)")
+        info_msg = await ctx.reply("Getting that data for you right now! One moment, please :)")
 
         async with self.bot.session.get(
             url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}",
