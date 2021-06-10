@@ -65,7 +65,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 embed = discord.Embed(
                     description=cleandoc(f"""
                         It doesn't look like you have any OSRS accounts linked to your Discord ID.\n\n
-                        Please specify an OSRS username (ex: `!kc Seltzer Bro`) or use `!link YourRSN` to link an OSRS account to your Discord account. Once you have at least one accout linked the `!kc` command will automatically know to pull your own "killcount".
+                        Please specify an OSRS username (ex: `!kc Seltzer Bro`) or use `!link YourRSN` to link an OSRS account to your Discord account. Once you have at least one account linked the `!kc` command will automatically know to pull your own "killcount".
                         You *do not* need to link an account before using this command.
 
                         You can `!link` multiple accounts to get your combined "killcount" if you use the plugin on multiple accounts.
