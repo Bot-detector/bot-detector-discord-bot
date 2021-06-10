@@ -94,7 +94,7 @@ class ModCommands(CommonCog, name="Moderator Commands"):
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, limit):
         channel = ctx.guild.get_channel(ctx.channel.id)
-        await channel.purge(limit=int(limit + 1))
+        await channel.purge(limit = int(limit) + 1)
 
 async def warn_msg():
     embed = discord.Embed(title=f"WARNING", color=0xff0000)
