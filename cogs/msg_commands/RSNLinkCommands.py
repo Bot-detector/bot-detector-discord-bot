@@ -129,32 +129,50 @@ async def link_msg(joinedName, code) -> discord.Embed:
     embed = discord.Embed(title=f"Linking '{joinedName}':", color=0x0000ff)
 
     embed.add_field(name="STATUS", inline=False, value=cleandoc(f"""
-            Request to link '{joinedName}'.
-            "Access Code: {code}
+            **Request to Link:** `{joinedName}`.
+            **Access Code:** `{code}`
         """)
     )
     embed.add_field(name="SETUP", inline=False, value=cleandoc(f"""
-            Please read through these instructions.
+            **Please read through these instructions.**
+
             1. Open Old School Runescape through RuneLite.
-            2. Login as: '{joinedName}'
-            3. Join the clan channel: 'Ferrariic'.
-            4. Verify that a Plugin Admin or Plugin Moderator is present in the channel.
-            5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-detector-commands.
-            6. Type into the Clan Chat: '!Code {code}'.
-            7. Type '!verify {joinedName}' in #bot-detector-commands channel to confirm that you have been Verified.
-            8. Verification Process Complete.
+
+            2. Login as: `{joinedName}`
+
+            3. Join the following clan chat: `Bot Detector`
+
+            4. Verify that a Plugin Admin or Plugin Moderator is present in the channel. See <#825137784112807946> for the list of admin/mod ranks to look for.
+
+            5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in <#825189024074563614>
+
+            6. Type into the Clan Chat: `!Code {code}`. It must match this exact pattern so that our clients can detect it properly.
+
+            7. To confirm that your verification is complete type `!verify {joinedName}` in <#825189024074563614>
+
+            8. You may now use the `!excelban` command to receive an export of the bans you have contributed to. You also no longer need to
+            specify a name whenever using the `!kc` command if you are trying to view your own "killcount".
+
         """)
     )
     embed.add_field(name="INFO", inline=False, value=cleandoc(f"""
-            You may link multiple Runescape accounts via this method.
+            **You may link multiple Runescape accounts via this method.**
+
             1. If you change the name of your account(s) you must repeat this process with your new RSN(s).
+
             2. In the event of a name change please allow some time for your data to be transferred over.
+
+            3. If you use the plugin on multiple accounts and you have them linked, using the `!kc` command will show you your combined total. You will also see the ban breakdowns for all of your accounts in your `!excelban` export.
+
         """)
     )
     embed.add_field(name="NOTICE", inline=False, value=cleandoc(f"""
-            Do not delete this message.
+            **Do not delete this message.**
+
             1. If this RSN was submitted in error, please type '!link <Your Correct RSN>'.
+
             2. This code will not expire, it is tied to your unique RSN:Discord Pair.
+
             3. If you are unable to become 'Verified' through this process, please contact an administrator for assistance.
         """)
     )
