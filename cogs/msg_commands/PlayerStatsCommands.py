@@ -308,7 +308,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         ) as r:
             if r.status == 200:
                 data = await r.read()
-                equip_data= json.loads(data)
+                equip_data = json.loads(data)
 
                 embed = discord.Embed(
                         title = f"{player_name}'s Last Seen Equipment",
