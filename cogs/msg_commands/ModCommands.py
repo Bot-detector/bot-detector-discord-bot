@@ -90,6 +90,10 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                 #TODO Handle members who have verified but left our Discord server
                 pass
 
+    @commands.command(hidden=True)
+    @commands.has_permissions(administrator=True)
+    async def clear(self, ctx, limit):
+        await ctx.purge(limit=limit)
 
 async def warn_msg():
     embed = discord.Embed(title=f"WARNING", color=0xff0000)
