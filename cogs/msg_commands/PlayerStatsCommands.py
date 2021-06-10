@@ -323,7 +323,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                     if v:
                         item_name = items.lookup_by_item_id(v).name
-                        v = item_name
+                        v = item_name #TODO Add image here as well
 
                     embed.add_field(name=k, value=v, inline=False)
 
