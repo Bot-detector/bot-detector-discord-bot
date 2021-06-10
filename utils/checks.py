@@ -1,3 +1,6 @@
+from re import A
+
+
 allowed_channels = (825189024074563614, 834028368147775488)
 patron_channels = (
     834028368147775488,
@@ -22,8 +25,17 @@ patron_roles = {
 }
 
 
+admin_roles = {
+    118082391041507334,
+    817917060796776469,
+    818528428851855361
+}
+
+
 async def check_allowed_channel(self, ctx):
     if str(ctx.command) == "panic":
+        return True
+    elif await is_admin(ctx):
         return True
     else:
         return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
@@ -33,8 +45,12 @@ async def check_patron(ctx):
 
     if result:
         return result
-
-    if ctx.invoked_with == "help":
+    elif await is_admin(ctx):
+        return True
+    elif ctx.invoked_with == "help":
         return
 
-    await ctx.send("This is Patreon-only command. It must be ran in <#830783778325528626>")
+    await ctx.reply("This is Patreon-only command. It must be ran in <#830783778325528626>")
+
+async def is_admin(ctx):
+    return set(role.id for role in ctx.author.roles) & admin_roles
