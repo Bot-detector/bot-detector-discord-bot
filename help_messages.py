@@ -92,10 +92,9 @@ rankup_help_msg = clean("""
     ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role.
 """)
 
-predict_help_msg = clean(r"""
+predict_help_msg = clean("""
     Usage: !predict <player name> Runs the player through our machine learning model
-    and displays the classifications the ML model assigns to the player. Note that any line with a confidence below
-    75% is insignificant.
+    and displays the classifications the ML model assigns to the player. Note that any line with a confidence below 75% is insignificant.
 """)
 
 excelban_help_msg = clean("""
@@ -108,6 +107,10 @@ csvban_help_msg = clean("""
     You must link your Discord account with an OSRS account in order to use this command. You will only be able
     to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
     which have resulted in bans in a .csv file format.
+""")
+
+equip_help_msg = clean("""
+    Shows the last equipment layout a player was seen in.
 """)
 
 ###########################

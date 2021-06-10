@@ -11,3 +11,4 @@ OSRS_Hiscores
 aiohttp
 xlsxwriter
 Pillow
+osrsbox

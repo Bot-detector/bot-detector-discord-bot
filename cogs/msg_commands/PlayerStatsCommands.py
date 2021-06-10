@@ -4,6 +4,8 @@ from inspect import cleandoc
 import json
 import discord
 import zipfile as zip
+from osrsbox import items_api
+
 from discord.ext import commands
 from dotenv import load_dotenv
 from OSRS_Hiscores import Hiscores
@@ -11,7 +13,6 @@ from OSRS_Hiscores import Hiscores
 import help_messages
 import utils
 from utils import discord_processing, roles, check_allowed_channel
-
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
@@ -294,6 +295,42 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         await self.export_bans(ctx, 'csv')
     '''
 
+
+    @commands.command(aliases=["sweg"], description=help_messages.equip_help_msg)
+    async def equip(self, ctx, *, player_name):
+        req_payload = {
+            "player_name": player_name
+        }
+
+        async with self.bot.session.get(
+            url=f"https://www.osrsbotdetector.com/api/discord/get_latest_sighting/{token}",
+            json=json.dumps(req_payload)
+        ) as r:
+            if r.status == 200:
+                data = await r.read()
+                equip_data= json.loads(data)
+
+                embed = discord.Embed(
+                        title = f"{player_name}'s Last Seen Equipment",
+                        color = discord.Colour.dark_gold()
+                    )
+
+                items = items_api.load()
+                
+                for k,v in equip_data.items():
+                    k = k.split("_")[1]
+                    k = k.capitalize()
+
+                    if v:
+                        item_name = items.lookup_by_item_id(v).name
+                        v = item_name
+
+                    embed.add_field(name=k, value=v, inline=False)
+
+                await ctx.reply(embed=embed)
+
+            else:
+                await ctx.reply(f"I was unable to grab {player_name}'s latest outfit.")
 
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))
