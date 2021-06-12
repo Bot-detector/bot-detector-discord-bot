@@ -98,7 +98,7 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
 
 async def jmod_warn_msg():
-    embed = discord.Embed(title=f"WARNING", color=0xff0000)
+    embed = discord.Embed(title="WARNING", color=0xff0000)
     embed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
     embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png")
