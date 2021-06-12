@@ -4,6 +4,7 @@ from inspect import cleandoc
 import pandas as pd
 import utils.sql as sql
 from discord.ext import commands
+import discord
 
 import help_messages
 from utils import check_allowed_channel, CommonCog
@@ -57,11 +58,17 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
-            await ctx.reply("Your list has been received. Thank you!")
+            embed = discord.Embed(title=f"Bot List Submission", color=discord.Colour.green())
+            embed.add_field (name="Success!", value="Your Pastebin list submission was received successfully.", inline=False)
+            embed.set_footer(text="Please note that names submitted via Pastebin are not attributed to the submitter and will not show up in your !kc totals. Only in-game sightings and flags submitted via the plugin contribute to those stats.")
+            await ctx.reply(embed=embed)
+
         except sql.MissingNamesError:
             await ctx.reply("The Pastebin list you've submitted appears to be empty.")
+
         except sql.InvalidPasteTitleError:
             await ctx.reply("The Pastebin title submitted was invalid. Please remove any special characters and try again.")
+            
         except Exception as e:
             errors = str(e)
             await ctx.reply("There was an error parsing your list submission.")
