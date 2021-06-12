@@ -14,8 +14,8 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
     @commands.has_permissions(kick_members=True)
     @commands.command(aliases=["youvedoneitnow"])
-    async def warn(self, ctx):
-        embed = await warn_msg()
+    async def jmod(self, ctx):
+        embed = await jmod_warn_msg()
         await ctx.send(embed=embed)
 
     @commands.has_role("Admin")
@@ -94,9 +94,10 @@ class ModCommands(CommonCog, name="Moderator Commands"):
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, limit):
         channel = ctx.guild.get_channel(ctx.channel.id)
-        await channel.purge(limit = int(limit) + 1)
+        await channel.purge(limit = int(limit))
 
-async def warn_msg():
+
+async def jmod_warn_msg():
     embed = discord.Embed(title=f"WARNING", color=0xff0000)
     embed.add_field (name="= WARNING MESSAGE =", value="**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**" + "\n" \
             + "**This is your only warning.**" + "\n", inline=False)
