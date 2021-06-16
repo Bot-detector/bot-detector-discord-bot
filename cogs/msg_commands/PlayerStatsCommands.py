@@ -248,52 +248,51 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         req_payload = {
             "discord_id": discord_id,
-            "display_name": display_name
+            "display_name": display_name,
+            "file_type": file_type
         }
 
-        info_msg = await ctx.reply("Getting that data for you right now! One moment, please :)")
+        info_msg = await ctx.reply("Working on that now! I'll DM you a download link whenever I have it ready for you.")
 
         async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}",
+            url=f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}",
             json=json.dumps(req_payload)
         ) as r:
 
             if r.status != 200:
                 data = await r.read()
-                js = json.loads(data)
-                await info_msg.delete()
-                return await ctx.reply(f"{js['error']}")
-            else:
-                file_name = f"{display_name}_bans"
+                data = data.decode("utf-8")
 
-                with open(file=file_name+".xlsx", mode="wb") as out_file:
-                    while True:
-                        chunk = await r.content.read(100)
-                        if not chunk:
-                            break
-                        out_file.write(chunk)
+                res_data = json.loads(data)
                 
-                with zip.ZipFile(file_name+".zip", "w") as ban_zip:
-                    ban_zip.write(filename=file_name+".xlsx", compress_type=zip.ZIP_DEFLATED)
+                await info_msg.delete()
+                return await ctx.reply(f"{res_data['error']}")
+            else:
+                data = await r.read()
+                data = data.decode("utf-8")
 
-            await ctx.author.send(file=discord.File(file_name+".zip"))
+                print(f"data: {data}")
+                print(type(data))
 
-            os.remove(file_name+".xlsx")
-            os.remove(file_name+".zip")
+                if isinstance(data, str):
+                    res_data = json.loads(data)
+                else:
+                    res_data = data
+
+            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/dev/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
-            await ctx.reply(f"Your bans export has been sent to your DMs.")
+            await ctx.reply(f"Your bans export link has been sent to your DMs.")
 
 
     @commands.command(aliases=["excelbans", "bansexport"], description=help_messages.excelban_help_msg)
     async def excelban(self, ctx):
         await self.export_bans(ctx, 'excel')
 
-    ''' TODO: Add back in selection between excel and csv outputs
+
     @commands.command(aliases=["csvbans"], description=help_messages.csvban_help_msg)
     async def csvban(self, ctx):
         await self.export_bans(ctx, 'csv')
-    '''
 
 
     @commands.command(aliases=["sweg"], description=help_messages.equip_help_msg)
