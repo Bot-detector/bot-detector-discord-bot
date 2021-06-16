@@ -255,7 +255,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         info_msg = await ctx.reply("Working on that now! I'll DM you a download link whenever I have it ready for you.")
 
         async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}",
+            url=f"https://bigboi.osrsbotdetector.com/dev/discord/player_bans/{token}",
             json=json.dumps(req_payload)
         ) as r:
 
@@ -279,7 +279,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 else:
                     res_data = data
 
-            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/dev/discord/download_export/{res_data['url']}")
+            await ctx.author.send(f"Here's your link! https://bigboi.osrsbotdetector.com/dev/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
             await ctx.reply(f"Your bans export link has been sent to your DMs.")
