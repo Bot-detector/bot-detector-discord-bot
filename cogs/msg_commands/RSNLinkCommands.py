@@ -111,7 +111,7 @@ async def verified_msg(joinedName):
 async def unverified_msg(joinedName):
     embed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
     embed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
-    embed.add_field (name="Next Steps:", value=f"Please type '!link {joinedName}'", inline=False)
+    embed.add_field (name="Next Steps:", value=f"Please type `!link {joinedName}` If you have already done so, please check for DMs for instructions on how to complete your verification.", inline=False)
     embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png")
     return embed
 
