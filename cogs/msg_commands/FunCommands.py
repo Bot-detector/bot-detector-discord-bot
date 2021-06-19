@@ -80,7 +80,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
     @commands.command( description=help_messages.event_help_msg)
     async def event(self, ctx, *, toggle_option):
         member = ctx.author
-        event_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"])
+        event_role = discord.utils.find(roles.special_roles["An Eventful Chum"]["role_id"])
 
         if toggle_option.lower() == "on":
             member = ctx.author
