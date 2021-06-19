@@ -78,7 +78,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
 
     @commands.command( description=help_messages.event_help_msg)
-    async def bunny(self, ctx, *, toggle_option):
+    async def event(self, ctx, *, toggle_option):
         member = ctx.author
         event_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"])
 
