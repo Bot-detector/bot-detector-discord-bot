@@ -33,6 +33,7 @@ special_roles = {
         +"final releases are up to snuff. A huge thank you to all of the QTs!" \
         +"\n\nIf you are interested in become a Quality Tester please reach out to one of the devs. Alternatively, you can use the `!beta` command for more information."},
     "New Developer" : {"role_id": 837766752166215683, "description": "Developers who are interested in contributing to the project."},
+    "An Eventful Chum" : {"role_id": 855603280997515264, "dscription": "Use `!event on` to get this role. You will receive announcements about our clan events."}
 }
 
 

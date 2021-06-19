@@ -5,6 +5,7 @@ import discord
 from discord.ext import commands
 
 import help_messages
+import utils.roles as roles
 from utils import CommonCog, check_allowed_channel
 
 
@@ -27,6 +28,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
     async def panic(self, ctx):
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
+
     @commands.command(name="meow", description=help_messages.meow_help_msg)
     async def meow(self, ctx):
         url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
@@ -37,6 +39,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
                 await ctx.send("https://cataas.com" + js['url'])
             else:
                 await ctx.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
+
 
     @commands.command(description=help_messages.woof_help_msg)
     async def woof(self, ctx):
@@ -49,6 +52,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Who let the dogs out?")
 
+
     @commands.command(aliases=["bird"], description=help_messages.birb_help_msg)
     async def birb(self, ctx):
         url = "http://shibe.online/api/birds"
@@ -60,6 +64,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Birds all flew away. :(")
 
+
     @commands.command(aliases=["rabbit", "bun"], description=help_messages.bunny_help_msg)
     async def bunny(self, ctx):
         url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
@@ -70,6 +75,20 @@ class FunCommands(CommonCog, name="Fun Commands"):
                 await ctx.send(js['media']['gif'])
             else:
                 await ctx.send("The buns went on the run.")
+
+
+    @commands.command( description=help_messages.event_help_msg)
+    async def bunny(self, ctx, *, toggle_option):
+        member = ctx.author
+        event_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"])
+
+        if toggle_option.lower() == "on":
+            member = ctx.author
+            await member.add_roles(event_role)
+        elif toggle_option.lower() == "off":
+            await member.remove_roles(event_role)
+        else:
+            await ctx.reply("Use `!event on` or `!event off`.")
 
 
 def setup(bot):

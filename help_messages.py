@@ -14,6 +14,8 @@ birb_help_msg = "Display a small friend of the avarian variety for you to cheris
 
 bunny_help_msg = "A silly rabbit .gif, but for you!"
 
+event_help_msg = "Opt in to receive announcements about our clan events. You will be given a special Discord role to let us know that you're down to party!!"
+
 
 ###########################
 # Info Commands
