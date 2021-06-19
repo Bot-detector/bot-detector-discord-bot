@@ -85,8 +85,10 @@ class FunCommands(CommonCog, name="Fun Commands"):
         if toggle_option.lower() == "on":
             member = ctx.author
             await member.add_roles(event_role)
+            await ctx.reply("You will now receive event announcements.")
         elif toggle_option.lower() == "off":
             await member.remove_roles(event_role)
+            await ctx.reply("You will no longer receive event announcements.")
         else:
             await ctx.reply("Use `!event on` or `!event off`.")
 
