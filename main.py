@@ -1,5 +1,6 @@
-import asyncio
 import os
+import asyncio
+import uvloop
 import traceback
 from inspect import cleandoc
 
@@ -127,11 +128,7 @@ async def startup():
     await bot.close()
 
 
-try:
-    import uvloop
-    uvloop.install()
-except ModuleNotFoundError:
-    print("Failed to import uvloop, performance may be reduced")
 
+uvloop.install()
 
 asyncio.run(startup())
