@@ -128,7 +128,6 @@ async def startup():
     await bot.close()
 
 
-
 uvloop.install()
 
 asyncio.run(startup())
