@@ -126,4 +126,12 @@ async def startup():
     print("Bot is going night-night.")
     await bot.close()
 
+
+try:
+    import uvloop
+    uvloop.install()
+except ModuleNotFoundError:
+    print("Failed to import uvloop, performance may be reduced")
+
+
 asyncio.run(startup())
