@@ -18,34 +18,6 @@ class ModCommands(CommonCog, name="Moderator Commands"):
         embed = await jmod_warn_msg()
         await ctx.send(embed=embed)
 
-    @commands.has_role("Admin")
-    @commands.command(hidden=True)
-    async def updatefaq(self, ctx):
-        channel = ctx.guild.get_channel(837497081987989516)
-        await channel.purge(limit=100)
-
-        url = "https://raw.githubusercontent.com/Bot-detector/bot-detector-discord-bot/main/FAQ.json"
-
-        async with self.bot.session.get(url) as r:
-            if r.status == 200:
-                faqEntriesList = await r.json(content_type="text/plain; charset=utf-8")
-
-        for entry in faqEntriesList:
-            await channel.send(embed=self.generateEmbed(entry["embeds"][0]))
-
-
-    def generateEmbed(self, entry):
-        embed = discord.Embed(
-            title=entry["title"],
-            color=discord.Color.gold()
-        )
-
-        fields = entry["fields"]
-        for field in fields:
-            embed.add_field(name=field["name"], value=field["value"], inline=False)
-
-        return embed
-
 
     @commands.command(hidden=True)
     @commands.has_permissions(manage_roles=True)
