@@ -20,49 +20,6 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
 
     @commands.command(hidden=True)
-    @commands.has_permissions(manage_roles=True)
-    async def updateallroles(self, ctx, spamChoice=""):
-
-        if 'spam' in spamChoice:
-            await ctx.send(f"{ctx.author.mention} You are a monster. I won't do it!!")
-
-        listUsers = await discord_processing.get_discords_ids_with_links(self.bot.session, token)
-
-        for user in listUsers:
-            try:
-                member = await ctx.guild.fetch_member(user["Discord_id"])
-
-                linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
-
-                if not len(linkedAccounts):
-                    #how the heck did we get here
-                    pass
-                else:
-                    for r in member.roles:
-                        if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
-                            #awesome, you're verified.
-                            break
-
-                    else:
-                        verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
-                        await member.add_roles(verified_role)
-
-                role_info = await roles.get_bot_hunter_role(self.bot.session, linkedAccounts, member)
-
-                if (isinstance(role_info, bool)):
-                    pass
-                elif (isinstance(role_info, tuple)):
-                    await roles.remove_old_roles(member)
-                    await member.add_roles(role_info[0])
-                else:
-                    await roles.remove_old_roles(member)
-                    await member.add_roles(role_info)
-            except Exception as d:
-                print(d)
-                #TODO Handle members who have verified but left our Discord server
-                pass
-
-    @commands.command(hidden=True)
     @commands.has_permissions(administrator=True)
     async def clear(self, ctx, limit):
         channel = ctx.guild.get_channel(ctx.channel.id)
