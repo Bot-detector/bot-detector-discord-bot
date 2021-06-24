@@ -4,8 +4,7 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from utils import CommonCog, discord_processing, roles
-
+from utils import CommonCog
 
 load_dotenv()
 token = os.getenv("API_AUTH_TOKEN")

@@ -211,29 +211,30 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
             js = await r.json()
 
-        name =        js['player_name']
-        prediction =  js['prediction_label']
-        player_id =   js['player_id']
-        confidence =  js['prediction_confidence']
-        secondaries = js['secondary_predictions']
+        name =        js.get("player_name")
+        prediction =  js.get("prediction_label")
+        player_id =   js.get("player_id")
+        confidence =  js.get("prediction_confidence")
+        secondaries = js.get("secondary_predictions")
 
         msg = cleandoc(f"""```diff
             + Name: {name}
             {utils.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
             {utils.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
             + ID: {player_id}
-            ============
-            Prediction Breakdown
         """)
 
-        msg += "\n"
-
-        for predict in secondaries:
-            msg += cleandoc(f"""
-                {utils.plus_minus(predict[0], 'Real_Player')} {predict[0]}: {predict[1] * 100:.2f}%
-            """)
-
+        if secondaries is not None:
             msg += "\n"
+            msg += cleandoc("Prediction Breakdown\n=======================")
+            msg += "\n"
+
+            for predict in secondaries:
+                msg += cleandoc(f"""
+                    {utils.plus_minus(predict[0], 'Real_Player')} {predict[0]}: {predict[1] * 100:.2f}%
+                """)
+
+                msg += "\n"
 
         msg += "```"
 
