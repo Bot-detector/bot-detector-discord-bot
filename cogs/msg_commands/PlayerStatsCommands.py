@@ -26,7 +26,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.reply(f"{username} is not a valid RSN")
 
         try:
-            username_parsed = string_processing.to_jagex_name(username)
+            username_parsed = username.replace(" ", "_")
             intro_msg = await ctx.reply("Searching for User... If there is no response, there was no account found.")
             user = Hiscores(username_parsed, 'N')
 
