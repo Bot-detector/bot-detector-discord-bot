@@ -8,6 +8,9 @@ def is_valid_rsn(rsn):
 def id_generator(size=4, chars=string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+def to_jagex_name(name: str) -> str:
+    return name.replace('_', ' ').replace('-', ' ')
+
 def plus_minus(var, compare):
     diff_control = '-'
     if isinstance(var, float) and var > compare:

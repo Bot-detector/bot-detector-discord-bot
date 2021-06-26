@@ -23,6 +23,7 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
         if not string_processing.is_valid_rsn(joinedName):
             return await ctx.send(f"{joinedName} isn't a valid Runescape user name.")
 
+        joinedName = string_processing.to_jagex_name(joinedName)
 
         verifyID = await discord_processing.get_playerid_verification(self.bot.session, playerName=joinedName, token=token)
 
@@ -67,6 +68,8 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
         if not string_processing.is_valid_rsn(joinedName):
             return await ctx.send(joinedName + " isn't a valid Runescape user name.")
 
+        joinedName = string_processing.to_jagex_name(joinedName)
+
         verifyStatus = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=joinedName, token=token)
 
         try:
@@ -85,6 +88,7 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
             embed = await unverified_msg(joinedName)
 
         await ctx.send(embed=embed)
+
 
     @commands.command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
     async def linked_comand(self, ctx):

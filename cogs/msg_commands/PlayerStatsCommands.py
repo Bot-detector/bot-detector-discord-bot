@@ -12,7 +12,7 @@ from OSRS_Hiscores import Hiscores
 
 import help_messages
 import utils
-from utils import discord_processing, roles, check_allowed_channel
+from utils import discord_processing, roles, check_allowed_channel, string_processing
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
@@ -26,7 +26,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.reply(f"{username} is not a valid RSN")
 
         try:
-            username_parsed = username.replace(" ", "_")
+            username_parsed = string_processing.to_jagex_name(username)
             intro_msg = await ctx.reply("Searching for User... If there is no response, there was no account found.")
             user = Hiscores(username_parsed, 'N')
 
@@ -93,6 +93,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
+
             async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{player_name}") as r:
                 if r.status != 200:
                     return await ctx.reply(f"Couldn't grab the !kc for {player_name}")
@@ -136,7 +137,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
-    @commands.command(aliases=["updaterank"], description=help_messages.rankup_help_msg)
+    @commands.command(aliases=["updaterank", "rankme"], description=help_messages.rankup_help_msg)
     async def rankup(self, ctx):
         await ctx.trigger_typing()
         member = ctx.author
