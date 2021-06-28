@@ -146,7 +146,7 @@ async def link_msg(joinedName, code) -> discord.Embed:
 
             3. Join the following clan chat: `Bot Detector`
 
-            4. Verify that a Plugin Admin or Plugin Moderator is present in the channel. See <#825137784112807946> for the list of admin/mod ranks to look for.
+            4. Verify that a Plugin Admin or Plugin Moderator is present in the channel. See <#856983841825620018> for the list of admin/mod ranks to look for.
 
             5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in <#825189024074563614>
 
