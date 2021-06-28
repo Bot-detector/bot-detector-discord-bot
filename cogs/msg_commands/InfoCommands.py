@@ -18,7 +18,7 @@ class InfoCommands(CommonCog, name='General Info Commands'):
 
     @commands.command(description=help_messages.rules_help_msg)
     async def rules(self, ctx):
-        await ctx.send('<#825137784112807946>')
+        await ctx.send('<#856983841825620018>')
 
     @commands.command(aliases=["site"], description=help_messages.website_help_msg)
     async def website(self, ctx):
