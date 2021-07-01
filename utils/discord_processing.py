@@ -80,3 +80,15 @@ async def get_player_labels(session: aiohttp.ClientSession):
         return labels
     except:
         return None
+
+async def get_latest_runelite_version(session: aiohttp.ClientSession):
+    url = "https://static.runelite.net/bootstrap.json"
+
+    async with session.get(url) as r:
+        if r.status == 200:
+            runelite_data = await r.json()
+
+            version = runelite_data["client"]["version"]
+
+    return version
+    
