@@ -58,3 +58,6 @@ async def check_patron(ctx):
 
 async def is_admin(ctx):
     return set(role.id for role in ctx.author.roles) & admin_roles
+
+async def get_transfer_name(ctx):
+    return

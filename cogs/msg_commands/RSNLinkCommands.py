@@ -92,17 +92,39 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
 
     @commands.command(name="linked", aliases=["getlinks"], description=help_messages.linked_help_msg)
     async def linked_comand(self, ctx):
-        linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
+        linked_accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
-        if len(linkedAccounts) == 0:
+        if len(linked_accounts) == 0:
             await ctx.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
         else:
             embed = discord.Embed(color=0x00ff00)
 
-            names = "\n".join(acc['name'] for acc in linkedAccounts)
+            names = "\n".join(acc['name'] for acc in linked_accounts)
             embed.add_field (name="Linked Accounts:", value=f"{names}", inline=False)
 
             await ctx.author.send(embed=embed)
+
+
+    @commands.command(aliases=["move_kc"], description=help_messages.linked_help_msg)
+    async def transfer(self, ctx, *, dest_name):
+        return #This is what you get for not making a separate branch...
+
+        if not string_processing.is_valid_rsn(dest_name):
+            ctx.reply(f"{dest_name} is not a valid RSN.")
+            return
+
+        linked_accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
+
+        if len(linked_accounts) == 0:
+            await ctx.reply("You do not have any OSRS accounts linked to this Discord ID, and therefore we can't perform an automatic transfer. Please reach out to a <@858763870042456084> member for assistance.")
+        else:
+            linked_names = (acc['name'] for acc in linked_accounts)
+
+            if not dest_name in linked_names:
+                await ctx.reply(f"Before we can transfer your KC to your new name, please verify that you own the new RSN by using `!link {dest_name}` in <#825189024074563614>")
+                return
+
+
 
 
 async def verified_msg(joinedName):
