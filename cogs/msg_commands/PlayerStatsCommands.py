@@ -317,17 +317,23 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     )
 
                 items = items_api.load()
+
+                equipped_items = 0
                 
                 for k,v in equip_data.items():
                     k = k.split("_")[1]
                     k = k.capitalize()
 
-                    if v:
+                    if not v is None:
                         item_name = items.lookup_by_item_id(v).name
                         v = item_name #TODO Add image here as well
+                        equipped_items += 1
 
-                    embed.add_field(name=k, value=v, inline=False)
+                        embed.add_field(name=k, value=v, inline=False)
 
+                if equipped_items == 0:
+                    embed.add_field(name="(O_O;)", value=f"It appears that {player_name} was last seen.. naked.", inline=False)
+                    
                 await ctx.reply(embed=embed)
 
             else:
