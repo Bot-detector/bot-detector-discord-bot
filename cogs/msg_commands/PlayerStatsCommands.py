@@ -333,6 +333,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 if equipped_items == 0:
                     embed.add_field(name="(O_O;)", value=f"It appears that {player_name} was last seen.. naked.", inline=False)
+                    embed.set_thumbnail(url="https://i.imgur.com/rYz39o6.png")
                     
                 await ctx.reply(embed=embed)
 
