@@ -324,7 +324,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     k = k.split("_")[1]
                     k = k.capitalize()
 
-                    if not v is None:
+                    if v:
                         item_name = items.lookup_by_item_id(v).name
                         v = item_name #TODO Add image here as well
                         equipped_items += 1

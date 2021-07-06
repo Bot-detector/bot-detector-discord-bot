@@ -84,8 +84,8 @@ coords_help_msg = "EXPERIMENTAL - Usage: !coords <x y z zoom> More details to co
 lookup_help_msg = "Usage: !lookup <player name> Places a table in chat show the hiscores entries for a player."
 
 kc_help_msg = clean("""
-    Usage: !kc <player name> Shows how many reports (passive and manual) a player has submitted through our plugin
-    and home many possible and confirmed bans have resulted from those reports.
+    Usage: !kc <player name> Shows how many sightings and flags a player has submitted through our plugin
+    and home many possible and confirmed bans have resulted from those uploads.
 """)
 
 rankup_help_msg = clean("""
@@ -119,7 +119,7 @@ equip_help_msg = clean("""
 # Project Stats Commands
 ###########################
 
-stats_help_msg = "Displays the project-wide reporting statistics. Also shows total active users in the last 7 days."
+stats_help_msg = "Displays the project-wide flagging statistics. Also shows total active users in the last 7 days."
 
 
 ###########################

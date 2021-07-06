@@ -109,22 +109,42 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
     async def transfer(self, ctx, *, dest_name):
         return #This is what you get for not making a separate branch...
 
+        dest_name = dest_name.lower()
+
         if not string_processing.is_valid_rsn(dest_name):
             ctx.reply(f"{dest_name} is not a valid RSN.")
             return
 
         linked_accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
+
         if len(linked_accounts) == 0:
             await ctx.reply("You do not have any OSRS accounts linked to this Discord ID, and therefore we can't perform an automatic transfer. Please reach out to a <@858763870042456084> member for assistance.")
         else:
-            linked_names = (acc['name'] for acc in linked_accounts)
+            linked_names = list(acc['name'].lower() for acc in linked_accounts)
 
             if not dest_name in linked_names:
                 await ctx.reply(f"Before we can transfer your KC to your new name, please verify that you own the new RSN by using `!link {dest_name}` in <#825189024074563614>")
                 return
 
+            else:
+                names_list = '\n'.join(linked_names)
+                embed = discord.Embed(title="KC Transfer Request", color=0x00ff00)
+                embed.add_field (name=f"Reply with which name you'd like to take KC from and put onto {dest_name}:", value=f"{names_list}", inline=False)
 
+                await ctx.author.send(embed=embed)
+
+                def check(msg):
+                    if not msg in linked_names:
+                        return False
+                    else:
+                        return True
+
+                print("we get here")
+
+                msg = await self.bot.wait_for("message", check=check)
+                print("we get here too")
+                await ctx.author.send(msg)
 
 
 async def verified_msg(joinedName):
@@ -146,7 +166,7 @@ async def installplugin_msg():
     embed = discord.Embed(title=f"User Not Found:", color=0xff0000)
     embed.add_field (name="Status:", value=f"No reports exist from specified player.", inline=False)
     embed.add_field (name="Next Steps:", value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\n" \
-        + "If you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to !link your account.", inline=False)
+        + "If you have the plugin installed, you will need to disable Anonymous Uploading for us to be able to !link your account.", inline=False)
     embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117361316-e1f9e200-ae87-11eb-840b-3bad75e80ff6.png")
     return embed
 
