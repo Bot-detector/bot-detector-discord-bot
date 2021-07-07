@@ -325,7 +325,11 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     k = k.capitalize()
 
                     if v:
-                        item_name = items.lookup_by_item_id(v).name
+                        try:
+                            item_name = items.lookup_by_item_id(v).name
+                        except KeyError:
+                            item_name = "Something currently unrecognizable. Perhaps a new item?"
+
                         v = item_name #TODO Add image here as well
                         equipped_items += 1
 
