@@ -90,6 +90,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             total_bans = int(js['total']['bans'])
             total_possible_bans = int(js['total']['possible_bans'])
 
+            feedback = int(js['total']['feedback'])
+
             embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
@@ -107,6 +109,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             total_reports = int(js['total']['reports'])
             total_bans = int(js['total']['bans'])
             total_possible_bans = int(js['total']['possible_bans'])
+
+            feedback = int(js['total']['feedback'])
 
             embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
         else:
@@ -126,6 +130,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         if report_accuracy is not None:
             embed.add_field(name="Manual Flags:", value=f"{manual_reports:,d}", inline=False)
             embed.add_field(name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False)
+
+        if feedback > 0:
+            embed.add_field(name="Feedback Submitted:", value=f"{feedback:,d}", inline=False)
 
         embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
 
