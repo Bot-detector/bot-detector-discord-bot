@@ -115,6 +115,11 @@ equip_help_msg = clean("""
     Shows the last equipment layout a player was seen in.
 """)
 
+xpgain_help_msg = clean("""
+    Displays the latest skill xp and boss/minigame completion count difference between our second-to-latest and latest 
+    hiscores scrapes for the specified user. We scrape the hiscores once daily for every player in our database that has not been banned.
+""")
+
 ###########################
 # Project Stats Commands
 ###########################

@@ -351,5 +351,56 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             else:
                 await ctx.reply(f"I was unable to grab {player_name}'s latest outfit.")
 
+
+    @commands.command(aliases=["gainz", "xpdiff", "xpgains"], description=help_messages.xpgain_help_msg)
+    async def xpgain(self, ctx, *, player_name):
+        req_payload = {
+            "player_name": player_name
+        }
+
+        async with self.bot.session.get(
+            url=f"https://www.osrsbotdetector.com/dev/discord/get_xp_gains/{token}",
+            json=json.dumps(req_payload)
+        ) as r:
+            if r.status == 200:
+                data = await r.read()
+                gains_data = json.loads(data)
+
+                embed = discord.Embed(
+                        title = f"{player_name}'s Latest XP/KC Gains",
+                        color = discord.Colour.dark_gold()
+                    )
+
+                diffs = 0
+
+                #TODO remove these from the API output
+                keys_to_remove = ["id", "Player_id", "ts_date"]
+                [gains_data.pop(key) for key in keys_to_remove]
+                
+                timestamp = gains_data.pop("timestamp")
+
+                print(gains_data)
+                
+                for k,v in gains_data.items():
+                    k = " ".join(k.split("_"))
+                    k = k.capitalize()
+
+                    if v > 0:
+                        embed.add_field(name=k, value=v, inline=True)
+                        diffs += 1
+
+                if diffs == 0:
+                    await ctx.reply(f"It doesn't appear that {player_name} has trained anything recently. Slacker!")
+
+                else:
+                    embed.set_footer(text=f"Last Updated: {timestamp}")
+                    await ctx.reply(embed=embed)
+
+            else:
+                await ctx.reply(f"I couldn't locate {player_name}'s hiscores gains. Sorry!")
+
+
+
+
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))
