@@ -400,7 +400,5 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 await ctx.reply(f"I couldn't locate {player_name}'s hiscores gains. Sorry!")
 
 
-
-
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))
