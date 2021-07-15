@@ -352,7 +352,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 await ctx.reply(f"I was unable to grab {player_name}'s latest outfit.")
 
 
-    @commands.command(aliases=["gainz", "xpdiff", "xpgains"], description=help_messages.xpgain_help_msg)
+    @commands.command(aliases=["gainz", "xpdiff", "xpgains", "gains"], description=help_messages.xpgain_help_msg)
     async def xpgain(self, ctx, *, player_name):
         req_payload = {
             "player_name": player_name
@@ -367,7 +367,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 gains_data = json.loads(data)
 
                 embed = discord.Embed(
-                        title = f"{player_name}'s Latest XP/KC Gains",
+                        title = f"{player_name}'s Latest Daily XP/KC Gains",
                         color = discord.Colour.dark_gold()
                     )
 
