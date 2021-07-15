@@ -359,7 +359,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         }
 
         async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/dev/discord/get_xp_gains/{token}",
+            url=f"https://www.osrsbotdetector.com/api/discord/get_xp_gains/{token}",
             json=json.dumps(req_payload)
         ) as r:
             if r.status == 200:
@@ -386,7 +386,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     k = k.capitalize()
 
                     if v > 0:
-                        embed.add_field(name=k, value=v, inline=True)
+                        embed.add_field(name=k, value=f"{v:,d}", inline=True)
                         diffs += 1
 
                 if diffs == 0:
