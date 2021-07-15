@@ -378,8 +378,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 [gains_data.pop(key) for key in keys_to_remove]
                 
                 timestamp = gains_data.pop("timestamp")
-
-                print(gains_data)
                 
                 for k,v in gains_data.items():
                     k = " ".join(k.split("_"))
