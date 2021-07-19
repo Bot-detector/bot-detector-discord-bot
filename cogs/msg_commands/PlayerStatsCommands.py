@@ -5,6 +5,7 @@ import json
 import discord
 import zipfile as zip
 from osrsbox import items_api
+from datetime import datetime
 
 from discord.ext import commands
 from dotenv import load_dotenv
@@ -366,6 +367,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 data = await r.read()
                 gains_data = json.loads(data)
 
+                latest_data = gains_data.get("latest")
+                second_latest_data = gains_data.get("second")
+
                 embed = discord.Embed(
                         title = f"{player_name}'s Latest Daily XP/KC Gains",
                         color = discord.Colour.dark_gold()
@@ -375,11 +379,11 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 #TODO remove these from the API output
                 keys_to_remove = ["id", "Player_id", "ts_date"]
-                [gains_data.pop(key) for key in keys_to_remove]
+                [latest_data.pop(key) for key in keys_to_remove]
                 
-                timestamp = gains_data.pop("timestamp")
+                timestamp = latest_data.pop("timestamp")
                 
-                for k,v in gains_data.items():
+                for k,v in latest_data.items():
                     k = " ".join(k.split("_"))
                     k = k.capitalize()
 
@@ -391,6 +395,16 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     await ctx.reply(f"It doesn't appear that {player_name} has trained anything recently. Slacker!")
 
                 else:
+                    if second_latest_data:
+                        dt_format = "%a, %d %b %Y %H:%M:%S %Z"
+                        latest_ts = datetime.strptime(timestamp, dt_format)
+                        second_latest_ts = datetime.strptime(second_latest_data.pop("timestamp"), dt_format)
+                        timestamp_delta = latest_ts - second_latest_ts
+                        
+                        embed.add_field(name="Duration", value=f"{timestamp_delta}", inline=False)
+                    else:
+                        embed.add_field(name="Duration", value="Insufficient data", inline=False)
+
                     embed.set_footer(text=f"Last Updated: {timestamp}")
                     await ctx.reply(embed=embed)
 

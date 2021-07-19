@@ -81,6 +81,7 @@ coords_help_msg = "EXPERIMENTAL - Usage: !coords <x y z zoom> More details to co
 ###########################
 # Player Stats Commands
 ###########################
+
 lookup_help_msg = "Usage: !lookup <player name> Places a table in chat show the hiscores entries for a player."
 
 kc_help_msg = clean("""
@@ -118,6 +119,8 @@ equip_help_msg = clean("""
 xpgain_help_msg = clean("""
     Displays the latest skill xp and boss/minigame completion count difference between our second-to-latest and latest 
     hiscores scrapes for the specified user. We scrape the hiscores once daily for every player in our database that has not been banned.
+    The duration is the amount of time between the last two scrapes. The duration will be "Insufficient data" if we only have one day's worth
+    of scrape data for a player.
 """)
 
 ###########################
