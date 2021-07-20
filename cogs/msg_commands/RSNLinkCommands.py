@@ -49,15 +49,17 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
                 if ownerID == ctx.author.id:
                     embed = await verified_msg(joinedName)
                     return await ctx.send(embed=embed)
+                else:
+                    embed = await verified_msg(joinedName)
+                    embed.set_footer(text="Note that this RSN is linked to another user's Discord ID.")
+                    return await ctx.send(embed=embed)
 
             elif isVerified == 0:
                 code = int(previousAttempts[len(previousAttempts) - 1]["Code"])
 
-
         await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, player_id=verifyID, code=code, token=token)
         embed = await link_msg(joinedName=joinedName, code=code)
         await ctx.author.send(embed=embed)
-
 
 
     @commands.command(name="verify", description=help_messages.verify_help_msg)
