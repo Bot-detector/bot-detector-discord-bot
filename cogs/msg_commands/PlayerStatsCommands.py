@@ -292,7 +292,13 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             await ctx.author.send(f"Here's your link! https://bigboi.osrsbotdetector.com/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
-            await ctx.reply(f"Your bans export link has been sent to your DMs.")
+
+            try:
+                await ctx.reply(f"Your bans export link has been sent to your DMs.")
+            except discord.errors.HTTPException:
+                print("Original command message was deleted, so there is nothing to reply to. Move along!")
+        
+            return
 
 
     @commands.command(aliases=["excelbans", "bansexport"], description=help_messages.excelban_help_msg)
