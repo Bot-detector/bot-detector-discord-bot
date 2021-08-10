@@ -117,7 +117,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         else:
             return await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
 
-        if manual_reports == 0:
+        if manual_bans == 0:
             report_accuracy = None
         elif manual_incorrect == 0:
             report_accuracy = 100.00
