@@ -124,7 +124,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         else:
             report_accuracy = round((manual_bans / (manual_bans + manual_incorrect)) * 100, 2)
 
-        embed.add_field(name="Reports Submitted:", value=f"{total_reports:,d}", inline=False)
+        embed.add_field(name="Sightings Submitted:", value=f"{total_reports:,d}", inline=False)
         embed.add_field(name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False)
         embed.add_field(name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
 
