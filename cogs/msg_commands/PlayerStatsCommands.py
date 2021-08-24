@@ -77,7 +77,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.reply(embed=embed)
 
-            async with self.bot.session.get(url="https://bigboi.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
+            async with self.bot.session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
                 if r.status != 200:
                     return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
 
