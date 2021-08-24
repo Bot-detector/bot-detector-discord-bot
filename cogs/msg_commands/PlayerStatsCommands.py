@@ -99,7 +99,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
             normalized_player_name = string_processing.to_jagex_name(player_name)
 
-            async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/stats/contributions/{normalized_player_name}") as r:
+            async with self.bot.session.get(f"https://bigboi.osrsbotdetector.com/stats/contributions/{normalized_player_name}") as r:
                 if r.status != 200:
                     return await ctx.reply(f"Couldn't grab the !kc for {player_name}")
 
