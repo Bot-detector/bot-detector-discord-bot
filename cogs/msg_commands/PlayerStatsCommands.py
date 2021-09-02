@@ -13,7 +13,7 @@ from OSRS_Hiscores import Hiscores
 
 import help_messages
 import utils
-from utils import discord_processing, roles, check_allowed_channel, string_processing
+from utils import discord_processing, roles, check_allowed_channel, string_processing, checks
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
@@ -90,19 +90,35 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
             
 
-        async with self.bot.session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(accounts)) as r:
+        if(await checks.check_patron(ctx)):
+            patron = True
+            #url = f"https://bigboi.osrsbotdetector.com/stats/contributionsplus/{token}"
+            url = "http://localhost:5000/stats/contributionsplus/{token}"
+        else:
+            patron=False
+            url = "https://bigboi.osrsbotdetector.com/stats/contributions/"
+
+
+        async with self.bot.session.get(url=url, json=json.dumps(accounts)) as r:
             if r.status != 200:
                 return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
             js = await r.json()
 
 
-        manual_reports = int(js['manual']['reports'])
-        manual_bans = int(js['manual']['bans'])
-        manual_incorrect = int(js['manual']['incorrect_reports'])
-        total_reports = int(js['total']['reports'])
-        total_bans = int(js['total']['bans'])
-        total_possible_bans = int(js['total']['possible_bans'])
-        feedback = int(js['total']['feedback'])
+        embed = await self.assemble_kc_embed(embed=embed, js=js, is_patron=patron)
+
+        await ctx.reply(embed=embed)
+
+
+    async def assemble_kc_embed(self, embed: discord.embeds.Embed, js: dict, is_patron: bool):
+
+        manual_reports = js['manual']['reports']
+        manual_bans = js['manual']['bans']
+        manual_incorrect = js['manual']['incorrect_reports']
+        total_reports = js['total']['reports']
+        total_bans = js['total']['bans']
+        total_possible_bans = js['total']['possible_bans']
+        feedback = js['total']['feedback']
      
         if manual_bans == 0:
             report_accuracy = None
@@ -122,13 +138,16 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         if feedback > 0:
             embed.add_field(name="Feedback Submitted:", value=f"{feedback:,d}", inline=False)
 
+        if(is_patron):
+            embed.add_field(name="Total XP Removed:", value=f"{js['total']['total_xp_removed']:,.0f}", inline=False)
+
         embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif")
 
         if total_reports == 0:
-            embed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.",
+            embed.set_footer(text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Uploading in your plugin settings.",
             icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png")
 
-        await ctx.reply(embed=embed)
+        return embed
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
@@ -184,7 +203,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         embed.set_thumbnail(url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif")
         await ctx.reply(embed=embed)
-
 
 
     @commands.command(aliases=["detect"], description=help_messages.predict_help_msg)
