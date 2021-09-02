@@ -41,14 +41,86 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                             'Runecrafting',     'Slayer',       'Farming',
                             'Construction',     'Hunter',       'Total' ]
 
-            embed = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
+            boss_list = [
+                            'league',
+                            'bounty_hunter_hunter',
+                            'bounty_hunter_rogue',
+                            'cs_all',
+                            'cs_beginner',
+                            'cs_easy',
+                            'cs_medium',
+                            'cs_hard',
+                            'cs_elite',
+                            'cs_master',
+                            'lms_rank',
+                            'soul_wars_zeal',
+                            'abyssal_sire',
+                            'alchemical_hydra',
+                            'barrows_chests',
+                            'bryophyta',
+                            'callisto',
+                            'cerberus',
+                            'chambers_of_xeric',
+                            'chambers_of_xeric_challenge_mode',
+                            'chaos_elemental',
+                            'chaos_fanatic',
+                            'commander_zilyana',
+                            'corporeal_beast',
+                            'crazy_archaeologist',
+                            'dagannoth_prime',
+                            'dagannoth_rex',
+                            'dagannoth_supreme',
+                            'deranged_archaeologist',
+                            'general_graardor',
+                            'giant_mole',
+                            'grotesque_guardians',
+                            'hespori',
+                            'kalphite_queen',
+                            'king_black_dragon',
+                            'kraken',
+                            'kreearra',
+                            'kril_tsutsaroth',
+                            'mimic',
+                            'nightmare',
+                            'phosanis_nightmare',
+                            'obor',
+                            'sarachnis',
+                            'scorpia',
+                            'skotizo',
+                            'tempoross',
+                            'the_gauntlet',
+                            'the_corrupted_gauntlet',
+                            'theatre_of_blood',
+                            'theatre_of_blood_hard',
+                            'thermonuclear_smoke_devil',
+                            'tzkal_zuk',
+                            'tztok_jad',
+                            'venenatis',
+                            'vetion',
+                            'vorkath',
+                            'wintertodt',
+                            'zalcano',
+                            'zulrah'
+            ]
+
+            skills_embed = discord.Embed(title=f"{username}'s Skills", description="OSRS Hiscores Lookup", color=0x00ff00)
+            boss_embed = discord.Embed(title=f"{username}'s Boss/Minigame KC", description="OSRS Hiscores Lookup", color=0x00ff00)
 
             for skill in skills_list:
-                embed.add_field(name=f"{skill} - {user.skill(skill.lower())}",
-                                   value=f"EXP - {int(user.skill(skill.lower(), 'experience')):,d}",
+                skills_embed.add_field(name=f"{skill} - {user.skill(skill)}",
+                                   value=f"XP - {int(user.skill(skill, 'experience')):,d}",
                                    inline=True)
 
-            await ctx.reply(embed=embed)
+            for boss in boss_list:
+                kc = user.boss(boss)
+
+                if kc != -1:
+                    boss_embed.add_field(name=f"{boss.title().replace('_', ' ')}",
+                                    value=f"{kc:,d}",
+                                    inline=True)
+                
+            await ctx.reply(embed=skills_embed)
+            await ctx.reply(embed=boss_embed)
 
         except Exception as e:
             await ctx.reply("Something went terribly wrong. :(")

@@ -7,7 +7,7 @@ numpy
 matplotlib
 seaborn
 pandas
-OSRS_Hiscores
+git+https://github.com/ThorntonMatthewD/osrs-hiscores.git@master#egg=OSRS-Hiscores
 aiohttp
 xlsxwriter
 Pillow
