@@ -47,6 +47,7 @@ async def check_allowed_channel(self, ctx):
     else:
         return not ctx.guild or ctx.channel.id in (allowed_channels + patron_channels)
 
+
 async def check_patron(ctx):
     result = set(role.id for role in ctx.author.roles) & patron_roles
 
@@ -57,7 +58,6 @@ async def check_patron(ctx):
     elif ctx.invoked_with == "help":
         return
 
-    await ctx.reply("This is Patreon-only command. It must be ran in <#830783778325528626>")
 
 async def is_admin(ctx):
     return set(role.id for role in ctx.author.roles) & admin_roles

@@ -4,9 +4,11 @@ from inspect import cleandoc
 import json
 import discord
 import zipfile as zip
+from discord import embeds
 from osrsbox import items_api
 from datetime import datetime
 
+from aiohttp import ClientTimeout
 from discord.ext import commands
 from dotenv import load_dotenv
 from OSRS_Hiscores import Hiscores
@@ -268,11 +270,21 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             "file_type": file_type
         }
 
-        info_msg = await ctx.reply("Working on that now! I'll DM you a download link whenever I have it ready for you.")
+        info_embed = discord.Embed(
+                    description = "I'm going to try to get that ready for you, and if it works I'll DM you a download link. This command is currently under maintenance and may fail."
+        )
+
+        info_embed.set_thumbnail(url="https://i.pinimg.com/originals/c1/b4/ee/c1b4ee02fc804310213be0ca427af5f8.png")
+
+        info_msg = await ctx.reply(embed=info_embed)
+
+        #temporary until task queue is up in fastapi
+        timeout = ClientTimeout(total=1200)
 
         async with self.bot.session.get(
             url=f"https://bigboi.osrsbotdetector.com/discord/player_bans/{token}",
-            json=json.dumps(req_payload)
+            json=json.dumps(req_payload),
+            timeout=timeout
         ) as r:
 
             if r.status != 200:
@@ -286,9 +298,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             else:
                 data = await r.read()
                 data = data.decode("utf-8")
-
-                print(f"data: {data}")
-                print(type(data))
 
                 if isinstance(data, str):
                     res_data = json.loads(data)
