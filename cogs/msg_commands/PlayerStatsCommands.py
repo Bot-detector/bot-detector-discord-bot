@@ -4,7 +4,6 @@ from inspect import cleandoc
 import json
 import discord
 import zipfile as zip
-from discord import embeds
 from osrsbox import items_api
 from datetime import datetime
 
@@ -111,7 +110,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         await ctx.reply(embed=embed)
 
 
-    async def assemble_kc_embed(self, embed: discord.embeds.Embed, js: dict, is_patron: bool):
+    async def assemble_kc_embed(self, embed: discord.Embed, js: dict, is_patron: bool):
 
         manual_reports = js['manual']['reports']
         manual_bans = js['manual']['bans']
