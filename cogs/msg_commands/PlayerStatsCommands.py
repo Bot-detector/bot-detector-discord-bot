@@ -60,9 +60,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def kc(self, ctx, *, player_name=None):
         await ctx.trigger_typing()
         if not player_name:
-            linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
+            accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
-            if not linkedAccounts:
+            if not accounts:
                 embed = discord.Embed(
                     description=cleandoc(f"""
                         It doesn't look like you have any OSRS accounts linked to your Discord ID.\n\n
@@ -77,48 +77,33 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 return await ctx.reply(embed=embed)
 
-            async with self.bot.session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(linkedAccounts)) as r:
-                if r.status != 200:
-                    return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
-
-                js = await r.json()
-
-            manual_reports = int(js['manual']['reports'])
-            manual_bans = int(js['manual']['bans'])
-            manual_incorrect = int(js['manual']['incorrect_reports'])
-
-            total_reports = int(js['total']['reports'])
-            total_bans = int(js['total']['bans'])
-            total_possible_bans = int(js['total']['possible_bans'])
-
-            feedback = int(js['total']['feedback'])
-
             embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
 
-            normalized_player_name = string_processing.to_jagex_name(player_name)
-
-            async with self.bot.session.get(f"https://bigboi.osrsbotdetector.com/stats/contributions/{normalized_player_name}") as r:
-                if r.status != 200:
-                    return await ctx.reply(f"Couldn't grab the !kc for {player_name}")
-
-                js = await r.json()
-
-            manual_reports = int(js['manual']['reports'])
-            manual_bans = int(js['manual']['bans'])
-            manual_incorrect = int(js['manual']['incorrect_reports'])
-
-            total_reports = int(js['total']['reports'])
-            total_bans = int(js['total']['bans'])
-            total_possible_bans = int(js['total']['possible_bans'])
-
-            feedback = int(js['total']['feedback'])
-
             embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
+
+            normalized_player_name = string_processing.to_jagex_name(player_name)
+            accounts= [{"name": normalized_player_name}]
+
         else:
             return await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
+            
 
+        async with self.bot.session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(accounts)) as r:
+            if r.status != 200:
+                return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
+            js = await r.json()
+
+
+        manual_reports = int(js['manual']['reports'])
+        manual_bans = int(js['manual']['bans'])
+        manual_incorrect = int(js['manual']['incorrect_reports'])
+        total_reports = int(js['total']['reports'])
+        total_bans = int(js['total']['bans'])
+        total_possible_bans = int(js['total']['possible_bans'])
+        feedback = int(js['total']['feedback'])
+     
         if manual_bans == 0:
             report_accuracy = None
         elif manual_incorrect == 0:
