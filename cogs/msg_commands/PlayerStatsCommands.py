@@ -92,8 +92,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if(await checks.check_patron(ctx)):
             patron = True
-            #url = f"https://bigboi.osrsbotdetector.com/stats/contributionsplus/{token}"
-            url = "http://localhost:5000/stats/contributionsplus/{token}"
+            url = f"https://bigboi.osrsbotdetector.com/stats/contributionsplus/{token}"
         else:
             patron=False
             url = "https://bigboi.osrsbotdetector.com/stats/contributions/"
