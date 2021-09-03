@@ -111,6 +111,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                                    value=f"XP - {int(user.skill(skill, 'experience')):,d}",
                                    inline=True)
 
+
+            ranked_kc = 0
+            
             for boss in boss_list:
                 kc = user.boss(boss)
 
@@ -118,9 +121,13 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     boss_embed.add_field(name=f"{boss.title().replace('_', ' ')}",
                                     value=f"{kc:,d}",
                                     inline=True)
+
+                    ranked_kc += 1
                 
             await ctx.reply(embed=skills_embed)
-            await ctx.reply(embed=boss_embed)
+
+            if ranked_kc > 0:
+                await ctx.reply(embed=boss_embed)
 
         except Exception as e:
             await ctx.reply("Something went terribly wrong. :(")
