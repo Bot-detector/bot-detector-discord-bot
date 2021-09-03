@@ -2,6 +2,7 @@ import os
 from inspect import cleandoc
 
 import json
+import OSRS_Hiscores
 import discord
 import zipfile as zip
 from osrsbox import items_api
@@ -27,113 +28,119 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         if not utils.is_valid_rsn(username):
             return await ctx.reply(f"{username} is not a valid RSN")
 
+        username_parsed = username.replace(" ", "_")
+
+        skills_embed = discord.Embed(title=f"{username}'s Skills", description="OSRS Hiscores Lookup", color=0x00ff00)
+        boss_embed = discord.Embed(title=f"{username}'s Boss/Minigame KC", description="OSRS Hiscores Lookup", color=0x00ff00)
+
         try:
-            username_parsed = username.replace(" ", "_")
-            intro_msg = await ctx.reply("Searching for User... If there is no response, there was no account found.")
-            user = Hiscores(username_parsed, 'N')
-
-            skills_list = [ 'Attack',           'Hitpoints',    'Mining',
-                            'Strength',         'Agility',      'Smithing',
-                            'Defense',          'Herblore',     'Fishing',
-                            'Ranged',           'Thieving',     'Cooking',
-                            'Prayer',           'Crafting',     'Firemaking',
-                            'Magic',            'Fletching',    'Woodcutting',
-                            'Runecrafting',     'Slayer',       'Farming',
-                            'Construction',     'Hunter',       'Total' ]
-
-            boss_list = [
-                            'league',
-                            'bounty_hunter_hunter',
-                            'bounty_hunter_rogue',
-                            'cs_all',
-                            'cs_beginner',
-                            'cs_easy',
-                            'cs_medium',
-                            'cs_hard',
-                            'cs_elite',
-                            'cs_master',
-                            'lms_rank',
-                            'soul_wars_zeal',
-                            'abyssal_sire',
-                            'alchemical_hydra',
-                            'barrows_chests',
-                            'bryophyta',
-                            'callisto',
-                            'cerberus',
-                            'chambers_of_xeric',
-                            'chambers_of_xeric_challenge_mode',
-                            'chaos_elemental',
-                            'chaos_fanatic',
-                            'commander_zilyana',
-                            'corporeal_beast',
-                            'crazy_archaeologist',
-                            'dagannoth_prime',
-                            'dagannoth_rex',
-                            'dagannoth_supreme',
-                            'deranged_archaeologist',
-                            'general_graardor',
-                            'giant_mole',
-                            'grotesque_guardians',
-                            'hespori',
-                            'kalphite_queen',
-                            'king_black_dragon',
-                            'kraken',
-                            'kreearra',
-                            'kril_tsutsaroth',
-                            'mimic',
-                            'nightmare',
-                            'phosanis_nightmare',
-                            'obor',
-                            'sarachnis',
-                            'scorpia',
-                            'skotizo',
-                            'tempoross',
-                            'the_gauntlet',
-                            'the_corrupted_gauntlet',
-                            'theatre_of_blood',
-                            'theatre_of_blood_hard',
-                            'thermonuclear_smoke_devil',
-                            'tzkal_zuk',
-                            'tztok_jad',
-                            'venenatis',
-                            'vetion',
-                            'vorkath',
-                            'wintertodt',
-                            'zalcano',
-                            'zulrah'
-            ]
-
-            skills_embed = discord.Embed(title=f"{username}'s Skills", description="OSRS Hiscores Lookup", color=0x00ff00)
-            boss_embed = discord.Embed(title=f"{username}'s Boss/Minigame KC", description="OSRS Hiscores Lookup", color=0x00ff00)
-
-            for skill in skills_list:
-                skills_embed.add_field(name=f"{skill} - {user.skill(skill)}",
-                                   value=f"XP - {int(user.skill(skill, 'experience')):,d}",
-                                   inline=True)
+            user = Hiscores(username_parsed, 'UIM')
+            skills_embed.set_thumbnail(url="https://i.imgur.com/2Pj3PaE.png")
+            boss_embed.set_thumbnail(url="https://i.imgur.com/2Pj3PaE.png")
+        except OSRS_Hiscores.http.client.HTTPException:
+            try:
+                user = Hiscores(username_parsed, 'HIM')
+                skills_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
+                boss_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
+            except OSRS_Hiscores.http.client.HTTPException:
+                try:
+                    user = Hiscores(username_parsed, 'IM')
+                    skills_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
+                    boss_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
+                except OSRS_Hiscores.http.client.HTTPException:
+                    try:
+                        user = Hiscores(username_parsed, 'N')
+                    except OSRS_Hiscores.http.client.HTTPException:
+                        ctx.reply(f"I cannot locate a hiscores entry for {username}.")
 
 
-            ranked_kc = 0
+
+        skills_list = [ 'Attack',           'Hitpoints',    'Mining',
+                        'Strength',         'Agility',      'Smithing',
+                        'Defense',          'Herblore',     'Fishing',
+                        'Ranged',           'Thieving',     'Cooking',
+                        'Prayer',           'Crafting',     'Firemaking',
+                        'Magic',            'Fletching',    'Woodcutting',
+                        'Runecrafting',     'Slayer',       'Farming',
+                        'Construction',     'Hunter',       'Total' ]
+        boss_list = [
+                        'league',
+                        'bounty_hunter_hunter',
+                        'bounty_hunter_rogue',
+                        'cs_all',
+                        'cs_beginner',
+                        'cs_easy',
+                        'cs_medium',
+                        'cs_hard',
+                        'cs_elite',
+                        'cs_master',
+                        'lms_rank',
+                        'soul_wars_zeal',
+                        'abyssal_sire',
+                        'alchemical_hydra',
+                        'barrows_chests',
+                        'bryophyta',
+                        'callisto',
+                        'cerberus',
+                        'chambers_of_xeric',
+                        'chambers_of_xeric_challenge_mode',
+                        'chaos_elemental',
+                        'chaos_fanatic',
+                        'commander_zilyana',
+                        'corporeal_beast',
+                        'crazy_archaeologist',
+                        'dagannoth_prime',
+                        'dagannoth_rex',
+                        'dagannoth_supreme',
+                        'deranged_archaeologist',
+                        'general_graardor',
+                        'giant_mole',
+                        'grotesque_guardians',
+                        'hespori',
+                        'kalphite_queen',
+                        'king_black_dragon',
+                        'kraken',
+                        'kreearra',
+                        'kril_tsutsaroth',
+                        'mimic',
+                        'nightmare',
+                        'phosanis_nightmare',
+                        'obor',
+                        'sarachnis',
+                        'scorpia',
+                        'skotizo',
+                        'tempoross',
+                        'the_gauntlet',
+                        'the_corrupted_gauntlet',
+                        'theatre_of_blood',
+                        'theatre_of_blood_hard',
+                        'thermonuclear_smoke_devil',
+                        'tzkal_zuk',
+                        'tztok_jad',
+                        'venenatis',
+                        'vetion',
+                        'vorkath',
+                        'wintertodt',
+                        'zalcano',
+                        'zulrah'
+        ]
+
+        for skill in skills_list:
+            skills_embed.add_field(name=f"{skill} - {user.skill(skill)}",
+                               value=f"XP - {int(user.skill(skill, 'experience')):,d}",
+                               inline=True)
+        ranked_kc = 0
+        for boss in boss_list:
+            kc = user.boss(boss)
+            if kc != -1:
+                boss_embed.add_field(name=f"{boss.title().replace('_', ' ')}",
+                                value=f"{kc:,d}",
+                                inline=True)
+                ranked_kc += 1
             
-            for boss in boss_list:
-                kc = user.boss(boss)
-
-                if kc != -1:
-                    boss_embed.add_field(name=f"{boss.title().replace('_', ' ')}",
-                                    value=f"{kc:,d}",
-                                    inline=True)
-
-                    ranked_kc += 1
-                
-            await ctx.reply(embed=skills_embed)
-
-            if ranked_kc > 0:
-                await ctx.reply(embed=boss_embed)
-
-        except Exception as e:
-            await ctx.reply("Something went terribly wrong. :(")
-            raise e
-
-        await intro_msg.delete()
+        await ctx.reply(embed=skills_embed)
+        if ranked_kc > 0:
+            await ctx.reply(embed=boss_embed)
 
 
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
