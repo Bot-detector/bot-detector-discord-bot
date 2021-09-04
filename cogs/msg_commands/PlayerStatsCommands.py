@@ -52,6 +52,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                         user = Hiscores(username_parsed, 'N')
                     except OSRS_Hiscores.http.client.HTTPException:
                         ctx.reply(f"I cannot locate a hiscores entry for {username}.")
+                        return
 
 
 
