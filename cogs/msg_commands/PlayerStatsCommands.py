@@ -237,7 +237,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
 
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
-    @commands.command(aliases=["updaterank", "rankme"], description=help_messages.rankup_help_msg)
+    @commands.command(aliases=["updaterank", "rankme", "lvlup", "levelup"], description=help_messages.rankup_help_msg)
     async def rankup(self, ctx):
         await ctx.trigger_typing()
         member = ctx.author
