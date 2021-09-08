@@ -51,9 +51,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     try:
                         user = Hiscores(username_parsed, 'N')
                     except OSRS_Hiscores.http.client.HTTPException:
-                        await ctx.reply(f"I cannot locate a hiscores entry for {username}.")
-                        return
-
+                        return await ctx.reply(f"I cannot locate a hiscores entry for {username}.") 
 
 
         skills_list = [ 'Attack',           'Hitpoints',    'Mining',
@@ -128,7 +126,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         for skill in skills_list:
             skills_embed.add_field(name=f"{skill} - {user.skill(skill)}",
-                               value=f"XP - {int(user.skill(skill, 'experience')):,d}",
+                               value=f"XP - {user.skill(skill, 'experience'):,d}",
                                inline=True)
         ranked_kc = 0
         for boss in boss_list:
@@ -185,8 +183,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             patron=False
             url = "https://bigboi.osrsbotdetector.com/stats/contributions/"
 
+        timeout = ClientTimeout(total=1200)
 
-        async with self.bot.session.get(url=url, json=json.dumps(accounts)) as r:
+        async with self.bot.session.get(url=url, json=json.dumps(accounts), timeout=timeout) as r:
             if r.status != 200:
                 return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
             js = await r.json()
