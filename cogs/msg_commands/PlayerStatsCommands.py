@@ -124,9 +124,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                         'zulrah'
         ]
 
+
         for skill in skills_list:
             skills_embed.add_field(name=f"{skill} - {user.skill(skill)}",
-                               value=f"XP - {user.skill(skill, 'experience'):,d}",
+                               value=f"XP - {int(user.skill(skill, 'experience')):,d}",
                                inline=True)
         ranked_kc = 0
         for boss in boss_list:
