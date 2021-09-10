@@ -37,17 +37,31 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             user = Hiscores(username_parsed, 'UIM')
             skills_embed.set_thumbnail(url="https://i.imgur.com/2Pj3PaE.png")
             boss_embed.set_thumbnail(url="https://i.imgur.com/2Pj3PaE.png")
+
         except OSRS_Hiscores.http.client.HTTPException:
+
             try:
-                user = Hiscores(username_parsed, 'HIM')
-                skills_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
-                boss_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
+                hcim_user = Hiscores(username_parsed, 'HIM')
+                im_user = Hiscores(username_parsed, 'IM')
+
+                if(string_processing.stats_are_equal(hcim_user, im_user)):
+                    skills_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
+                    boss_embed.set_thumbnail(url="https://i.imgur.com/OUJlv4X.png")
+                    user = hcim_user
+                else:
+                    skills_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
+                    boss_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
+                    user = im_user
+
             except OSRS_Hiscores.http.client.HTTPException:
+
                 try:
                     user = Hiscores(username_parsed, 'IM')
                     skills_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
                     boss_embed.set_thumbnail(url="https://i.imgur.com/55Xasyt.png")
+
                 except OSRS_Hiscores.http.client.HTTPException:
+                    
                     try:
                         user = Hiscores(username_parsed, 'N')
                     except OSRS_Hiscores.http.client.HTTPException:
