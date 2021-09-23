@@ -1,6 +1,7 @@
 import bisect
 import json
 import discord
+from aiohttp import ClientTimeout
 
 bot_hunter_roles = {
     1:       {"role_id": 825165287526498314, "role_name": "Bot Hunter I"}, # 1 Ban
@@ -40,7 +41,9 @@ special_roles = {
 #Gets bans from all accounts passed in
 async def get_multi_player_bans(session, verifiedPlayers):
 
-    async with session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(verifiedPlayers)) as r:
+    timeout = ClientTimeout(total=1200)
+
+    async with session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(verifiedPlayers), timeout=timeout) as r:
         if r.status != 200:
             return #TODO Figure out what to do here haha
 
