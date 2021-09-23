@@ -539,5 +539,29 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 await ctx.reply(f"I couldn't locate {player_name}'s hiscores gains. Sorry!")
 
 
+    @commands.command(aliases=["isbanned", "banned"])
+    async def pwned(self, ctx, *, player_name):
+        is_pwned = False
+
+        async with self.bot.session.get(
+            url=f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={player_name}"
+        ) as hiscores_r:
+            if hiscores_r.status == 404:
+                async with self.bot.session.get(
+                    url=f"https://apps.runescape.com/runemetrics/profile/profile?user={player_name}"
+                ) as runemetrics_r:
+                    data = await runemetrics_r.read()
+                    runemetrics_data = json.loads(data)
+
+                    status = runemetrics_data.get("error")
+
+                    if status == "NOT_A_MEMBER":
+                        is_pwned = True
+
+        if is_pwned:
+            await ctx.reply(f"{player_name} has been banned.")
+        else:
+            await ctx.reply(f"{player_name} has NOT been banned.")
+
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))

@@ -13,3 +13,4 @@ xlsxwriter
 Pillow
 osrsbox
 uvloop
+discord-components
