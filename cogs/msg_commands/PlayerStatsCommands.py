@@ -4,6 +4,7 @@ from inspect import cleandoc
 import json
 import OSRS_Hiscores
 import discord
+import asyncio
 import zipfile as zip
 from osrsbox import items_api
 from datetime import datetime
@@ -15,7 +16,7 @@ from OSRS_Hiscores import Hiscores
 
 import help_messages
 import utils
-from utils import discord_processing, roles, check_allowed_channel, string_processing, checks
+from utils import discord_processing, roles, check_allowed_channel, string_processing, checks, sql
 
 load_dotenv()
 token = os.getenv('API_AUTH_TOKEN')
@@ -541,6 +542,35 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["isbanned", "banned"])
     async def pwned(self, ctx, *, player_name):
+        if not string_processing.is_valid_rsn(player_name):
+            await ctx.reply(f"{player_name} isn't a valid Runescape username.")
+
+        is_pwned = (await self.check_if_banned(player_name)).get("banned")
+
+        if is_pwned:
+            await ctx.reply(f"{player_name} has been banned.")
+        else:
+            await ctx.reply(f"{player_name} has NOT been banned.")
+
+
+    @commands.command()
+    async def ban_list(self, ctx, pastebin_url):
+        paste_soup = sql.get_paste_data(pastebin_url)
+        names_list = sql.get_paste_names(paste_soup)
+
+        results = "```\nname, is_banned\n"
+
+        for future in asyncio.as_completed(map(self.check_if_banned, names_list)):
+            single_result = await future
+            print(single_result)
+            results += (f"{single_result.get('name')}, {str(single_result.get('banned'))}\n")
+
+        results += "```"
+
+        await ctx.reply(results)
+
+
+    async def check_if_banned(self, player_name: str) -> dict:
         is_pwned = False
 
         async with self.bot.session.get(
@@ -558,10 +588,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     if status == "NOT_A_MEMBER":
                         is_pwned = True
 
-        if is_pwned:
-            await ctx.reply(f"{player_name} has been banned.")
-        else:
-            await ctx.reply(f"{player_name} has NOT been banned.")
+        return {"name": player_name, "banned": is_pwned}
+
 
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))
