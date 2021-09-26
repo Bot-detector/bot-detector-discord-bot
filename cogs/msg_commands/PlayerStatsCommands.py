@@ -6,6 +6,7 @@ import OSRS_Hiscores
 import discord
 import asyncio
 import zipfile as zip
+from discord import player
 from osrsbox import items_api
 from datetime import datetime
 
@@ -547,27 +548,34 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         is_pwned = (await self.check_if_banned(player_name)).get("banned")
 
+        if is_pwned == "ERROR":
+            await ctx.reply(f"I couldn't get the ban information for {player_name}. I might be rate-limited, or the RS servers may be having issues.")
         if is_pwned:
             await ctx.reply(f"{player_name} has been banned.")
         else:
             await ctx.reply(f"{player_name} has NOT been banned.")
 
 
-    @commands.command()
+    @commands.command(aliases=["ban_list_check", "ban_check", "bans_check", "check_bans"])
     async def ban_list(self, ctx, pastebin_url):
         paste_soup = sql.get_paste_data(pastebin_url)
         names_list = sql.get_paste_names(paste_soup)
+        label = sql.get_paste_label(paste_soup)
 
-        results = "```\nname, is_banned\n"
+        names_list = [name for name in names_list if string_processing.is_valid_rsn(name)]
+
+        csv_file = open(f"{label}.csv", "w+")
+        file_name = csv_file.name
+        
+        csv_file.write("name, is_banned" + os.linesep)
 
         for future in asyncio.as_completed(map(self.check_if_banned, names_list)):
             single_result = await future
-            print(single_result)
-            results += (f"{single_result.get('name')}, {str(single_result.get('banned'))}\n")
+            csv_file.write(f"{single_result.get('name')}, {str(single_result.get('banned'))}" + os.linesep)
+        
+        csv_file.close()
 
-        results += "```"
-
-        await ctx.reply(results)
+        await ctx.reply(file=discord.File(file_name))
 
 
     async def check_if_banned(self, player_name: str) -> dict:
@@ -580,13 +588,16 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 async with self.bot.session.get(
                     url=f"https://apps.runescape.com/runemetrics/profile/profile?user={player_name}"
                 ) as runemetrics_r:
-                    data = await runemetrics_r.read()
-                    runemetrics_data = json.loads(data)
+                    if runemetrics_r.status == 200:
+                        data = await runemetrics_r.read()
+                        runemetrics_data = json.loads(data)
 
-                    status = runemetrics_data.get("error")
+                        status = runemetrics_data.get("error")
 
-                    if status == "NOT_A_MEMBER":
-                        is_pwned = True
+                        if status == "NOT_A_MEMBER":
+                            is_pwned = True
+                    else:
+                        is_pwned = "ERROR"
 
         return {"name": player_name, "banned": is_pwned}
 
