@@ -580,7 +580,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
 
     async def check_if_banned(self, player_name: str) -> dict:
-        delay = random.randint(1,10)
+        delay = random.randint(3,15)
         await asyncio.sleep(delay)
 
         async with self.bot.session.get(
