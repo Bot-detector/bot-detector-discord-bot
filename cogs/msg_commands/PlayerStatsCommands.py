@@ -5,6 +5,7 @@ import json
 import OSRS_Hiscores
 import discord
 import asyncio
+import random
 import zipfile as zip
 from discord import player
 from osrsbox import items_api
@@ -579,15 +580,18 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
 
     async def check_if_banned(self, player_name: str) -> dict:
-        is_pwned = False
+        delay = random.randint(1,10)
+        await asyncio.sleep(delay)
 
         async with self.bot.session.get(
             url=f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={player_name}"
         ) as hiscores_r:
+            print(f"Hiscores {hiscores_r.status}")
             if hiscores_r.status == 404:
                 async with self.bot.session.get(
                     url=f"https://apps.runescape.com/runemetrics/profile/profile?user={player_name}"
                 ) as runemetrics_r:
+                    print(f"runemetrics {runemetrics_r.status}")
                     if runemetrics_r.status == 200:
                         data = await runemetrics_r.read()
                         runemetrics_data = json.loads(data)
@@ -595,11 +599,16 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                         status = runemetrics_data.get("error")
 
                         if status == "NOT_A_MEMBER":
-                            is_pwned = True
-                    else:
-                        is_pwned = "ERROR"
+                            return {"name": player_name, "banned": True}
+                        else:
+                            return {"name": player_name, "banned": "Maybe?"}
 
-        return {"name": player_name, "banned": is_pwned}
+                    else:
+                        print("RM NOT 200")
+            elif hiscores_r.status == 200:
+                return {"name": player_name, "banned": False}
+
+        return {"name": player_name, "banned": "ERROR"}
 
 
 def setup(bot):
