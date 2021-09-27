@@ -1,6 +1,10 @@
-from typing import Optional, Dict
+from json.decoder import JSONDecodeError
+from os import stat
+from typing import Optional, Dict, List
 
 import aiohttp
+import json
+from discord.errors import HTTPException
 
 BASE_URL = 'https://www.osrsbotdetector.com/api'
 
@@ -60,6 +64,7 @@ async def get_linked_accounts(session: aiohttp.ClientSession, discord_id: str, t
     except:
         return None
 
+
 async def get_discords_ids_with_links(session: aiohttp.ClientSession, token):
     url = f'{BASE_URL}/discord/get_all_linked_ids/{token}'
 
@@ -68,6 +73,7 @@ async def get_discords_ids_with_links(session: aiohttp.ClientSession, token):
             discordIDList = await r.json()
 
     return discordIDList
+
 
 async def get_player_labels(session: aiohttp.ClientSession):
     url = f'{BASE_URL}/labels/get_player_labels'
@@ -81,6 +87,7 @@ async def get_player_labels(session: aiohttp.ClientSession):
     except:
         return None
 
+
 async def get_latest_runelite_version(session: aiohttp.ClientSession):
     url = "https://static.runelite.net/bootstrap.json"
 
@@ -91,4 +98,24 @@ async def get_latest_runelite_version(session: aiohttp.ClientSession):
             version = runelite_data["client"]["version"]
 
     return version
-    
+
+
+async def get_players(session: aiohttp.ClientSession, player_names, token: str):
+    url = f'https://www.osrsbotdetector.com/dev/v1/bulk_players?token={token}'
+
+    req_payload = {
+        "names":  player_names
+    }
+
+    try:
+        async with session.get(
+            url=url,
+            json=req_payload
+        ) as r:
+            if r.status == 200:
+                players = await r.json()
+                return players
+
+    except Exception as e:
+        print(e)
+        return "Error"

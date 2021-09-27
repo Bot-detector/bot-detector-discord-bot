@@ -563,35 +563,32 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         names_list = sql.get_paste_names(paste_soup)
         label = sql.get_paste_label(paste_soup)
 
-        names_list = [name for name in names_list if string_processing.is_valid_rsn(name)]
+        #Setting up the names list to be JSON parseable on FastAPI
+        names_list = [{"name": name} for name in names_list if string_processing.is_valid_rsn(name)]
+
+        player_data = await discord_processing.get_players(session=self.bot.session, player_names=names_list, token=token)
 
         csv_file = open(f"{label}.csv", "w+")
         file_name = csv_file.name
         
         csv_file.write("name, is_banned" + os.linesep)
 
-        for future in asyncio.as_completed(map(self.check_if_banned, names_list)):
-            single_result = await future
-            csv_file.write(f"{single_result.get('name')}, {str(single_result.get('banned'))}" + os.linesep)
-        
+        for p in player_data:
+            csv_file.write(f"{p.get('name')}, {p.get('confirmed_ban')}" + os.linesep)
+
         csv_file.close()
 
         await ctx.reply(file=discord.File(file_name))
 
 
     async def check_if_banned(self, player_name: str) -> dict:
-        delay = random.randint(3,15)
-        await asyncio.sleep(delay)
-
         async with self.bot.session.get(
             url=f"https://secure.runescape.com/m=hiscore_oldschool/index_lite.ws?player={player_name}"
         ) as hiscores_r:
-            print(f"Hiscores {hiscores_r.status}")
             if hiscores_r.status == 404:
                 async with self.bot.session.get(
                     url=f"https://apps.runescape.com/runemetrics/profile/profile?user={player_name}"
                 ) as runemetrics_r:
-                    print(f"runemetrics {runemetrics_r.status}")
                     if runemetrics_r.status == 200:
                         data = await runemetrics_r.read()
                         runemetrics_data = json.loads(data)
@@ -603,13 +600,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                         else:
                             return {"name": player_name, "banned": "Maybe?"}
 
-                    else:
-                        print("RM NOT 200")
             elif hiscores_r.status == 200:
                 return {"name": player_name, "banned": False}
 
         return {"name": player_name, "banned": "ERROR"}
-
 
 def setup(bot):
     bot.add_cog(PlayerStatsCommands(bot))
