@@ -136,11 +136,7 @@ def get_paste_names(paste_soup):
 
     return Set
 
+
 def get_paste_label(paste_soup):
     label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()
-    L = re.fullmatch('[\w\d _-]{1,100}', label)
-
-    if not L:
-        raise InvalidPasteTitleError
-
-    return label
+    return label.replace('/', "_").replace('\0', '_')
