@@ -101,7 +101,7 @@ async def get_latest_runelite_version(session: aiohttp.ClientSession):
 
 
 async def get_players(session: aiohttp.ClientSession, player_names, token: str):
-    url = f'https://www.osrsbotdetector.com/dev/v1/bulk_players?token={token}'
+    url = f'https://www.osrsbotdetector.com/dev/v1/player/bulk_by_names?token={token}'
 
     req_payload = {
         "names":  player_names
