@@ -564,7 +564,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         label = sql.get_paste_label(paste_soup)
 
         #Setting up the names list to be JSON parseable on FastAPI
-        names_list = [{"name": name} for name in names_list if string_processing.is_valid_rsn(name)]
+        names_list = [name for name in names_list if string_processing.is_valid_rsn(name)]
 
         player_data = await discord_processing.get_players(session=self.bot.session, player_names=names_list, token=token)
 
