@@ -106,7 +106,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
         if toggle_option.lower() == "on":
             member = ctx.author
             await member.add_roles(event_role)
-            await ctx.reply("You will now be pinged whenever we add banss.")
+            await ctx.reply("You will now be pinged whenever we add bans.")
         elif toggle_option.lower() == "off":
             await member.remove_roles(event_role)
             await ctx.reply("You will no longer be pinged whenever we add bans.")
