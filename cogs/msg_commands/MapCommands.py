@@ -56,7 +56,6 @@ class MapCommands(CommonCog, name='Map Commands'):
             return await ctx.send("Please enter a region name or region ID.")
 
         info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
-        await ctx.trigger_typing()
 
         if region.isdigit():
             regionTrueName = f"Region ID: {region}"

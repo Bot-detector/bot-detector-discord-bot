@@ -162,7 +162,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
     async def kc(self, ctx, *, player_name=None):
-        await ctx.trigger_typing()
         if not player_name:
             accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
@@ -257,7 +256,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     #rank up '/discord/get_linked_accounts/<token>/<discord_id>
     @commands.command(aliases=["updaterank", "rankme", "lvlup", "levelup"], description=help_messages.rankup_help_msg)
     async def rankup(self, ctx):
-        await ctx.trigger_typing()
         member = ctx.author
         linkedAccounts = await discord_processing.get_linked_accounts(self.bot.session, member.id, token)
 
@@ -313,7 +311,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def predict(self, ctx, *, player_name):
 
         pending_msg = await ctx.reply("Searching the database for the predicted username.")
-        await ctx.trigger_typing()
 
         if not utils.is_valid_rsn(player_name):
             if len(player_name) < 1:
@@ -555,6 +552,12 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             await ctx.reply(f"{player_name} has been banned.")
         else:
             await ctx.reply(f"{player_name} has NOT been banned.")
+
+
+    @commands.command()
+    async def test (self, ctx):
+        await asyncio.sleep(5)
+        await ctx.reply("This is a test. Please, do not panic.")
 
 
     @commands.command(aliases=["ban_list_check", "ban_check", "bans_check", "check_bans"])
