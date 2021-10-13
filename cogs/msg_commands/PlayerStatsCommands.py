@@ -343,7 +343,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if secondaries is not None:
             msg += "\n"
-            msg += cleandoc("Prediction Breakdown\n=======================")
+            msg += cleandoc("Prediction Likelihoods\n=======================")
             msg += "\n"
 
             for predict in secondaries:
