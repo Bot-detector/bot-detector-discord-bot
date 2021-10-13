@@ -337,7 +337,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         msg = cleandoc(f"""```diff
             + Name: {name}
             {utils.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
-            {utils.plus_minus(confidence, 0.75)} Confidence: {confidence * 100:.2f}%
+            {utils.plus_minus(confidence, 0.75)} Likelihood: {confidence * 100:.2f}%
             + ID: {player_id}
         """)
 
