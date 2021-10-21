@@ -481,7 +481,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     @commands.command(aliases=["gainz", "xpdiff", "xpgains", "gains"], description=help_messages.xpgain_help_msg)
     async def xpgain(self, ctx, *, player_name):
 
-        player_name = string_processing.to_jagex_name(player_name)
+        #player_name = string_processing.to_jagex_name(player_name)
 
         req_payload = {
             "player_name": player_name
