@@ -186,7 +186,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
             embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
 
-            normalized_player_name = string_processing.to_jagex_name(player_name)
+            #normalized_player_name = string_processing.to_jagex_name(player_name)
+            normalized_player_name = player_name #still not sure how we are storing new names with special characters...
             accounts= [{"name": normalized_player_name}]
 
         else:
