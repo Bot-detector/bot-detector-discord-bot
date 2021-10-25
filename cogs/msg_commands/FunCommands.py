@@ -1,4 +1,3 @@
-import subprocess
 from random import randint
 
 import discord
@@ -14,13 +13,9 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
     @commands.command(description=help_messages.poke_help_msg)
     async def poke(self, ctx):
-        ping_api = subprocess.check_call(['ping','-c1','www.osrsbotdetector.com'])
-        isServerUp = "Online" if not ping_api else "Uh-Oh"
-
         embed = discord.Embed(color=0x00ff)
         embed.add_field(name="Teehee", value=f":3", inline=False)
         embed.add_field(name="Discord Ping:", value=f"{self.bot.latency:.3f} ms", inline=False)
-        embed.add_field(name="BD API Status:", value=f"{isServerUp}", inline=False)
         await ctx.send(embed=embed)
 
 
