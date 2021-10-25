@@ -1,5 +1,7 @@
 FROM ubuntu
 
+RUN apt-get -y install python3-pip
+
 WORKDIR /code
 
 COPY ./requirements.txt /code/requirements.txt
