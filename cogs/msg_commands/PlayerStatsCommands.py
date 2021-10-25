@@ -321,7 +321,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 await ctx.reply(f"{player_name} isn't a valid Runescape user name.")
                 return
 
-        player_name = string_processing.to_jagex_name(player_name)
+        #player_name = string_processing.to_jagex_name(player_name)
 
         async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
             if r.status != 200:

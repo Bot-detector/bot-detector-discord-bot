@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bd-discord-bot
+spec:
+  selector:
+    matchLabels:
+      app: bd-discord-bot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bd-discord-bot
+    spec:
+      containers:
+      - name: bd-discord-bot
+        image: hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: regcred
