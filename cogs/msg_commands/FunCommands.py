@@ -1,3 +1,4 @@
+import time
 from random import randint
 
 import discord
@@ -13,9 +14,23 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
     @commands.command(description=help_messages.poke_help_msg)
     async def poke(self, ctx):
+        start = time.perf_counter()
+        async with self.bot.session.get("https://www.osrsbotdetector.com/api/") as r:
+            if r.status == 200:
+                delta = time.perf_counter() - start
+                serverStatus = "Online"
+            else:
+                delta = 0
+                serverStatus = "Offline"
+
         embed = discord.Embed(color=0x00ff)
         embed.add_field(name="Teehee", value=f":3", inline=False)
-        embed.add_field(name="Discord Ping:", value=f"{self.bot.latency:.3f} ms", inline=False)
+        embed.add_field(name="Discord Ping:", value=f"{self.bot.latency * 1000:.2f} ms", inline=False)
+        embed.add_field(name="BD API Status:", value=f"{serverStatus}", inline=False)
+        
+        if serverStatus == "Online":
+            embed.add_field(name="BD API Ping:", value=f"{delta * 1000:.2f} ms", inline=False)
+            
         await ctx.send(embed=embed)
 
 
