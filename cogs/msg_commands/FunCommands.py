@@ -87,37 +87,5 @@ class FunCommands(CommonCog, name="Fun Commands"):
                 await ctx.send("The buns went on the run.")
 
 
-    @commands.command(aliases=["events"], description=help_messages.event_help_msg)
-    async def event(self, ctx, *, toggle_option):
-        member = ctx.author
-        event_role = discord.utils.get(member.guild.roles, id=roles.special_roles["Events"]["role_id"])
-
-        if toggle_option.lower() == "on":
-            member = ctx.author
-            await member.add_roles(event_role)
-            await ctx.reply("You will now receive event announcements.")
-        elif toggle_option.lower() == "off":
-            await member.remove_roles(event_role)
-            await ctx.reply("You will no longer receive event announcements.")
-        else:
-            await ctx.reply("Use `!event on` or `!event off`.")
-
-
-    @commands.command(aliases=["bans", "bans_subscribe"], description=help_messages.event_help_msg)
-    async def bans_notify(self, ctx, *, toggle_option):
-        member = ctx.author
-        event_role = discord.utils.get(member.guild.roles, id=roles.special_roles["Bans Subscriber"]["role_id"])
-
-        if toggle_option.lower() == "on":
-            member = ctx.author
-            await member.add_roles(event_role)
-            await ctx.reply("You will now be pinged whenever we add bans.")
-        elif toggle_option.lower() == "off":
-            await member.remove_roles(event_role)
-            await ctx.reply("You will no longer be pinged whenever we add bans.")
-        else:
-            await ctx.reply("Use `!bans on` or `!bans off`.")
-
-
 def setup(bot):
     bot.add_cog(FunCommands(bot))
