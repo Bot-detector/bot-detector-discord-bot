@@ -44,7 +44,7 @@ async def get_multi_player_bans(session, verifiedPlayers):
 
     timeout = ClientTimeout(total=1200)
 
-    async with session.get(url="https://bigboi.osrsbotdetector.com/stats/contributions/", json=json.dumps(verifiedPlayers), timeout=timeout) as r:
+    async with session.get(url="https://www.osrsbotdetector.com/stats/contributions/", json=json.dumps(verifiedPlayers), timeout=timeout) as r:
         if r.status != 200:
             return #TODO Figure out what to do here haha
 
