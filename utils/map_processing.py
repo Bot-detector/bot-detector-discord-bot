@@ -99,7 +99,7 @@ async def getHeatmapRegion(session, regionName, token):
 
 async def getHeatmapData(session, region_id, token):
     json = {"region_id" : region_id}
-    url = f'https://www.osrsbotdetector.com/discord/heatmap/{token}'
+    url = f'https://www.osrsbotdetector.com/api/discord/heatmap/{token}'
     timeout = aiohttp.ClientTimeout(total=1200)
 
     async with session.get(url,json=json, timeout=timeout) as r:

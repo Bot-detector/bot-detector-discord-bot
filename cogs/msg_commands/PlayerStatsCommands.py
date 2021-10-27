@@ -196,10 +196,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if(await checks.check_patron(ctx)):
             patron = True
-            url = f"https://www.osrsbotdetector.com/stats/contributionsplus/{token}"
+            url = f"https://www.osrsbotdetector.com/api/stats/contributionsplus/{token}"
         else:
             patron=False
-            url = "https://www.osrsbotdetector.com/stats/contributions/"
+            url = "https://www.osrsbotdetector.com/api/stats/contributions/"
 
         timeout = ClientTimeout(total=1200)
 
@@ -383,7 +383,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         timeout = ClientTimeout(total=1200)
 
         async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/discord/player_bans/{token}",
+            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}",
             json=json.dumps(req_payload),
             timeout=timeout
         ) as r:
@@ -405,7 +405,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 else:
                     res_data = data
 
-            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/discord/download_export/{res_data['url']}")
+            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/api/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
 
