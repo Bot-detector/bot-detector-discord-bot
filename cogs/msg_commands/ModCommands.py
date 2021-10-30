@@ -1,4 +1,5 @@
 import os
+import time
 
 import discord
 from discord.errors import HTTPException
@@ -41,8 +42,7 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                 id = id_record.get('Discord_id')
 
                 try:
-                    member = ctx.message.guild.fetch_member(id)
-
+                    member = await ctx.message.guild.fetch_member(id)
 
                     for r in member.roles:
                         if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
@@ -56,6 +56,10 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                 except:
                     #The user isn't in our server anymore, or Discord just can't get them right now. Skip!
                     pass
+
+                time.sleep(1)
+
+
 
 
         except HTTPException:
