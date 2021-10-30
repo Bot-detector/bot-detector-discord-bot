@@ -30,6 +30,8 @@ class ModCommands(CommonCog, name="Moderator Commands"):
     @commands.has_permissions(administrator=True)
     async def give_link_roles(self, ctx):
 
+        await ctx.reply("It begins...")
+
         num_updated = 0
 
         try:
@@ -37,7 +39,7 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
             for id_record in discord_ids:
                 id = id_record.get('Discord_id')
-                member = ctx.message.guild.get_member(id)
+                member = ctx.message.guild.fetch_member(id)
 
 
                 for r in member.roles:
