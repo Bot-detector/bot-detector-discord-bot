@@ -39,17 +39,23 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
             for id_record in discord_ids:
                 id = id_record.get('Discord_id')
-                member = ctx.message.guild.fetch_member(id)
+
+                try:
+                    member = ctx.message.guild.fetch_member(id)
 
 
-                for r in member.roles:
-                    if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
-                        break
+                    for r in member.roles:
+                        if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
+                            break
 
-                else:
-                    verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
-                    await member.add_roles(verified_role)
-                    num_updated += 1
+                    else:
+                        verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
+                        await member.add_roles(verified_role)
+                        num_updated += 1
+
+                except:
+                    #The user isn't in our server anymore, or Discord just can't get them right now. Skip!
+                    pass
 
 
         except HTTPException:
