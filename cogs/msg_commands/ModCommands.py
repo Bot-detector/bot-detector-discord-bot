@@ -37,34 +37,29 @@ class ModCommands(CommonCog, name="Moderator Commands"):
 
         try:
             discord_ids = await discord_processing.get_discord_id_with_links(self.bot.session, token)
-
-            for id_record in discord_ids:
-                id = id_record.get('Discord_id')
-
-                try:
-                    member = await ctx.message.guild.fetch_member(id)
-
-                    for r in member.roles:
-                        if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
-                            break
-
-                    else:
-                        verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
-                        await member.add_roles(verified_role)
-                        num_updated += 1
-
-                except:
-                    #The user isn't in our server anymore, or Discord just can't get them right now. Skip!
-                    pass
-
-                time.sleep(1)
-
-
+            
         except HTTPException:
             await ctx.reply("I couldn't grab the list of Discord IDs.")
+            return
+
+        for id_record in discord_ids:
+            id = id_record.get('Discord_id')
+
+            try:
+                member = await ctx.message.guild.fetch_member(id)
+                verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
+                await member.add_roles(verified_role)
+
+                num_updated += 1
+                time.sleep(1)
+
+            except HTTPException:
+                #Player not found in guild. Probably left the server. Skip!!
+                pass
 
 
         await ctx.reply(f"The deed... is done. {num_updated} accounts now have the Discord-RSN Linked role.")
+        return
 
 
 async def jmod_warn_msg():
