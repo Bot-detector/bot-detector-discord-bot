@@ -60,8 +60,6 @@ class ModCommands(CommonCog, name="Moderator Commands"):
                 time.sleep(1)
 
 
-
-
         except HTTPException:
             await ctx.reply("I couldn't grab the list of Discord IDs.")
 
