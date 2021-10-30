@@ -88,6 +88,18 @@ async def get_player_labels(session: aiohttp.ClientSession):
         return None
 
 
+async def get_discord_id_with_links(session: aiohttp.ClientSession, token):
+    url = f'{BASE_URL}/discord/get_all_linked_ids/{token}'
+
+    async with session.get(url) as r:
+        if r.status == 200:
+            discords_ids = await r.json()
+
+            return discords_ids
+
+    raise HTTPException(r.status, "Could not grab data.")
+
+
 async def get_latest_runelite_version(session: aiohttp.ClientSession):
     url = "https://static.runelite.net/bootstrap.json"
 

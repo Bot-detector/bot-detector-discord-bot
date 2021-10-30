@@ -1,10 +1,11 @@
 import os
 
 import discord
+from discord.errors import HTTPException
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from utils import CommonCog
+from utils import CommonCog, discord_processing, roles
 
 load_dotenv()
 token = os.getenv("API_AUTH_TOKEN")
@@ -23,6 +24,37 @@ class ModCommands(CommonCog, name="Moderator Commands"):
     async def clear(self, ctx, limit):
         channel = ctx.guild.get_channel(ctx.channel.id)
         await channel.purge(limit = int(limit))
+
+
+    @commands.command(hidden=True)
+    @commands.has_permissions(administrator=True)
+    async def give_link_roles(self, ctx):
+
+        num_updated = 0
+
+        try:
+            discord_ids = await discord_processing.get_discord_id_with_links(self.bot.session, token)
+
+            for id_record in discord_ids:
+                id = id_record.get('Discord_id')
+                member = ctx.message.guild.get_member(id)
+
+
+                for r in member.roles:
+                    if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
+                        break
+
+                else:
+                    verified_role = discord.utils.find(lambda r: r.id == roles.special_roles["Discord-RSN Linked"]["role_id"], member.guild.roles)
+                    await member.add_roles(verified_role)
+                    num_updated += 1
+
+
+        except HTTPException:
+            await ctx.reply("I couldn't grab the list of Discord IDs.")
+
+
+        await ctx.reply(f"The deed... is done. {num_updated} accounts now have the Discord-RSN Linked role.")
 
 
 async def jmod_warn_msg():
