@@ -31,6 +31,7 @@ banned_clients = [
     "bluelite",
     "runeliteplus",
     "run-elite"
+]
 
 # Define bot
 description = cleandoc("""
