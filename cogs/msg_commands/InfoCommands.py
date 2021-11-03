@@ -36,10 +36,13 @@ class InfoCommands(CommonCog, name='General Info Commands'):
     async def github(self, ctx):
         await ctx.send("https://github.com/Bot-detector")
 
-
     @commands.command(description=help_messages.invite_help_msg)
     async def invite(self, ctx):
         await ctx.send('https://discord.com/invite/JCAGpcjbfP')
+
+    @commands.command(aliases=["open"])
+    async def openosrs(self, ctx):
+        await ctx.send('https://twitter.com/jagextyran/status/1358801848166137856')
 
     @commands.command(aliases=["issue"], description=help_messages.issues_help_msg)
     async def issues(self, ctx):
