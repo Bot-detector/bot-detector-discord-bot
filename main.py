@@ -9,6 +9,7 @@ import discord
 print(discord.__version__)
 from discord.ext import commands
 from dotenv import load_dotenv
+from utils import roles
 
 
 # Load files
@@ -25,6 +26,11 @@ EASTER_EGGS = {
     "a q p": "( ͡° ͜ʖ ͡°)",
 }
 
+banned_clients = [
+    "openosrs",
+    "bluelite",
+    "runeliteplus",
+    "run-elite"
 
 # Define bot
 description = cleandoc("""
@@ -33,7 +39,7 @@ description = cleandoc("""
 """)
 
 activity = discord.Game("Bustin' Bots", type=discord.ActivityType.watching)
-intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True)
+intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True, presences=True)
 bot = commands.Bot(
     allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=True),
     command_prefix=os.getenv('COMMAND_PREFIX'),
@@ -58,6 +64,17 @@ async def on_connect():
 @bot.event
 async def on_disconnect():
     print("Bot disconnected.")
+
+
+@bot.event
+async def on_member_update(before: discord.Member, after: discord.Member):
+    try:
+        if(after.activity.name.lower() in banned_clients):
+            await roles.add_banned_client_role(after)
+
+    except AttributeError:
+        #no activity
+        pass
 
 
 @bot.event

@@ -2,6 +2,7 @@ import bisect
 import json
 import discord
 from aiohttp import ClientTimeout
+from discord import role
 
 bot_hunter_roles = {
     1:       {"role_id": 825165287526498314, "role_name": "Bot Hunter I"}, # 1 Ban
@@ -85,3 +86,35 @@ async def remove_old_roles(member):
         if 'Bot Hunter' in role.name:
             to_remove = discord.utils.find(lambda r: role.name in r.name, member.roles)
             await member.remove_roles(to_remove)
+
+
+async def has_role(member: discord.Member, role_id: int):
+    if(discord.utils.get(member.roles, id=role_id)):
+        return True
+    else:
+        return False
+
+
+async def remove_all_roles(member):
+    roles = member.roles
+
+    print(roles)
+
+    for role in roles:
+        if role.name == "@everyone":
+            pass
+        else:
+            to_remove = discord.utils.find(lambda r: role.name in r.name, member.roles)
+            await member.remove_roles(to_remove)
+
+
+async def add_banned_client_role(member):
+    target_role_id = 905495630665891861
+
+    if await has_role(member, target_role_id):
+        return
+    else:
+        await remove_all_roles(member)
+        target_role = discord.utils.get(member.guild.roles, id=target_role_id)
+        await member.add_roles(target_role)
+
