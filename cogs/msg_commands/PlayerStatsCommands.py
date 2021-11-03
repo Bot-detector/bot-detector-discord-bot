@@ -565,7 +565,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def ban_list(self, ctx, pastebin_url):
         paste_soup = sql.get_paste_data(pastebin_url)
         names_list = sql.get_paste_names(paste_soup)
-        label = sql.get_paste_label(paste_soup)
+        raw_label = sql.get_paste_label(paste_soup)
+        label = ''.join(c for c in raw_label if c.isalnum())
+
 
         #Setting up the names list to be JSON parseable on FastAPI
         names_list = [name for name in names_list if string_processing.is_valid_rsn(name)]
@@ -578,7 +580,12 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         csv_file.write("name, is_banned" + os.linesep)
 
         for p in player_data:
-            csv_file.write(f"{p.get('name')}, {p.get('confirmed_ban')}" + os.linesep)
+            if p.get('label_jagex') == 2:
+                is_banned = True
+            else:
+                is_banned = False
+
+            csv_file.write(f"{p.get('name')}, {is_banned}" + os.linesep)
 
         csv_file.close()
 
