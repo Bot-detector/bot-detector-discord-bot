@@ -30,7 +30,8 @@ banned_clients = [
     "openosrs",
     "bluelite",
     "runeliteplus",
-    "run-elite"
+    "run-elite",
+    "meteorlite"
 ]
 
 # Define bot
