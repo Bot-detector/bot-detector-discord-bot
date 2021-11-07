@@ -6,47 +6,44 @@ import aiohttp
 import json
 from discord.errors import HTTPException
 
-BASE_URL = 'https://www.osrsbotdetector.com/api'
+BASE_URL = 'https://www.osrsbotdetector.com/dev'
 
-async def get_player_verification_full_status(session: aiohttp.ClientSession, playerName: str, token: str) -> Optional[dict]:
-    url = f'{BASE_URL}/discord/verify/player_rsn_discord_account_status/{token}/{playerName}'
+async def get_player_verification_full_status(session: aiohttp.ClientSession, player_name: str, token: str):
+    url = f'{BASE_URL}/discord/verify/player_rsn_discord_account_status/{token}/{player_name}'
 
     async with session.get(url) as r:
         if r.status == 200:
             data = await r.json()
+            return data
 
-    try:
-        return data
-    except:
-        return None
+    raise HTTPException(r.status, "Could not grab data.")
 
 
-async def get_playerid_verification(session: aiohttp.ClientSession, playerName, token):
-    url = f'{BASE_URL}/discord/verify/playerid/{token}/{playerName}'
+#Gets Previous Attempts to Link the Same RSN
+async def get_verification_attempts(session: aiohttp.ClientSession, player_name, token):
+    url = f'{BASE_URL}/discord/verify/get_verification_attempts/{token}/{player_name}'
 
     async with session.get(url) as r:
         if r.status == 200:
-            playerIDverif = await r.json()
+            attempts = await r.json()
+            return attempts
 
-    try:
-        return playerIDverif[0]
-    except:
-        return None
+    raise HTTPException(r.status, "Could not grab data.")
 
 
-async def get_verified_player_info(session: aiohttp.ClientSession, playerName, token):
-    url = f'{BASE_URL}/discord/verify/verified_player_info/{token}/{playerName}'
+async def get_verified_player_info(session: aiohttp.ClientSession, player_name, token):
+    url = f'{BASE_URL}/discord/verify/verified_player_info/{token}/{player_name}'
 
     async with session.get(url) as r:
         if r.status == 200:
             vplayerinfo = await r.json()
+            return vplayerinfo[0]
 
-    return vplayerinfo[0]
+    raise HTTPException(r.status, "Could not grab data.")
 
 
-async def post_discord_player_info(session: aiohttp.ClientSession, discord_id, player_id, code, token):
-    id = player_id['id']
-    url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}/{discord_id}/{id}/{code}'
+async def post_discord_player_info(session: aiohttp.ClientSession, discord_id, player_name, code, token):
+    url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}/{discord_id}/{player_name}/{code}'
 
     async with session.post(url) as r:
         return await r.json() if r.status == 200 else {"error":f"Failed: {r.status} error"}
@@ -58,11 +55,9 @@ async def get_linked_accounts(session: aiohttp.ClientSession, discord_id: str, t
     async with session.get(url) as r:
         if r.status == 200:
             linkedAccounts = await r.json()
+            return linkedAccounts
 
-    try:
-        return linkedAccounts
-    except:
-        return None
+    raise HTTPException(r.status, "Could not grab data.")
 
 
 async def get_discords_ids_with_links(session: aiohttp.ClientSession, token):
@@ -71,21 +66,9 @@ async def get_discords_ids_with_links(session: aiohttp.ClientSession, token):
     async with session.get(url) as r:
         if r.status == 200:
             discordIDList = await r.json()
+            return discordIDList
 
-    return discordIDList
-
-
-async def get_player_labels(session: aiohttp.ClientSession):
-    url = f'{BASE_URL}/labels/get_player_labels'
-
-    async with session.get(url) as r:
-        if r.status == 200:
-            labels = await r.json()
-
-    try:
-        return labels
-    except:
-        return None
+    raise HTTPException(r.status, "Could not grab data.")
 
 
 async def get_discord_id_with_links(session: aiohttp.ClientSession, token):
@@ -94,7 +77,6 @@ async def get_discord_id_with_links(session: aiohttp.ClientSession, token):
     async with session.get(url) as r:
         if r.status == 200:
             discords_ids = await r.json()
-
             return discords_ids
 
     raise HTTPException(r.status, "Could not grab data.")
@@ -106,28 +88,25 @@ async def get_latest_runelite_version(session: aiohttp.ClientSession):
     async with session.get(url) as r:
         if r.status == 200:
             runelite_data = await r.json()
-
             version = runelite_data["client"]["version"]
+            return version
 
-    return version
+    raise HTTPException(r.status, "Could not grab data.")
 
 
 async def get_players(session: aiohttp.ClientSession, player_names, token: str):
-    url = f'https://www.osrsbotdetector.com/dev/v1/player/bulk?token={token}'
+    url = f'{BASE_URL}/dev/v1/player/bulk?token={token}'
 
     req_payload = {
         "player_name":  player_names
     }
 
-    try:
-        async with session.post(
-            url=url,
-            json=req_payload
-        ) as r:
-            if r.status == 200:
-                players = await r.json()
-                return players
+    async with session.post(
+        url=url,
+        json=req_payload
+    ) as r:
+        if r.status == 200:
+            players = await r.json()
+            return players
 
-    except Exception as e:
-        print(e)
-        return "Error"
+    raise HTTPException(r.status, "Could not grab data.")

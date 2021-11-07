@@ -14,9 +14,6 @@ birb_help_msg = "Display a small friend of the avarian variety for you to cheris
 
 bunny_help_msg = "A silly rabbit .gif, but for you!"
 
-event_help_msg = "Opt in to receive announcements about our clan events. You will be given a special Discord role to let us know that you're down to party!!"
-
-
 ###########################
 # Info Commands
 ###########################
@@ -41,8 +38,6 @@ invite_help_msg = "Places an invite link to the Discord server in the chat. Feel
 issues_help_msg = "Having an issue with the plugin? !issues puts a link to #plugin-issues into the chat, where you can let us know."
 
 roles_help_msg = "Lists the Discord roles available to our users."
-
-labels_help_msg = "Lists the player labels that the ML model currently will try to identify players as. These will change over time."
 
 ###########################
 # Bot Submissions Commands
@@ -106,12 +101,6 @@ excelban_help_msg = clean("""
     which have resulted in bans in an .xlsx file format.
 """)
 
-csvban_help_msg = clean("""
-    You must link your Discord account with an OSRS account in order to use this command. You will only be able
-    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
-    which have resulted in bans in a .csv file format.
-""")
-
 equip_help_msg = clean("""
     Shows the last equipment layout a player was seen in.
 """)
@@ -136,7 +125,7 @@ stats_help_msg = "Displays the project-wide flagging statistics. Also shows tota
 
 link_help_msg = clean("""
     Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future.
-    Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban.
+    Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban.
 
 
     YOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin

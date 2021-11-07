@@ -16,63 +16,63 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
     cog_check = check_allowed_channel
 
     @commands.command(aliases=["pair"], description=help_messages.link_help_msg)
-    async def link(self, ctx, *, joinedName=None):
-        if not joinedName:
+    async def link(self, ctx, *, joined_name=None):
+        if not joined_name:
             return await ctx.send("Please specify the RSN of the account you'd wish to link. !link <RSN>")
 
-        if not string_processing.is_valid_rsn(joinedName):
-            return await ctx.send(f"{joinedName} isn't a valid Runescape user name.")
+        if not string_processing.is_valid_rsn(joined_name):
+            return await ctx.send(f"{joined_name} isn't a valid Runescape user name.")
 
-        joinedName = string_processing.to_jagex_name(joinedName)
+        #joined_name = string_processing.to_jagex_name(joined_name)
 
-        verifyID = await discord_processing.get_playerid_verification(self.bot.session, playerName=joinedName, token=token)
+        previous_attempts = await discord_processing.get_verification_attempts(self.bot.session, player_name=joined_name, token=token)
 
-        if verifyID is None:
-            embed = await installplugin_msg()
-            return await ctx.send(embed=embed)
-
-        previousAttempts = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=joinedName, token=token)
-
-        if len(previousAttempts) == 0:
+        if len(previous_attempts) == 0:
             code = string_processing.id_generator()
+            await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, \
+                player_name=joined_name, code=code, token=token)
+            embed = await link_msg(joined_name=joined_name, code=code)
+            await ctx.author.send(embed=embed)
         else:
-            for status in previousAttempts:
-                if int(status['Verified_status']) == 1:
-                    isVerified = 1
+            users_previous_attempt = {}
+            user_previously_tried = False
+            is_verified = False
+
+            for attempt in previous_attempts:
+                if attempt.get("Verified_status") == 1:
+                    is_verified = True
                     break
+                elif attempt.get("Discord_id") == ctx.author.id:
+                    users_previous_attempt = attempt
+                    user_previously_tried = True
+
+            if is_verified:
+                await ctx.reply(embed=await verified_msg(joined_name))
+            elif user_previously_tried:
+                code = users_previous_attempt.get('Code')
+                embed = await link_msg(joined_name=joined_name, code=code)
+                await ctx.author.send(embed=embed)
             else:
-                isVerified = 0
+                code = string_processing.id_generator()
+                await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, \
+                    player_name=joined_name, code=code, token=token)
+                embed = await link_msg(joined_name=joined_name, code=code)
+                await ctx.author.send(embed=embed)
 
-            if isVerified == 1:
-                owner_verified_info = await discord_processing.get_verified_player_info(self.bot.session, playerName=joinedName, token=token)
-                ownerID = owner_verified_info['Discord_id']
-                if ownerID == ctx.author.id:
-                    embed = await verified_msg(joinedName)
-                    return await ctx.send(embed=embed)
-                else:
-                    embed = await verified_msg(joinedName)
-                    embed.set_footer(text="Note that this RSN is linked to another user's Discord ID.")
-                    return await ctx.send(embed=embed)
-
-            elif isVerified == 0:
-                code = int(previousAttempts[len(previousAttempts) - 1]["Code"])
-
-        await discord_processing.post_discord_player_info(self.bot.session, discord_id=ctx.author.id, player_id=verifyID, code=code, token=token)
-        embed = await link_msg(joinedName=joinedName, code=code)
-        await ctx.author.send(embed=embed)
+        return
 
 
     @commands.command(name="verify", description=help_messages.verify_help_msg)
-    async def verify_comand(self, ctx, *, joinedName=None):
-        if not joinedName:
+    async def verify_comand(self, ctx, *, joined_name=None):
+        if not joined_name:
             return await ctx.send("Please specify the RSN of the account you'd wish to view the verification status for. !verify <RSN>")
 
-        if not string_processing.is_valid_rsn(joinedName):
-            return await ctx.send(joinedName + " isn't a valid Runescape user name.")
+        if not string_processing.is_valid_rsn(joined_name):
+            return await ctx.send(joined_name + " isn't a valid Runescape user name.")
 
-        joinedName = string_processing.to_jagex_name(joinedName)
+        joined_name = string_processing.to_jagex_name(joined_name)
 
-        verifyStatus = await discord_processing.get_player_verification_full_status(self.bot.session, playerName=joinedName, token=token)
+        verifyStatus = await discord_processing.get_player_verification_full_status(self.bot.session, player_name=joined_name, token=token)
 
         try:
             for status in verifyStatus:
@@ -83,11 +83,11 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
                 isVerified = False
 
             if isVerified:
-                embed = await verified_msg(joinedName)
+                embed = await verified_msg(joined_name)
             else:
-                embed = await unverified_msg(joinedName)
+                embed = await unverified_msg(joined_name)
         except:
-            embed = await unverified_msg(joinedName)
+            embed = await unverified_msg(joined_name)
 
         await ctx.send(embed=embed)
 
@@ -107,59 +107,17 @@ class RSNLinkCommands(CommonCog, name='RSN Link Commands'):
             await ctx.author.send(embed=embed)
 
 
-    @commands.command(aliases=["move_kc"], description=help_messages.linked_help_msg)
-    async def transfer(self, ctx, *, dest_name):
-        return #This is what you get for not making a separate branch...
-
-        dest_name = dest_name.lower()
-
-        if not string_processing.is_valid_rsn(dest_name):
-            ctx.reply(f"{dest_name} is not a valid RSN.")
-            return
-
-        linked_accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
-
-
-        if len(linked_accounts) == 0:
-            await ctx.reply("You do not have any OSRS accounts linked to this Discord ID, and therefore we can't perform an automatic transfer. Please reach out to a <@858763870042456084> member for assistance.")
-        else:
-            linked_names = list(acc['name'].lower() for acc in linked_accounts)
-
-            if not dest_name in linked_names:
-                await ctx.reply(f"Before we can transfer your KC to your new name, please verify that you own the new RSN by using `!link {dest_name}` in <#825189024074563614>")
-                return
-
-            else:
-                names_list = '\n'.join(linked_names)
-                embed = discord.Embed(title="KC Transfer Request", color=0x00ff00)
-                embed.add_field (name=f"Reply with which name you'd like to take KC from and put onto {dest_name}:", value=f"{names_list}", inline=False)
-
-                await ctx.author.send(embed=embed)
-
-                def check(msg):
-                    if not msg in linked_names:
-                        return False
-                    else:
-                        return True
-
-                print("we get here")
-
-                msg = await self.bot.wait_for("message", check=check)
-                print("we get here too")
-                await ctx.author.send(msg)
-
-
-async def verified_msg(joinedName):
-    embed = discord.Embed(title=f"{joinedName}'s Status:", color=0x00ff00)
-    embed.add_field (name="Verified:", value=f"{joinedName} is Verified.", inline=False)
+async def verified_msg(joined_name):
+    embed = discord.Embed(title=f"{joined_name}'s Status:", color=0x00ff00)
+    embed.add_field (name="Verified:", value=f"{joined_name} is Verified.", inline=False)
     embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117238120-538b4f00-adfa-11eb-9c58-d5500af7d215.png")
     return embed
 
 
-async def unverified_msg(joinedName):
-    embed = discord.Embed(title=f"{joinedName}'s Status:", color=0xff0000)
-    embed.add_field (name="Unverified:", value=f"{joinedName} is Unverified.", inline=False)
-    embed.add_field (name="Next Steps:", value=f"Please type `!link {joinedName}`. If you have already done so, please check your DMs for instructions on how to complete your verification.", inline=False)
+async def unverified_msg(joined_name):
+    embed = discord.Embed(title=f"{joined_name}'s Status:", color=0xff0000)
+    embed.add_field (name="Unverified:", value=f"{joined_name} is Unverified.", inline=False)
+    embed.add_field (name="Next Steps:", value=f"Please type `!link {joined_name}`. If you have already done so, please check your DMs for instructions on how to complete your verification.", inline=False)
     embed.set_thumbnail(url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png")
     return embed
 
@@ -173,11 +131,11 @@ async def installplugin_msg():
     return embed
 
 
-async def link_msg(joinedName, code) -> discord.Embed:
-    embed = discord.Embed(title=f"Linking '{joinedName}':", color=0x0000ff)
+async def link_msg(joined_name, code) -> discord.Embed:
+    embed = discord.Embed(title=f"Linking '{joined_name}':", color=0x0000ff)
 
     embed.add_field(name="STATUS", inline=False, value=cleandoc(f"""
-            **Request to Link:** `{joinedName}`.
+            **Request to Link:** `{joined_name}`.
             **Access Code:** `{code}`
         """)
     )
@@ -186,7 +144,7 @@ async def link_msg(joinedName, code) -> discord.Embed:
 
             1. Open Old School Runescape through RuneLite.
 
-            2. Login as: `{joinedName}`
+            2. Login as: `{joined_name}`
 
             3. Join the following clan chat: `Bot Detector`
 
@@ -196,7 +154,7 @@ async def link_msg(joinedName, code) -> discord.Embed:
 
             6. Type into the Clan Chat: `!Code {code}`. It must match this exact pattern so that our clients can detect it properly.
 
-            7. To confirm that your verification is complete type `!verify {joinedName}` in <#825189024074563614>
+            7. To confirm that your verification is complete type `!verify {joined_name}` in <#825189024074563614>
 
             8. You may now use the `!excelban` command to receive an export of the bans you have contributed to. You also no longer need to
             specify a name whenever using the `!kc` command if you are trying to view your own "killcount".

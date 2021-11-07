@@ -21,8 +21,6 @@ EASTER_EGGS = {
     "::bank": "Hey, everyone, I just tried to do something very silly!",
     "a round of wintertodt is about to begin": "Chop chop!",
     "25 buttholes": "hahahahahaha w0w!",
-    "tedious": "Theeeee collection log",
-    "ltt": "https://www.lttstore.com",
     "a q p": "( ͡° ͜ʖ ͡°)",
 }
 

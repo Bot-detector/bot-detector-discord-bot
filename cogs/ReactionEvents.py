@@ -38,7 +38,7 @@ class ReactionHandling(CommonCog):
             "vote":         vote
         }
 
-        endpoint = "https://www.osrsbotdetector.com/api/discord/predictionfeedback/"
+        endpoint = "https://www.osrsbotdetector.com/dev/discord/predictionfeedback/"
 
         await self.bot.session.post(endpoint, json=prediction)
 

@@ -45,7 +45,7 @@ async def get_multi_player_bans(session, verifiedPlayers):
 
     timeout = ClientTimeout(total=1200)
 
-    async with session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(verifiedPlayers), timeout=timeout) as r:
+    async with session.get(url="https://www.osrsbotdetector.com/dev/stats/contributions/", json=verifiedPlayers, timeout=timeout) as r:
         if r.status != 200:
             return #TODO Figure out what to do here haha
 
@@ -97,8 +97,6 @@ async def has_role(member: discord.Member, role_id: int):
 
 async def remove_all_roles(member):
     roles = member.roles
-
-    print(roles)
 
     for role in roles:
         if role.name == "@everyone":

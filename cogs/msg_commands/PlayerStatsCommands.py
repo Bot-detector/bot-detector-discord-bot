@@ -196,18 +196,17 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if(await checks.check_patron(ctx)):
             patron = True
-            url = f"https://www.osrsbotdetector.com/api/stats/contributionsplus/{token}"
+            url = f"https://www.osrsbotdetector.com/dev/stats/contributions?token={token}"
         else:
             patron=False
-            url = "https://www.osrsbotdetector.com/api/stats/contributions/"
+            url = "https://www.osrsbotdetector.com/dev/stats/contributions/"
 
         timeout = ClientTimeout(total=1200)
 
-        async with self.bot.session.get(url=url, json=json.dumps(accounts), timeout=timeout) as r:
+        async with self.bot.session.post(url=url, json=accounts, timeout=timeout) as r:
             if r.status != 200:
                 return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
             js = await r.json()
-
 
         embed = await self.assemble_kc_embed(embed=embed, js=js, is_patron=patron)
 
@@ -269,7 +268,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             return await ctx.reply(embed=embed)
 
         for r in member.roles:
-            if r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
+            if r.id == 905495630665891861:
+                #booooooooo
+                return
+            elif r.id == roles.special_roles["Discord-RSN Linked"]["role_id"]:
                 #awesome, you're verified.
                 break
 
@@ -323,7 +325,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         #player_name = string_processing.to_jagex_name(player_name)
 
-        async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/site/prediction/{player_name}") as r:
+        async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/v1-bot/site/prediction/{player_name}") as r:
             if r.status != 200:
                 return await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
 
@@ -382,20 +384,18 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         #temporary until task queue is up in fastapi
         timeout = ClientTimeout(total=1200)
 
-        async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}",
-            json=json.dumps(req_payload),
+        async with self.bot.session.post(
+            url=f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}",
+            json=req_payload,
             timeout=timeout
         ) as r:
 
             if r.status != 200:
                 data = await r.read()
                 data = data.decode("utf-8")
-
-                res_data = json.loads(data)
                 
                 await info_msg.delete()
-                return await ctx.reply(f"{res_data['error']}")
+                return await ctx.reply(f"{data}")
             else:
                 data = await r.read()
                 data = data.decode("utf-8")
@@ -405,7 +405,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 else:
                     res_data = data
 
-            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/api/discord/download_export/{res_data['url']}")
+            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/dev/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
 
@@ -422,27 +422,21 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         await self.export_bans(ctx, 'excel')
 
 
-    @commands.command(aliases=["csvbans"], description=help_messages.csvban_help_msg)
-    async def csvban(self, ctx):
-        await self.export_bans(ctx, 'csv')
-
-
     @commands.command(aliases=["sweg"], description=help_messages.equip_help_msg)
     async def equip(self, ctx, *, player_name):
-
-        #player_name = string_processing.to_jagex_name(player_name)
 
         req_payload = {
             "player_name": player_name
         }
 
-        async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/api/discord/get_latest_sighting/{token}",
-            json=json.dumps(req_payload)
+        async with self.bot.session.post(
+            url=f"https://www.osrsbotdetector.com/dev/discord/get_latest_sighting/{token}",
+            json=req_payload
         ) as r:
             if r.status == 200:
                 data = await r.read()
                 equip_data = json.loads(data)
+                equip_data = equip_data[0]
 
                 embed = discord.Embed(
                         title = f"{player_name}'s Last Seen Equipment",
@@ -487,9 +481,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             "player_name": player_name
         }
 
-        async with self.bot.session.get(
-            url=f"https://www.osrsbotdetector.com/api/discord/get_xp_gains/{token}",
-            json=json.dumps(req_payload)
+        async with self.bot.session.post(
+            url=f"https://www.osrsbotdetector.com/dev/discord/get_xp_gains/{token}",
+            json=req_payload
         ) as r:
             if r.status == 200:
                 data = await r.read()
@@ -524,7 +518,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
                 else:
                     if second_latest_data:
-                        dt_format = "%a, %d %b %Y %H:%M:%S %Z"
+                        #2021-11-06T17:53:18
+                        dt_format = "%Y-%m-%dT%H:%M:%S"
+                        #dt_format = "%a, %d %b %Y %H:%M:%S %Z"
                         latest_ts = datetime.strptime(timestamp, dt_format)
                         second_latest_ts = datetime.strptime(second_latest_data.pop("timestamp"), dt_format)
                         timestamp_delta = latest_ts - second_latest_ts
@@ -553,12 +549,6 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             await ctx.reply(f"{player_name} has been banned.")
         else:
             await ctx.reply(f"{player_name} has NOT been banned.")
-
-
-    @commands.command()
-    async def test (self, ctx):
-        await asyncio.sleep(5)
-        await ctx.reply("This is a test. Please, do not panic.")
 
 
     @commands.command(aliases=["ban_list_check", "ban_check", "bans_check", "check_bans"])

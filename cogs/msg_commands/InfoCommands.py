@@ -65,19 +65,6 @@ class InfoCommands(CommonCog, name='General Info Commands'):
         await ctx.send(embed=bot_embed)
         await ctx.send(embed=special_roles_embed)
 
-    @commands.command(aliases=["botlabels"], description=help_messages.labels_help_msg)
-    async def labels(self, ctx):
-        labels = await utils.get_player_labels(self.bot.session)
-
-        labels_embed = discord.Embed(title="Current Player Labels")
-
-        for l in labels:
-            labels_embed.add_field(name=f"{l['label']}", value="\u200b", inline=True)
-
-        labels_embed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
-
-        await ctx.send(embed=labels_embed)
-
 
 def setup(bot):
     bot.add_cog(InfoCommands(bot))

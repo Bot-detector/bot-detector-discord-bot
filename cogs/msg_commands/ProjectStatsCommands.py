@@ -17,7 +17,7 @@ class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
         totalRealPlayers = ""
         activeInstalls = ""
 
-        async with self.bot.session.get("https://www.osrsbotdetector.com/api/site/dashboard/projectstats") as r:
+        async with self.bot.session.get("https://www.osrsbotdetector.com/dev/site/dashboard/projectstats") as r:
             if r.status == 200:
                 js = await r.json()
                 totalBans = js['total_bans']

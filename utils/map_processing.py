@@ -87,11 +87,11 @@ async def CleanupImages(filename):
     os.remove(filename)
 
 
-async def getHeatmapRegion(session, regionName, token):
-    json = {"region" : regionName}
-    url = f'https://www.osrsbotdetector.com/api/discord/region/{token}/{regionName}'
+async def getHeatmapRegion(session, region_name, token):
+    json = {"region_name" : region_name}
+    url = f'https://www.osrsbotdetector.com/dev/discord/region/{token}'
 
-    async with session.get(url,json=json) as r:
+    async with session.post(url,json=json) as r:
         if r.status == 200:
             data = await r.json()
             return data
@@ -99,10 +99,10 @@ async def getHeatmapRegion(session, regionName, token):
 
 async def getHeatmapData(session, region_id, token):
     json = {"region_id" : region_id}
-    url = f'https://www.osrsbotdetector.com/api/discord/heatmap/{token}'
+    url = f'https://www.osrsbotdetector.com/dev/discord/heatmap/{token}'
     timeout = aiohttp.ClientTimeout(total=1200)
 
-    async with session.get(url,json=json, timeout=timeout) as r:
+    async with session.post(url,json=json, timeout=timeout) as r:
         if r.status == 200:
             data = await r.json()
             return data
