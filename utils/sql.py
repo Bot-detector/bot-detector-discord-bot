@@ -137,6 +137,27 @@ def get_paste_names(paste_soup):
     return Set
 
 
+def get_ghostbin_paste_names(paste_soup):
+    Set = set()
+    lines = paste_soup.select('body > div.container > textarea').pop().decode_contents()
+    lines = lines.splitlines()
+
+    for line in lines:
+        L = re.fullmatch('[\w\d _-]{1,12}', line)
+        if L:
+            Set.add(line)
+
+    if len(Set) == 0:
+        raise MissingNamesError
+
+    return Set
+
+
 def get_paste_label(paste_soup):
     label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()
+    return label.replace('/', "_").replace('\0', '_')
+
+
+def get_ghostbin_label(paste_soup):
+    label = paste_soup.select('body > div.container > h4').pop().text.strip().replace('raw', '')
     return label.replace('/', "_").replace('\0', '_')

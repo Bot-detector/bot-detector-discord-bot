@@ -1,4 +1,5 @@
 import os
+import re
 from inspect import cleandoc
 
 import pandas as pd
@@ -48,43 +49,67 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
         sqlPlayersInsert = "INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)"
         sqlInsertPlayerLabel = "INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)"
 
-        try:
+
+        domain = re.search('https?://([A-Za-z_0-9.-]+).*', paste_url).group(1)
+
+       
+        if domain == "ghostbin.com":
+            
             paste_soup = sql.get_paste_data(paste_url)
-            List = sql.get_paste_names(paste_soup)
-            labelCheck = sql.get_paste_label(paste_soup)
+            List = sql.get_ghostbin_paste_names(paste_soup)
+            labelCheck = sql.get_ghostbin_label(paste_soup)
             sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
             sql.InsertPlayers(sqlPlayersInsert, List)
             dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
-            embed = discord.Embed(
-                title="Success!", 
-                description="Your Pastebin list submission was received successfully.",
-                color=discord.Colour.green()
-            )
-            embed.set_footer(text="Please note that names submitted via Pastebin are not attributed to the submitter and will not show up in your !kc totals. Only in-game sightings and flags submitted via the plugin contribute to those stats.")
-            await ctx.reply(embed=embed)
 
-        except sql.MissingNamesError:
-            await ctx.reply("The Pastebin list you've submitted appears to be empty.")
+        elif domain == "pastebin.com":
 
-        except sql.InvalidPasteTitleError:
-            await ctx.reply("The Pastebin title submitted was invalid. Please remove any special characters and try again.")
+            try:
+                paste_soup = sql.get_paste_data(paste_url)
+                List = sql.get_paste_names(paste_soup)
+                labelCheck = sql.get_paste_label(paste_soup)
+                sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+                sql.InsertPlayers(sqlPlayersInsert, List)
+                dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+                playerID = sql.PlayerID(sqlPlayerID, List)
+                sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+
+            except sql.MissingNamesError:
+                await ctx.reply("The list you've submitted appears to be empty.")
+                return
+
+            except sql.InvalidPasteTitleError:
+                await ctx.reply("The Pastebin title submitted was invalid. Please remove any special characters and try again.")
+                return
+                
+            except Exception as e:
+                errors = str(e)
+                await ctx.reply("There was an error parsing your list submission.")
+                await send_list_digest(self, paste_url, errors)
+                return
             
-        except Exception as e:
-            errors = str(e)
-            await ctx.reply("There was an error parsing your list submission.")
 
-        msg = cleandoc(f"""```diff
-            Paste Information Submitted
+        embed = discord.Embed(
+            title="Success!", 
+            description="Your submission was received successfully.",
+            color=discord.Colour.green()
+        )
+        embed.set_footer(text="Please note that names submitted via !submit are not attributed to the submitter and will not show up in your !kc totals. Only in-game sightings and flags submitted via the plugin contribute to those stats.")
+        await ctx.reply(embed=embed)
+
+
+async def send_list_digest(self, paste_url, errors):
+    msg = cleandoc(f"""```diff
+        Paste Information Submitted
             _____________________
-            Link: {paste_url}
-            Errors: {errors}
-        ```""")
-
-        recipient = await self.bot.fetch_user(int(os.getenv('SUBMIT_RECIPIENT')))
-        await recipient.send(msg)
+        Link: {paste_url}
+        Errors: {errors}
+    ```""")
+    recipient = await self.bot.fetch_user(int(os.getenv('SUBMIT_RECIPIENT')))
+    await recipient.send(msg)
         
         
 def setup(bot):
