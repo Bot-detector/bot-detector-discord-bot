@@ -41,17 +41,16 @@ special_roles = {
 
 
 #Gets bans from all accounts passed in
-async def get_multi_player_bans(session, verifiedPlayers):
+async def get_multi_player_bans(session, verifiedPlayers) -> int:
 
     timeout = ClientTimeout(total=1200)
 
-    async with session.get(url="https://www.osrsbotdetector.com/dev/stats/contributions/", json=verifiedPlayers, timeout=timeout) as r:
+    async with session.post(url="https://www.osrsbotdetector.com/dev/stats/contributions/", json=verifiedPlayers, timeout=timeout) as r:
         if r.status != 200:
-            return #TODO Figure out what to do here haha
+            return 0 #TODO Figure out what to do here haha
 
         js = await r.json()
         return int(js['total']['bans'])
-
 
 
 async def get_bot_hunter_role(session, verifiedPlayers, member):
