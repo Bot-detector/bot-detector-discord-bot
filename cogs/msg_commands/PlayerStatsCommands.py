@@ -335,7 +335,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         prediction =  js.get("prediction_label")
         player_id =   js.get("player_id")
         confidence =  js.get("prediction_confidence")
-        secondaries = js.get("secondary_predictions")
+        secondaries = js.get("predictions_breakdown")
 
         msg = cleandoc(f"""```diff
             + Name: {name}
@@ -345,13 +345,16 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         """)
 
         if secondaries is not None:
+            #Sorts the secondary predictions dictionary in descending order by confidence value
+            secondaries = {k: v for k, v in sorted(secondaries.items(), key=lambda item: item[1], reverse=True)} 
+
             msg += "\n"
             msg += cleandoc("Prediction Likelihoods\n=======================")
             msg += "\n"
 
-            for predict in secondaries:
+            for label, confidence in secondaries.items():
                 msg += cleandoc(f"""
-                    {utils.plus_minus(predict[0], 'Real_Player')} {predict[0]}: {predict[1] * 100:.2f}%
+                    {utils.plus_minus(label, 'Real_Player')} {label}: {confidence * 100:.2f}%
                 """)
 
                 msg += "\n"
