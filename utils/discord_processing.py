@@ -95,7 +95,7 @@ async def get_latest_runelite_version(session: aiohttp.ClientSession):
 
 
 async def get_players(session: aiohttp.ClientSession, player_names, token: str):
-    url = f'{BASE_URL}/dev/v1/player/bulk?token={token}'
+    url = f'{BASE_URL}/v1/player/bulk?token={token}'
 
     req_payload = {
         "player_name":  player_names
