@@ -43,9 +43,16 @@ async def get_verified_player_info(session: aiohttp.ClientSession, player_name, 
 
 
 async def post_discord_player_info(session: aiohttp.ClientSession, discord_id, player_name, code, token):
-    url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}/{discord_id}/{player_name}/{code}'
+    #url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}/{discord_id}/{player_name}/{code}'
+    url = f'http://localhost:8000/discord/verify/insert_player_dpc/{token}'
 
-    async with session.post(url) as r:
+    verify_info = {
+        "discord_id": discord_id,
+        "player_name": player_name,
+        "code": code
+    }
+
+    async with session.post(url, json=verify_info) as r:
         return await r.json() if r.status == 200 else {"error":f"Failed: {r.status} error"}
 
 
