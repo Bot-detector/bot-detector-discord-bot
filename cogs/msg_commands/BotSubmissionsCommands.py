@@ -41,7 +41,6 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
 
     @commands.command(description=help_messages.submit_help_msg)
     async def submit(self, ctx, paste_url):
-        errors = "No Errors"
 
         sqlLabelID = "SELECT ID FROM `labels_submitted` WHERE Label = %s"
         sqlPlayerID = "SELECT ID FROM `players_submitted` WHERE Players = %s"
@@ -49,9 +48,7 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
         sqlPlayersInsert = "INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)"
         sqlInsertPlayerLabel = "INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)"
 
-
         domain = re.search('https?://([A-Za-z_0-9.-]+).*', paste_url).group(1)
-
        
         if domain == "ghostbin.com":
             
@@ -64,33 +61,20 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
-
         elif domain == "pastebin.com":
+            paste_soup = sql.get_paste_data(paste_url)
+            List = sql.get_paste_names(paste_soup)
+            labelCheck = sql.get_paste_label(paste_soup)
+            sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
+            sql.InsertPlayers(sqlPlayersInsert, List)
+            dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
+            playerID = sql.PlayerID(sqlPlayerID, List)
+            sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
-            try:
-                paste_soup = sql.get_paste_data(paste_url)
-                List = sql.get_paste_names(paste_soup)
-                labelCheck = sql.get_paste_label(paste_soup)
-                sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
-                sql.InsertPlayers(sqlPlayersInsert, List)
-                dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
-                playerID = sql.PlayerID(sqlPlayerID, List)
-                sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+        else:
+            await ctx.reply("We currently only support ghostbin.com and passtebin.com pastes.")
+            return
 
-            except sql.MissingNamesError:
-                await ctx.reply("The list you've submitted appears to be empty.")
-                return
-
-            except sql.InvalidPasteTitleError:
-                await ctx.reply("The Pastebin title submitted was invalid. Please remove any special characters and try again.")
-                return
-                
-            except Exception as e:
-                errors = str(e)
-                await ctx.reply("There was an error parsing your list submission.")
-                await send_list_digest(self, paste_url, errors)
-                return
-            
 
         embed = discord.Embed(
             title="Success!", 
@@ -99,17 +83,6 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
         )
         embed.set_footer(text="Please note that names submitted via !submit are not attributed to the submitter and will not show up in your !kc totals. Only in-game sightings and flags submitted via the plugin contribute to those stats.")
         await ctx.reply(embed=embed)
-
-
-async def send_list_digest(self, paste_url, errors):
-    msg = cleandoc(f"""```diff
-        Paste Information Submitted
-            _____________________
-        Link: {paste_url}
-        Errors: {errors}
-    ```""")
-    recipient = await self.bot.fetch_user(int(os.getenv('SUBMIT_RECIPIENT')))
-    await recipient.send(msg)
         
         
 def setup(bot):
