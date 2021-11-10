@@ -39,7 +39,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
 
-    @commands.command(name="meow", description=help_messages.meow_help_msg)
+    @commands.command(name="meow", aliases=["kitty", "cat"],description=help_messages.meow_help_msg)
     async def meow(self, ctx):
         url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
 
