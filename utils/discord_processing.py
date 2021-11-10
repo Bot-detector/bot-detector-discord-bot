@@ -43,8 +43,7 @@ async def get_verified_player_info(session: aiohttp.ClientSession, player_name, 
 
 
 async def post_discord_player_info(session: aiohttp.ClientSession, discord_id, player_name, code, token):
-    #url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}/{discord_id}/{player_name}/{code}'
-    url = f'http://localhost:8000/discord/verify/insert_player_dpc/{token}'
+    url = f'{BASE_URL}/discord/verify/insert_player_dpc/{token}'
 
     verify_info = {
         "discord_id": discord_id,
