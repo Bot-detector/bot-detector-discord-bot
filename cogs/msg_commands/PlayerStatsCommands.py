@@ -1,11 +1,10 @@
 import os
+import re
 from inspect import cleandoc
 
 import json
 import OSRS_Hiscores
 import discord
-import asyncio
-import random
 import zipfile as zip
 from discord import player
 from osrsbox import items_api
@@ -205,6 +204,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         async with self.bot.session.post(url=url, json=accounts, timeout=timeout) as r:
             if r.status != 200:
+                print(r.status)
+                print(r)
                 return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
             js = await r.json()
 
@@ -555,12 +556,21 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
 
     @commands.command(aliases=["ban_list_check", "ban_check", "bans_check", "check_bans"])
-    async def ban_list(self, ctx, pastebin_url):
-        paste_soup = sql.get_paste_data(pastebin_url)
-        names_list = sql.get_paste_names(paste_soup)
-        raw_label = sql.get_paste_label(paste_soup)
-        label = ''.join(c for c in raw_label if c.isalnum())
+    async def ban_list(self, ctx, paste_url):
 
+        domain = re.search('https?:\/\/([A-Za-z_0-9.-]+).*', paste_url).group(1)
+
+        paste_soup = sql.get_paste_data(paste_url)
+
+        if "ghostbin.com" in domain:
+            names_list = sql.get_ghostbin_paste_names(paste_soup)
+            raw_label = sql.get_ghostbin_label(paste_soup)
+            label = ''.join(c for c in raw_label if c.isalnum())
+
+        elif "pastebin.com" in domain:
+            names_list = sql.get_paste_names(paste_soup)
+            raw_label = sql.get_paste_label(paste_soup)
+            label = ''.join(c for c in raw_label if c.isalnum())
 
         #Setting up the names list to be JSON parseable on FastAPI
         names_list = [name for name in names_list if string_processing.is_valid_rsn(name)]

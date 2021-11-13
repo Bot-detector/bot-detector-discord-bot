@@ -48,10 +48,9 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
         sqlPlayersInsert = "INSERT IGNORE `players_submitted`(`Players`) VALUES (%s)"
         sqlInsertPlayerLabel = "INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)"
 
-        domain = re.search('https?://([A-Za-z_0-9.-]+).*', paste_url).group(1)
+        domain = re.search('https?:\/\/([A-Za-z_0-9.-]+).*', paste_url).group(1)
        
-        if domain == "ghostbin.com":
-            
+        if "ghostbin.com" in domain:
             paste_soup = sql.get_paste_data(paste_url)
             List = sql.get_ghostbin_paste_names(paste_soup)
             labelCheck = sql.get_ghostbin_label(paste_soup)
@@ -61,7 +60,7 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
 
-        elif domain == "pastebin.com":
+        elif "pastebin.com" in domain:
             paste_soup = sql.get_paste_data(paste_url)
             List = sql.get_paste_names(paste_soup)
             labelCheck = sql.get_paste_label(paste_soup)
