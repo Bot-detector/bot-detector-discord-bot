@@ -354,11 +354,13 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             msg += "\n"
 
             for label, confidence in secondaries.items():
-                msg += cleandoc(f"""
-                    {utils.plus_minus(label, 'Real_Player')} {label}: {confidence * 100:.2f}%
-                """)
 
-                msg += "\n"
+                if confidence > 0:
+                    msg += cleandoc(f"""
+                        {utils.plus_minus(label, 'Real_Player')} {label}: {confidence * 100:.2f}%
+                    """)
+
+                    msg += "\n"
 
         msg += "```"
 
