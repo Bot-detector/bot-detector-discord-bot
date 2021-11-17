@@ -58,9 +58,7 @@ class InfoCommands(CommonCog, name='General Info Commands'):
         bot_embed.add_field(name="Have enough for a new role?", value="Use `!rankup` in <#825189024074563614>", inline=False)
         special_roles_embed = discord.Embed(title="Special Roles")
 
-        for k, v in roles.special_roles.items():
-            role_description = v["description"]
-            special_roles_embed.add_field(name=k, value=f"{role_description}", inline=False)
+        special_roles_embed.add_field(name="🎊🎊🎊", value=f"Once you have linked at least one OSRS account you can add additional roles to your account in <#899651226352877618>", inline=False)
 
         await ctx.send(embed=bot_embed)
         await ctx.send(embed=special_roles_embed)
