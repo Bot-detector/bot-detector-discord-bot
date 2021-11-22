@@ -15,7 +15,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
     @commands.command(description=help_messages.poke_help_msg)
     async def poke(self, ctx):
         start = time.perf_counter()
-        async with self.bot.session.get("https://www.osrsbotdetector.com/dev/") as r:
+        async with self.bot.session.get("https://www.osrsbotdetector.com/api/") as r:
             if r.status == 200:
                 delta = time.perf_counter() - start
                 serverStatus = "Online"

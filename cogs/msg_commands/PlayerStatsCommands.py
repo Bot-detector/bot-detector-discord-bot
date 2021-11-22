@@ -195,10 +195,10 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         if(await checks.check_patron(ctx)):
             patron = True
-            url = f"https://www.osrsbotdetector.com/dev/stats/contributions?token={token}"
+            url = f"https://www.osrsbotdetector.com/api/stats/contributions?token={token}"
         else:
             patron=False
-            url = "https://www.osrsbotdetector.com/dev/stats/contributions/"
+            url = "https://www.osrsbotdetector.com/api/stats/contributions/"
 
         timeout = ClientTimeout(total=1200)
 
@@ -326,7 +326,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         #player_name = string_processing.to_jagex_name(player_name)
 
-        async with self.bot.session.get(f"https://www.osrsbotdetector.com/dev/v1-bot/site/prediction/{player_name}") as r:
+        async with self.bot.session.get(f"https://www.osrsbotdetector.com/api/v1-bot/site/prediction/{player_name}") as r:
             if r.status != 200:
                 return await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
 
@@ -391,7 +391,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         timeout = ClientTimeout(total=1200)
 
         async with self.bot.session.post(
-            url=f"https://www.osrsbotdetector.com/dev/discord/player_bans/{token}",
+            url=f"https://www.osrsbotdetector.com/api/discord/player_bans/{token}",
             json=req_payload,
             timeout=timeout
         ) as r:
@@ -411,7 +411,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                 else:
                     res_data = data
 
-            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/dev/discord/download_export/{res_data['url']}")
+            await ctx.author.send(f"Here's your link! https://www.osrsbotdetector.com/api/discord/download_export/{res_data['url']}")
 
             await info_msg.delete()
 
@@ -436,7 +436,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         }
 
         async with self.bot.session.post(
-            url=f"https://www.osrsbotdetector.com/dev/discord/get_latest_sighting/{token}",
+            url=f"https://www.osrsbotdetector.com/api/discord/get_latest_sighting/{token}",
             json=req_payload
         ) as r:
             if r.status == 200:
@@ -488,7 +488,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         }
 
         async with self.bot.session.post(
-            url=f"https://www.osrsbotdetector.com/dev/discord/get_xp_gains/{token}",
+            url=f"https://www.osrsbotdetector.com/api/discord/get_xp_gains/{token}",
             json=req_payload
         ) as r:
             if r.status == 200:
