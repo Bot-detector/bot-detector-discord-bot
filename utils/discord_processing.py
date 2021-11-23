@@ -6,7 +6,7 @@ import aiohttp
 import json
 from discord.errors import HTTPException
 
-BASE_URL = 'https://www.osrsbotdetector.com/dev'
+BASE_URL = 'https://www.osrsbotdetector.com/api'
 
 async def get_player_verification_full_status(session: aiohttp.ClientSession, player_name: str, token: str):
     url = f'{BASE_URL}/discord/verify/player_rsn_discord_account_status/{token}/{player_name}'
