@@ -400,11 +400,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
         ) as r:
 
             if r.status != 200:
-                data = await r.read()
-                data = data.decode("utf-8")
-                
                 await info_msg.delete()
-                return await ctx.reply(f"{data}")
+                return await ctx.reply("I couldn't get your !execelbans export.")
             else:
                 data = await r.read()
                 data = data.decode("utf-8")
