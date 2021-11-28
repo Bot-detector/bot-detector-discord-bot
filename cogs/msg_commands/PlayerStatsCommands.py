@@ -162,6 +162,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     @commands.command(aliases=["killcount"], description=help_messages.kc_help_msg)
     async def kc(self, ctx, *, player_name=None):
         if not player_name:
+
+            caller_name = ctx.author.display_name
+
             accounts = await discord_processing.get_linked_accounts(self.bot.session, ctx.author.id, token)
 
             if not accounts:
@@ -182,6 +185,8 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
             embed = discord.Embed(title=f"{ctx.author.display_name}'s Stats", color=0x00ff00)
 
         elif utils.is_valid_rsn(player_name):
+
+            caller_name = player_name
 
             embed = discord.Embed(title=f"{player_name}'s Stats", color=0x00ff00)
 
@@ -204,9 +209,7 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
 
         async with self.bot.session.post(url=url, json=accounts, timeout=timeout) as r:
             if r.status != 200:
-                print(r.status)
-                print(r)
-                return await ctx.reply(f"Couldn't grab the !kc for {ctx.author.display_name}")
+                return await ctx.reply(f"Couldn't grab the !kc for {caller_name}")
             js = await r.json()
 
         embed = await self.assemble_kc_embed(embed=embed, js=js, is_patron=patron)
