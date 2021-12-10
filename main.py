@@ -1,15 +1,20 @@
 import os
 import asyncio
+import datetime
+import json
 import uvloop
 import traceback
 from inspect import cleandoc
+from json import JSONDecodeError
+from typing import List
 
 import aiohttp
 import discord
 print(discord.__version__)
-from discord.ext import commands
+from discord.ext import commands, tasks
 from dotenv import load_dotenv
-from utils import roles
+from utils import roles, string_processing
+from utils.discord_processing import get_latest_feedback, get_player
 
 
 # Load files
@@ -114,6 +119,76 @@ async def on_command_error(ctx, error):
         )
 
 
+#Recurring Tasks
+@tasks.loop(minutes=5, count=None, reconnect=True)
+async def post_user_feedback(session: aiohttp.ClientSession):
+    with open("store.json", "r") as store:
+        try:
+            data = json.load(store)
+            latest_id = data[-1].get("latest_id", 0)
+        except JSONDecodeError:
+            return
+
+    feedback = await get_latest_feedback(token=os.getenv("API_AUTH_TOKEN"), session=session, latest_id=latest_id)
+
+    if len(feedback) == 0:
+        print("No new feedback to broadcast.")
+        return
+
+    with open("store.json", "w+") as store:
+        lastest_feedback_id = feedback[-1].get('id')
+
+        json.dump([{"latest_id": lastest_feedback_id}], store)
+
+    feedback_to_broadcast = [f for f in feedback if f.get('id', 0) > latest_id]
+
+    await broadcast_feedback(feedback_to_broadcast)
+
+    return
+
+
+async def broadcast_feedback(feedback_to_broadcast: List[dict]):
+    feedback_channel = bot.get_channel(841366652935471135)
+
+    for f in feedback_to_broadcast:
+        voter   = await get_player(session=session, token=os.getenv("API_AUTH_TOKEN"), player_id=f.get('voter_id'))
+        subject = await get_player(session=session, token=os.getenv("API_AUTH_TOKEN"), player_id=f.get('subject_id'))
+
+        if f.get("vote") == 1:
+            embed_color=0x009302
+            vote_name="Looks good!"
+        elif f.get("vote") == 0:
+            embed_color=0x6A6A6A
+            vote_name="Not sure.."
+        else:
+            embed_color=0xFF0000
+            vote_name="Looks wrong."
+
+        embed = discord.Embed(title="New Feedback Submission", color=embed_color)
+        embed.add_field(name="Voter Name", value=f"{voter.get('name')}", inline=False)
+        embed.add_field(name="Subject Name", value=f"{subject.get('name')}", inline=False)
+        embed.add_field(name="Prediction", value=f"{f.get('prediction').replace('_', ' ')}")
+        embed.add_field(name="Confidence", value=f"{f.get('confidence') * 100:.2f}%")
+        embed.add_field(name="Vote", value=f"{vote_name}", inline=False)
+        embed.add_field(name="Explanation", value=f"{string_processing.escape_markdown(f.get('feedback_text'))}", inline=False)
+
+        if f.get("vote") == -1 and f.get("proposed_label"):
+            embed.add_field(name="Proposed Label", value=f"{f.get('proposed_label').replace('_', ' ')}")
+
+        embed.set_footer(text=datetime.datetime.utcnow().strftime('%a %B %d %Y  %I:%M:%S %p'))
+        
+        await feedback_channel.send(embed=embed)
+        await asyncio.sleep(2)
+
+    return
+
+
+@post_user_feedback.before_loop
+async def before_post_user_feedback():
+    await asyncio.sleep(5)
+    print("Feedback monitoring and posting is now active.")
+
+
 async def send_error_message(ctx, error, tb):
     # Cleandoc was being really annoying for this, would be multiline str but was having issues.
     error_message =  f"`{ctx.author}` running `{ctx.command}` caused `{error.__class__.__name__}`\n"
@@ -141,6 +216,7 @@ async def startup():
             bot.error_file = error_file
             bot.loop = asyncio.get_event_loop()
 
+            post_user_feedback.start(session)
             await bot.start(os.getenv("TOKEN"))
 
     print("Bot is going night-night.")
