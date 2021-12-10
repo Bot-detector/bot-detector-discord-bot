@@ -122,7 +122,7 @@ async def on_command_error(ctx, error):
 #Recurring Tasks
 @tasks.loop(minutes=5, count=None, reconnect=True)
 async def post_user_feedback(session: aiohttp.ClientSession):
-    with open("store.json", "r") as store:
+    with open("./data/store.json", "r") as store:
         try:
             data = json.load(store)
             latest_id = data[-1].get("latest_id", 0)
@@ -135,7 +135,7 @@ async def post_user_feedback(session: aiohttp.ClientSession):
         print("No new feedback to broadcast.")
         return
 
-    with open("store.json", "w+") as store:
+    with open("./data/store.json", "w+") as store:
         lastest_feedback_id = feedback[-1].get('id')
 
         json.dump([{"latest_id": lastest_feedback_id}], store)
