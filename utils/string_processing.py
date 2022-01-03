@@ -34,3 +34,9 @@ def stats_are_equal(player1: Hiscores, player2: Hiscores) -> bool:
             return False
     
     return True
+
+def escape_markdown(s):
+    markdown_escape_map = {'_' : '\\_', '*' : '\\*', '<': '\\<', '@': '\\@', '//': '\\//'}
+    for search, replace in markdown_escape_map.items():
+        s = s.replace(search, replace)
+    return s 

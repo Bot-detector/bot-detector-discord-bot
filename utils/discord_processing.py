@@ -1,9 +1,6 @@
-from json.decoder import JSONDecodeError
-from os import stat
 from typing import Optional, Dict, List
 
 import aiohttp
-import json
 from discord.errors import HTTPException
 
 BASE_URL = 'https://www.osrsbotdetector.com/api'
@@ -114,5 +111,27 @@ async def get_players(session: aiohttp.ClientSession, player_names, token: str):
         if r.status == 200:
             players = await r.json()
             return players
+
+    raise HTTPException(r.status, "Could not grab data.")
+
+
+async def get_latest_feedback(session: aiohttp.ClientSession, token: str, latest_id: int):
+    url = f"{BASE_URL}/v1/feedback/?token={token}&since_id={latest_id}&has_text=True"
+
+    async with session.get(url=url) as r:
+        if r.status == 200:
+            feedback = await r.json()
+            return feedback
+
+    raise HTTPException(r.status, "Could not grab data.")
+
+
+async def get_player(session: aiohttp.ClientSession, token: str, player_id: int):
+    url = f"{BASE_URL}/v1/player/?token={token}&player_id={player_id}"
+
+    async with session.get(url=url) as r:
+        if r.status == 200:
+            player = await r.json()
+            return player[0]
 
     raise HTTPException(r.status, "Could not grab data.")
