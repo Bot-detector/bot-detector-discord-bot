@@ -34,6 +34,6 @@ spec:
         imagePullPolicy: Always
         volumeMounts:
         - name: discord-storage
-          mountPath: /data
+          mountPath: /code/data
       imagePullSecrets:
       - name: regcred
