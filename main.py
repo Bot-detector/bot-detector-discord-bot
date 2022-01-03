@@ -142,12 +142,12 @@ async def post_user_feedback(session: aiohttp.ClientSession):
 
     feedback_to_broadcast = [f for f in feedback if f.get('id', 0) > latest_id]
 
-    await broadcast_feedback(feedback_to_broadcast)
+    await broadcast_feedback(feedback_to_broadcast, session)
 
     return
 
 
-async def broadcast_feedback(feedback_to_broadcast: List[dict]):
+async def broadcast_feedback(feedback_to_broadcast: List[dict], session: aiohttp.ClientSession):
     feedback_channel = bot.get_channel(841366652935471135)
 
     for f in feedback_to_broadcast:
