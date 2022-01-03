@@ -9,4 +9,4 @@ venv/
 .idea/
 error.log
 *.bak
-store.json
+data/store.json
