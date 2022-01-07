@@ -515,6 +515,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
                     k = " ".join(k.split("_"))
                     k = k.capitalize()
 
+                    if v is None:
+                        v = 0
+
                     if v > 0:
                         embed.add_field(name=k, value=f"{v:,d}", inline=True)
                         diffs += 1
