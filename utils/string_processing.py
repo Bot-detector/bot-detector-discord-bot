@@ -7,7 +7,9 @@ def is_valid_rsn(rsn):
     return re.fullmatch("[\w\d _-]{1,12}", rsn)
 
 def id_generator(size=4, chars=string.digits):
-    return ''.join(random.choice(chars) for _ in range(size))
+    code = ''.join(random.choice(chars) for _ in range(size))
+     #Add leading zeroes if int(code) < 1000.
+    return code.zfill((4 - len(code) + len(code)))
 
 def to_jagex_name(name: str) -> str:
     #Allow for special characters as the first character of RSNs
@@ -39,4 +41,4 @@ def escape_markdown(s):
     markdown_escape_map = {'_' : '\\_', '*' : '\\*', '<': '\\<', '@': '\\@', '//': '\\//'}
     for search, replace in markdown_escape_map.items():
         s = s.replace(search, replace)
-    return s 
+    return s
