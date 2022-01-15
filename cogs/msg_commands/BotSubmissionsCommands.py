@@ -1,4 +1,3 @@
-import os
 import re
 from inspect import cleandoc
 
@@ -49,23 +48,21 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
         sqlInsertPlayerLabel = "INSERT IGNORE `playerlabels_submitted`(`Player_ID`, `Label_ID`) VALUES (%s, %s)"
 
         domain = re.search('https?:\/\/([A-Za-z_0-9.-]+).*', paste_url).group(1)
+        paste_id = re.search('([^\/]+$)', paste_url).group(0)
+
+        print(f"{domain} and {paste_id}")
        
         if "ghostbin.com" in domain:
-            paste_soup = sql.get_paste_data(paste_url)
-            List = sql.get_ghostbin_paste_names(paste_soup)
-            labelCheck = sql.get_ghostbin_label(paste_soup)
-            sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
-            sql.InsertPlayers(sqlPlayersInsert, List)
-            dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
-            playerID = sql.PlayerID(sqlPlayerID, List)
-            sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)
+            #Ghostbin has enabled Cloudflare protections, and we can longer scrape without workarounds.
+            ctx.send("<@&817917814798155866> A new Ghostbin paste for you!")
 
         elif "pastebin.com" in domain:
-            paste_soup = sql.get_paste_data(paste_url)
-            List = sql.get_paste_names(paste_soup)
-            labelCheck = sql.get_paste_label(paste_soup)
+            List = sql.get_paste_names(paste_id)
+            labelCheck = sql.get_paste_label(paste_id)
+
             sql.execute_sql(sqlLabelInsert, insert=True, param=[labelCheck])
             sql.InsertPlayers(sqlPlayersInsert, List)
+
             dfLabelID = pd.DataFrame(sql.execute_sql(sqlLabelID, insert=False, param=[labelCheck]))
             playerID = sql.PlayerID(sqlPlayerID, List)
             sql.InsertPlayerLabel(sqlInsertPlayerLabel, playerID, dfLabelID)

@@ -116,20 +116,27 @@ def PlayerID(sqlPlayerID, List):
     mydb.close()
     return playerID
 
+
 def get_paste_data(paste_url):
     paste_data = req.get(paste_url)
     paste_soup = BeautifulSoup(paste_data.content, 'html.parser')
     return paste_soup
 
 
-def get_paste_names(paste_soup):
+def get_paste_names(paste_id):
+
+    paste_soup = get_paste_data(f"https://pastebin.com/raw/{paste_id}")
+
     Set = set()
-    lines = paste_soup.findAll('textarea',{"class":"textarea"})[0].decode_contents()
+    lines = paste_soup.decode_contents()
     lines = lines.splitlines()
+
     for line in lines:
-        L = re.fullmatch('[\w\d _-]{1,12}', line)
+        clean_line = line.strip()
+
+        L = re.fullmatch('[\w\d _-]{1,12}', clean_line)
         if L:
-            Set.add(line)
+            Set.add(clean_line)
 
     if len(Set) == 0:
         raise MissingNamesError
@@ -137,27 +144,7 @@ def get_paste_names(paste_soup):
     return Set
 
 
-def get_ghostbin_paste_names(paste_soup):
-    Set = set()
-    lines = paste_soup.select('body > div.container > textarea').pop().decode_contents()
-    lines = lines.splitlines()
-
-    for line in lines:
-        L = re.fullmatch('[\w\d _-]{1,12}', line)
-        if L:
-            Set.add(line)
-
-    if len(Set) == 0:
-        raise MissingNamesError
-
-    return Set
-
-
-def get_paste_label(paste_soup):
+def get_paste_label(paste_id):
+    paste_soup = get_paste_data(f"https://pastebin.com/{paste_id}")
     label = paste_soup.findAll('div',{"class":"info-top"})[0].text.strip()
-    return label.replace('/', "_").replace('\0', '_')
-
-
-def get_ghostbin_label(paste_soup):
-    label = paste_soup.select('body > div.container > h4').pop().text.strip().replace('raw', '')
     return label.replace('/', "_").replace('\0', '_')
