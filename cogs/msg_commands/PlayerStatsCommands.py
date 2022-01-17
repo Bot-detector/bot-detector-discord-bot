@@ -563,6 +563,9 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     @commands.command(aliases=["ban_list_check", "ban_check", "bans_check", "check_bans"])
     async def ban_list(self, ctx, paste_url):
 
+        await ctx.reply("This command is temproarily disabled while a fix is pending to our backend.")
+        return
+
         domain = re.search('https?:\/\/([A-Za-z_0-9.-]+).*', paste_url).group(1)
         paste_id = re.search('([^\/]+$)', paste_url).group(0)
 

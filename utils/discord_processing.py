@@ -104,14 +104,14 @@ async def get_players(session: aiohttp.ClientSession, player_names, token: str):
         "player_name":  player_names
     }
 
-    async with session.post(
+    async with session.get(
         url=url,
         json=req_payload
     ) as r:
         if r.status == 200:
             players = await r.json()
             return players
-
+  
     raise HTTPException(r.status, "Could not grab data.")
 
 
