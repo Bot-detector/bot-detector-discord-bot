@@ -564,17 +564,15 @@ class PlayerStatsCommands(utils.CommonCog, name='Player Stats Commands'):
     async def ban_list(self, ctx, paste_url):
 
         domain = re.search('https?:\/\/([A-Za-z_0-9.-]+).*', paste_url).group(1)
+        paste_id = re.search('([^\/]+$)', paste_url).group(0)
 
-        paste_soup = sql.get_paste_data(paste_url)
 
         if "ghostbin.com" in domain:
-            names_list = sql.get_ghostbin_paste_names(paste_soup)
-            raw_label = sql.get_ghostbin_label(paste_soup)
-            label = ''.join(c for c in raw_label if c.isalnum())
+            await ctx.reply("Ghostbin isn't allowing bots to access it right now.")
 
         elif "pastebin.com" in domain:
-            names_list = sql.get_paste_names(paste_soup)
-            raw_label = sql.get_paste_label(paste_soup)
+            names_list = sql.get_paste_names(paste_id)
+            raw_label = sql.get_paste_label(paste_id)
             label = ''.join(c for c in raw_label if c.isalnum())
 
         #Setting up the names list to be JSON parseable on FastAPI

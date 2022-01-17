@@ -54,7 +54,7 @@ class BotSubmissionsCommands(CommonCog, name="Bot Submissions Commands"):
        
         if "ghostbin.com" in domain:
             #Ghostbin has enabled Cloudflare protections, and we can longer scrape without workarounds.
-            ctx.send("<@&817917814798155866> A new Ghostbin paste for you!")
+            await ctx.send("<@&817917814798155866> A new Ghostbin paste for you!")
 
         elif "pastebin.com" in domain:
             List = sql.get_paste_names(paste_id)
