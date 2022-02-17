@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
     image: bot-detector/bd-discord:latest
     environment:
-      - TOKEN=<YOUR_TOKEN_HERE>
+      - TOKEN=<YOUR TOKEN HERE>
       - COMMAND_PREFIX=!
       - DB_USER=botssuck
       - DB_PASS=botdetector
