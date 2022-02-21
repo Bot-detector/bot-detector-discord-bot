@@ -1,0 +1,62 @@
+version: '3'
+services:
+
+  mysql:
+    build:
+      context: ../bot-detector-mysql
+      dockerfile: Dockerfile
+    image: bot-detector/bd-mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_bot_buster
+      - MYSQL_USER=botssuck
+      - MYSQL_PASSWORD=botdetector
+    volumes:
+      - '../bot-detector-mysql/mount:/var/lib/mysql'
+    ports:
+      - "3306:3306"
+    networks:
+      - botdetector-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        root_path: /
+        api_port: 5000
+    image: bot-detector/bd-api:latest
+    environment:
+      - sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/playerdata_dev
+      - discord_sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/discord_dev
+      - token=verify_ban
+    volumes: 
+      - '../Bot-Detector-Core-Files/api:/code/api'
+    ports:
+      - "5000:5000"
+    networks:
+      - botdetector-network
+    depends_on:
+      - mysql
+    
+  discord:
+    build:
+      context: ../bot-detector-discord-bot
+      dockerfile: Dockerfile
+    image: bot-detector/bd-discord:latest
+    environment:
+      - TOKEN=<YOUR TOKEN HERE>
+      - COMMAND_PREFIX=!
+      - DB_USER=botssuck
+      - DB_PASS=botdetector
+      - DB_HOST=mysql:3306
+      - DB_NAME_SUBMISSIONS=discord_dev
+      - DB_NAME_PLAYERS=playerdata_dev
+      - API_AUTH_TOKEN=verify_ban
+      - SUBMIT_RECIPIENT=178965680266149888
+    networks:
+      - botdetector-network
+    depends_on:
+      - api
+
+networks:
+  botdetector-network:
