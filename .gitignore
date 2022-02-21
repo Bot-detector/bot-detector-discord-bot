@@ -9,7 +9,5 @@ venv/
 .idea/
 error.log
 *.bak
-docker-compose.yaml
 data/store.json
-
 docker-compose.yaml

@@ -1,7 +1,7 @@
-import os
 import asyncio
 import datetime
 import json
+import os
 import traceback
 from inspect import cleandoc
 from json import JSONDecodeError
@@ -9,10 +9,11 @@ from typing import List
 
 import aiohttp
 import discord
-from discord.ext import commands
-
+from discord.ext import commands, tasks
 
 import config
+from utils import discord_processing, string_processing
+from cogs.msg_commands import InfoCommands
 
 print(f"{discord.__version__=}")
 # Define constants
@@ -23,13 +24,7 @@ EASTER_EGGS = {
     "a q p": "( ͡° ͜ʖ ͡°)",
 }
 
-banned_clients = [
-    "openosrs",
-    "bluelite",
-    "runeliteplus",
-    "run-elite",
-    "meteorlite"
-]
+banned_clients = ["openosrs", "bluelite", "runeliteplus", "run-elite", "meteorlite"]
 
 # Define bot
 description = cleandoc(
@@ -40,7 +35,9 @@ description = cleandoc(
 )
 
 activity = discord.Game("Bustin' Bots", type=discord.ActivityType.watching)
-intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True, presences=True)
+intents = discord.Intents(
+    messages=True, guilds=True, members=True, reactions=True, presences=True
+)
 bot = commands.Bot(
     allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, users=True),
     command_prefix=config.COMMAND_PREFIX,
@@ -70,11 +67,11 @@ async def on_disconnect():
 @bot.event
 async def on_member_update(before: discord.Member, after: discord.Member):
     try:
-        if(after.activity.name.lower() in banned_clients):
-            await roles.add_banned_client_role(after)
+        if after.activity.name.lower() in banned_clients:
+            await InfoCommands.roles.add_banned_client_role(after)
 
     except AttributeError:
-        #no activity
+        # no activity
         pass
 
 
@@ -125,7 +122,7 @@ async def on_command_error(ctx, error):
         )
 
 
-#Recurring Tasks
+# Recurring Tasks
 @tasks.loop(minutes=5, count=None, reconnect=True)
 async def post_user_feedback(session: aiohttp.ClientSession):
     with open("./data/store.json", "r") as store:
@@ -135,54 +132,79 @@ async def post_user_feedback(session: aiohttp.ClientSession):
         except JSONDecodeError:
             return
 
-    feedback = await get_latest_feedback(token=os.getenv("API_AUTH_TOKEN"), session=session, latest_id=latest_id)
+    feedback = await discord_processing.get_latest_feedback(
+        token=os.getenv("API_AUTH_TOKEN"), session=session, latest_id=latest_id
+    )
 
     if len(feedback) == 0:
         print("No new feedback to broadcast.")
         return
 
     with open("./data/store.json", "w+") as store:
-        lastest_feedback_id = feedback[-1].get('id')
+        lastest_feedback_id = feedback[-1].get("id")
 
         json.dump([{"latest_id": lastest_feedback_id}], store)
 
-    feedback_to_broadcast = [f for f in feedback if f.get('id', 0) > latest_id]
+    feedback_to_broadcast = [f for f in feedback if f.get("id", 0) > latest_id]
 
     await broadcast_feedback(feedback_to_broadcast, session)
 
     return
 
 
-async def broadcast_feedback(feedback_to_broadcast: List[dict], session: aiohttp.ClientSession):
+async def broadcast_feedback(
+    feedback_to_broadcast: List[dict], session: aiohttp.ClientSession
+):
     feedback_channel = bot.get_channel(841366652935471135)
 
     for f in feedback_to_broadcast:
-        voter   = await get_player(session=session, token=os.getenv("API_AUTH_TOKEN"), player_id=f.get('voter_id'))
-        subject = await get_player(session=session, token=os.getenv("API_AUTH_TOKEN"), player_id=f.get('subject_id'))
+        voter = await discord_processing.get_player(
+            session=session,
+            token=os.getenv("API_AUTH_TOKEN"),
+            player_id=f.get("voter_id"),
+        )
+        subject = await discord_processing.get_player(
+            session=session,
+            token=os.getenv("API_AUTH_TOKEN"),
+            player_id=f.get("subject_id"),
+        )
 
         if f.get("vote") == 1:
-            embed_color=0x009302
-            vote_name="Looks good!"
+            embed_color = 0x009302
+            vote_name = "Looks good!"
         elif f.get("vote") == 0:
-            embed_color=0x6A6A6A
-            vote_name="Not sure.."
+            embed_color = 0x6A6A6A
+            vote_name = "Not sure.."
         else:
-            embed_color=0xFF0000
-            vote_name="Looks wrong."
+            embed_color = 0xFF0000
+            vote_name = "Looks wrong."
 
         embed = discord.Embed(title="New Feedback Submission", color=embed_color)
         embed.add_field(name="Voter Name", value=f"{voter.get('name')}", inline=False)
-        embed.add_field(name="Subject Name", value=f"{subject.get('name')}", inline=False)
-        embed.add_field(name="Prediction", value=f"{f.get('prediction').replace('_', ' ')}")
+        embed.add_field(
+            name="Subject Name", value=f"{subject.get('name')}", inline=False
+        )
+        embed.add_field(
+            name="Prediction", value=f"{f.get('prediction').replace('_', ' ')}"
+        )
         embed.add_field(name="Confidence", value=f"{f.get('confidence') * 100:.2f}%")
         embed.add_field(name="Vote", value=f"{vote_name}", inline=False)
-        embed.add_field(name="Explanation", value=f"{string_processing.escape_markdown(f.get('feedback_text'))}", inline=False)
+        embed.add_field(
+            name="Explanation",
+            value=f"{string_processing.escape_markdown(f.get('feedback_text'))}",
+            inline=False,
+        )
 
         if f.get("vote") == -1 and f.get("proposed_label"):
-            embed.add_field(name="Proposed Label", value=f"{f.get('proposed_label').replace('_', ' ')}")
+            embed.add_field(
+                name="Proposed Label",
+                value=f"{f.get('proposed_label').replace('_', ' ')}",
+            )
 
-        embed.set_footer(text=datetime.datetime.utcnow().strftime('%a %B %d %Y  %I:%M:%S %p'))
-        
+        embed.set_footer(
+            text=datetime.datetime.utcnow().strftime("%a %B %d %Y  %I:%M:%S %p")
+        )
+
         await feedback_channel.send(embed=embed)
         await asyncio.sleep(2)
 
@@ -223,10 +245,11 @@ async def startup():
             bot.session = session
             bot.error_file = error_file
             bot.loop = asyncio.get_event_loop()
-            print(f'{config.TOKEN=}')
+            print(f"{config.TOKEN=}")
             await bot.start(config.TOKEN)
-
 
     print("Bot is going night-night.")
     await bot.close()
+
+
 asyncio.run(startup())
