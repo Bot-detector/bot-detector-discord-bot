@@ -14,7 +14,6 @@ birb_help_msg = "Display a small friend of the avarian variety for you to cheris
 
 bunny_help_msg = "A silly rabbit .gif, but for you!"
 
-
 ###########################
 # Info Commands
 ###########################
@@ -39,8 +38,6 @@ invite_help_msg = "Places an invite link to the Discord server in the chat. Feel
 issues_help_msg = "Having an issue with the plugin? !issues puts a link to #plugin-issues into the chat, where you can let us know."
 
 roles_help_msg = "Lists the Discord roles available to our users."
-
-labels_help_msg = "Lists the player labels that the ML model currently will try to identify players as. These will change over time."
 
 ###########################
 # Bot Submissions Commands
@@ -79,11 +76,12 @@ coords_help_msg = "EXPERIMENTAL - Usage: !coords <x y z zoom> More details to co
 ###########################
 # Player Stats Commands
 ###########################
+
 lookup_help_msg = "Usage: !lookup <player name> Places a table in chat show the hiscores entries for a player."
 
 kc_help_msg = clean("""
-    Usage: !kc <player name> Shows how many reports (passive and manual) a player has submitted through our plugin
-    and home many possible and confirmed bans have resulted from those reports.
+    Usage: !kc <player name> Shows how many sightings and flags a player has submitted through our plugin
+    and home many possible and confirmed bans have resulted from those uploads.
 """)
 
 rankup_help_msg = clean("""
@@ -92,10 +90,9 @@ rankup_help_msg = clean("""
     ID. The bot will tally up your KC from all accounts you have linked. This command will also give you the Verified RSN role.
 """)
 
-predict_help_msg = clean(r"""
+predict_help_msg = clean("""
     Usage: !predict <player name> Runs the player through our machine learning model
-    and displays the classifications the ML model assigns to the player. Note that any line with a confidence below
-    75% is insignificant.
+    and displays the classifications the ML model assigns to the player. Note that any line with a confidence below 75% is insignificant.
 """)
 
 excelban_help_msg = clean("""
@@ -104,17 +101,22 @@ excelban_help_msg = clean("""
     which have resulted in bans in an .xlsx file format.
 """)
 
-csvban_help_msg = clean("""
-    You must link your Discord account with an OSRS account in order to use this command. You will only be able
-    to retrieve exports for accounts you have linked to with !link. Exports the breakdown of player sightings you have submitted
-    which have resulted in bans in a .csv file format.
+equip_help_msg = clean("""
+    Shows the last equipment layout a player was seen in.
+""")
+
+xpgain_help_msg = clean("""
+    Displays the latest skill xp and boss/minigame completion count difference between our second-to-latest and latest 
+    hiscores scrapes for the specified user. We scrape the hiscores once daily for every player in our database that has not been banned.
+    The duration is the amount of time between the last two scrapes. The duration will be "Insufficient data" if we only have one day's worth
+    of scrape data for a player.
 """)
 
 ###########################
 # Project Stats Commands
 ###########################
 
-stats_help_msg = "Displays the project-wide reporting statistics. Also shows total active users in the last 7 days."
+stats_help_msg = "Displays the project-wide flagging statistics. Also shows total active users in the last 7 days."
 
 
 ###########################
@@ -123,7 +125,7 @@ stats_help_msg = "Displays the project-wide reporting statistics. Also shows tot
 
 link_help_msg = clean("""
     Usage: !link <your OSRS name> Allows you to pair an OSRS account with your Discord ID. This will allow for auto-rank assignment in the future.
-    Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban and !csvban.
+    Currently, linking allows you to vote on predictions with reactions in #bot-detector-commands and receive your ban breakdowns with !excelban.
 
 
     YOU DO NOT NEED TO !LINK YOUR OSRS ACCOUNT FOR YOUR !KC TO INCREASE. For that you need to have Anonymous Mode disabled on your plugin

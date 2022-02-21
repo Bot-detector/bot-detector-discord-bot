@@ -1,6 +1,8 @@
 import bisect
 import json
 import discord
+from aiohttp import ClientTimeout
+from discord import role
 
 bot_hunter_roles = {
     1:       {"role_id": 825165287526498314, "role_name": "Bot Hunter I"}, # 1 Ban
@@ -33,19 +35,22 @@ special_roles = {
         +"final releases are up to snuff. A huge thank you to all of the QTs!" \
         +"\n\nIf you are interested in become a Quality Tester please reach out to one of the devs. Alternatively, you can use the `!beta` command for more information."},
     "New Developer" : {"role_id": 837766752166215683, "description": "Developers who are interested in contributing to the project."},
+    "Events" : {"role_id": 855603280997515264, "description": "Use `!event on` to get this role. You will receive announcements about our clan events."},
+    "Bans Subscriber": {"role_id": 893399220172767253, "description": "You will be notified whenever we announce confirmed bans being added to the project's total."}
 }
 
 
 #Gets bans from all accounts passed in
-async def get_multi_player_bans(session, verifiedPlayers):
+async def get_multi_player_bans(session, verifiedPlayers) -> int:
 
-    async with session.get(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=json.dumps(verifiedPlayers)) as r:
+    timeout = ClientTimeout(total=1200)
+
+    async with session.post(url="https://www.osrsbotdetector.com/api/stats/contributions/", json=verifiedPlayers, timeout=timeout) as r:
         if r.status != 200:
-            return #TODO Figure out what to do here haha
+            return 0 #TODO Figure out what to do here haha
 
         js = await r.json()
         return int(js['total']['bans'])
-
 
 
 async def get_bot_hunter_role(session, verifiedPlayers, member):
@@ -80,3 +85,33 @@ async def remove_old_roles(member):
         if 'Bot Hunter' in role.name:
             to_remove = discord.utils.find(lambda r: role.name in r.name, member.roles)
             await member.remove_roles(to_remove)
+
+
+async def has_role(member: discord.Member, role_id: int):
+    if(discord.utils.get(member.roles, id=role_id)):
+        return True
+    else:
+        return False
+
+
+async def remove_all_roles(member):
+    roles = member.roles
+
+    for role in roles:
+        if role.name == "@everyone":
+            pass
+        else:
+            to_remove = discord.utils.find(lambda r: role.name in r.name, member.roles)
+            await member.remove_roles(to_remove)
+
+
+async def add_banned_client_role(member):
+    target_role_id = 905495630665891861
+
+    if await has_role(member, target_role_id):
+        return
+    else:
+        await remove_all_roles(member)
+        target_role = discord.utils.get(member.guild.roles, id=target_role_id)
+        await member.add_roles(target_role)
+

@@ -1,10 +1,11 @@
-import subprocess
+import time
 from random import randint
 
 import discord
 from discord.ext import commands
 
 import help_messages
+import utils.roles as roles
 from utils import CommonCog, check_allowed_channel
 
 
@@ -13,13 +14,23 @@ class FunCommands(CommonCog, name="Fun Commands"):
 
     @commands.command(description=help_messages.poke_help_msg)
     async def poke(self, ctx):
-        ping_api = subprocess.check_call(['ping','-c1','www.osrsbotdetector.com'])
-        isServerUp = "Online" if not ping_api else "Uh-Oh"
+        start = time.perf_counter()
+        async with self.bot.session.get("https://www.osrsbotdetector.com/api/") as r:
+            if r.status == 200:
+                delta = time.perf_counter() - start
+                serverStatus = "Online"
+            else:
+                delta = 0
+                serverStatus = "Offline"
 
         embed = discord.Embed(color=0x00ff)
         embed.add_field(name="Teehee", value=f":3", inline=False)
-        embed.add_field(name="Discord Ping:", value=f"{self.bot.latency:.3f} ms", inline=False)
-        embed.add_field(name="BD API Status:", value=f"{isServerUp}", inline=False)
+        embed.add_field(name="Discord Ping:", value=f"{self.bot.latency * 1000:.2f} ms", inline=False)
+        embed.add_field(name="BD API Status:", value=f"{serverStatus}", inline=False)
+        
+        if serverStatus == "Online":
+            embed.add_field(name="BD API Ping:", value=f"{delta * 1000:.2f} ms", inline=False)
+            
         await ctx.send(embed=embed)
 
 
@@ -27,7 +38,8 @@ class FunCommands(CommonCog, name="Fun Commands"):
     async def panic(self, ctx):
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
-    @commands.command(name="meow", description=help_messages.meow_help_msg)
+
+    @commands.command(name="meow", aliases=["kitty", "cat"],description=help_messages.meow_help_msg)
     async def meow(self, ctx):
         url = "https://cataas.com/cat/gif?json=true" if randint(0, 1) > 0 else "https://cataas.com/cat?json=true"
 
@@ -37,6 +49,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
                 await ctx.send("https://cataas.com" + js['url'])
             else:
                 await ctx.send("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
+
 
     @commands.command(description=help_messages.woof_help_msg)
     async def woof(self, ctx):
@@ -49,6 +62,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
             else:
                 await ctx.send("Who let the dogs out?")
 
+
     @commands.command(aliases=["bird"], description=help_messages.birb_help_msg)
     async def birb(self, ctx):
         url = "http://shibe.online/api/birds"
@@ -59,6 +73,7 @@ class FunCommands(CommonCog, name="Fun Commands"):
                 await ctx.send(js[0])
             else:
                 await ctx.send("Birds all flew away. :(")
+
 
     @commands.command(aliases=["rabbit", "bun"], description=help_messages.bunny_help_msg)
     async def bunny(self, ctx):

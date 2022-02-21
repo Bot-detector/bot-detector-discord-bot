@@ -56,7 +56,6 @@ class MapCommands(CommonCog, name='Map Commands'):
             return await ctx.send("Please enter a region name or region ID.")
 
         info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
-        await ctx.trigger_typing()
 
         if region.isdigit():
             regionTrueName = f"Region ID: {region}"
@@ -71,7 +70,6 @@ class MapCommands(CommonCog, name='Map Commands'):
                 try:
                     await ctx.reply(file=discord.File(mapFilePath))
                 except Exception as e:
-                    print(e)
                     await ctx.reply("Uhhh... I should have a heatmap to give you, but I don't. Please accept this image of a cat fixing our bot instead.")
                     await ctx.reply('https://i.redd.it/lel3o4e2hhp11.jpg')
 

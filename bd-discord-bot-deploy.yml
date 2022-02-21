@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: longhorn-discord-storage
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bd-discord-bot
+spec:
+  selector:
+    matchLabels:
+      app: bd-discord-bot
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bd-discord-bot
+    spec:
+      volumes:
+      - name: discord-storage
+        persistentVolumeClaim:
+          claimName: longhorn-discord-storage
+      containers:
+      - name: bd-discord-bot
+        image: hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: discord-storage
+          mountPath: /code/data
+      imagePullSecrets:
+      - name: regcred

@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 import help_messages
-from utils import CommonCog, checks
+from utils import CommonCog, checks, discord_processing
 
 
 class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
@@ -12,44 +12,40 @@ class ProjectStatsCommands(CommonCog, name='Project Stats Commands'):
 
     @commands.command(description=help_messages.stats_help_msg)
     async def stats(self, ctx):
-        playersTracked = ""
+        totalAccounts = ""
         totalBans = ""
-        totalReports = ""
+        totalRealPlayers = ""
         activeInstalls = ""
 
-        async with self.bot.session.get("https://www.osrsbotdetector.com/api/site/dashboard/gettotaltrackedplayers") as r:
+        async with self.bot.session.get("https://www.osrsbotdetector.com/api/site/dashboard/projectstats") as r:
             if r.status == 200:
                 js = await r.json()
-                playersTracked = js['players'][0]
+                totalBans = js['total_bans']
+                totalAccounts = js['total_accounts']
+                totalRealPlayers = js['total_real_players']
             else:
-                playersTracked = "N/A"
-
-        async with self.bot.session.get("https://www.osrsbotdetector.com/api/site/dashboard/getreportsstats") as r:
-            if r.status == 200:
-                js = await r.json()
-                totalBans = js['bans']
-                totalReports = js['total_reports']
-            else:
+                totalAccounts = "N/A"
                 totalBans = "N/A"
-                totalReports = "N/A"
+                totalRealPlayers = "N/A"
 
-        async with self.bot.session.get("https://api.runelite.net/runelite-1.7.11.1/pluginhub") as r:
+        runelite_version = await discord_processing.get_latest_runelite_version(self.bot.session)
+
+        async with self.bot.session.get(f"https://api.runelite.net/runelite-{runelite_version}/pluginhub") as r:
             if r.status == 200:
                 js = await r.json()
                 activeInstalls = js['bot-detector']
             else:
                 activeInstalls = "N/A"
 
-
-        embed = await project_stats(playersTracked, totalReports, totalBans, activeInstalls)
+        embed = await project_stats(totalAccounts, totalRealPlayers, totalBans, activeInstalls)
         await ctx.send(embed=embed)
 
 
-async def project_stats(playersTracked, totalReports, totalBans, activeInstalls):
+async def project_stats(totalAccounts, totalRealPlayers, totalBans, activeInstalls):
     embed = discord.Embed(title="Bot Detector Plugin", color=0x00ff00)
     embed.add_field(name="= Project Stats =", inline=False, value=cleandoc(f"""
-            Players Analyzed: {playersTracked:,}
-            Confirmed Players: {(totalReports-totalBans):,}
+            Players Analyzed: {totalAccounts:,}
+            Confirmed Players: {totalRealPlayers:,}
             Confirmed Bans: {totalBans:,}
             Active Installs: {activeInstalls:,}
         """)

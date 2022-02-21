@@ -10,3 +10,5 @@ venv/
 error.log
 *.bak
 docker-compose.yaml
+data/store.json
+

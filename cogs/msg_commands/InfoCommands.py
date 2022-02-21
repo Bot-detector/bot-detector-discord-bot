@@ -18,7 +18,7 @@ class InfoCommands(CommonCog, name='General Info Commands'):
 
     @commands.command(description=help_messages.rules_help_msg)
     async def rules(self, ctx):
-        await ctx.send('<#825137784112807946>')
+        await ctx.send('<#856983841825620018>')
 
     @commands.command(aliases=["site"], description=help_messages.website_help_msg)
     async def website(self, ctx):
@@ -36,10 +36,13 @@ class InfoCommands(CommonCog, name='General Info Commands'):
     async def github(self, ctx):
         await ctx.send("https://github.com/Bot-detector")
 
-
     @commands.command(description=help_messages.invite_help_msg)
     async def invite(self, ctx):
         await ctx.send('https://discord.com/invite/JCAGpcjbfP')
+
+    @commands.command(aliases=["open"])
+    async def openosrs(self, ctx):
+        await ctx.send('https://twitter.com/jagextyran/status/1358801848166137856')
 
     @commands.command(aliases=["issue"], description=help_messages.issues_help_msg)
     async def issues(self, ctx):
@@ -55,25 +58,10 @@ class InfoCommands(CommonCog, name='General Info Commands'):
         bot_embed.add_field(name="Have enough for a new role?", value="Use `!rankup` in <#825189024074563614>", inline=False)
         special_roles_embed = discord.Embed(title="Special Roles")
 
-        for k, v in roles.special_roles.items():
-            role_description = v["description"]
-            special_roles_embed.add_field(name=k, value=f"{role_description}", inline=False)
+        special_roles_embed.add_field(name="🎊🎊🎊", value=f"Once you have linked at least one OSRS account you can add additional roles to your account in <#899651226352877618>", inline=False)
 
         await ctx.send(embed=bot_embed)
         await ctx.send(embed=special_roles_embed)
-
-    @commands.command(aliases=["botlabels"], description=help_messages.labels_help_msg)
-    async def labels(self, ctx):
-        labels = await utils.get_player_labels(self.bot.session)
-
-        labels_embed = discord.Embed(title="Current Player Labels")
-
-        for l in labels:
-            labels_embed.add_field(name=f"{l['label']}", value="\u200b", inline=True)
-
-        labels_embed.set_footer(text="Please note that some of these labels may not be avaiable yet in the current RuneLite Plugin Hub release.")
-
-        await ctx.send(embed=labels_embed)
 
 
 def setup(bot):
