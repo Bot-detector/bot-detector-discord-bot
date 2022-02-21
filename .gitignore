@@ -12,3 +12,4 @@ error.log
 docker-compose.yaml
 data/store.json
 
+docker-compose.yaml

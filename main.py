@@ -2,7 +2,6 @@ import os
 import asyncio
 import datetime
 import json
-import uvloop
 import traceback
 from inspect import cleandoc
 from json import JSONDecodeError
