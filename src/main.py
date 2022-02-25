@@ -21,8 +21,8 @@ bot = discord.ext.commands.Bot(
     intents=intents,
 )
 
-# register our own commands
-#  bot.load_extension()
+# register our own commands, these should be in the cogs folder
+# bot.add_cog(className(bot))
 
 # default events
 @bot.event
