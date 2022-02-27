@@ -21,7 +21,7 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        root_path: /
+        root_path: ''
         api_port: 5000
     image: bot-detector/bd-api:latest
     environment:
