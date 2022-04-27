@@ -19,7 +19,7 @@ SUBMIT_RECIPIENT = os.environ.get('SUBMIT_RECIPIENT')
 
 
 # setup logging
-file_handler = logging.FileHandler(filename="logs/error.log", mode='a')
+file_handler = logging.FileHandler(filename="./error.log", mode='a')
 stream_handler = logging.StreamHandler(sys.stdout)
 # # log formatting
 formatter = logging.Formatter(json.dumps(
@@ -28,7 +28,7 @@ formatter = logging.Formatter(json.dumps(
         'name': '%(name)s',
         'function': '%(funcName)s',
         'level':'%(levelname)s',
-        'msg': json.dumps('%(message)s')
+        'msg': '%(message)s'
     }
 ))
 
@@ -42,3 +42,6 @@ handlers = [
 ]
 
 logging.basicConfig(level=logging.DEBUG, handlers=handlers)
+
+logging.getLogger("discord").setLevel(logging.WARNING)
+logging.getLogger("uvicorn").setLevel(logging.DEBUG)

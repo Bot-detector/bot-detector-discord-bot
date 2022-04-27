@@ -1,7 +1,8 @@
 import logging
 
 import discord
-
+from discord.ext.commands import Bot
+import aiohttp
 from src import config
 
 logger = logging.getLogger(__name__)
@@ -10,7 +11,8 @@ activity = discord.Game("OSRS", type=discord.ActivityType.watching)
 allowed_mentions = discord.AllowedMentions(everyone=False, roles=False, users=True)
 intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True)
 
-bot = discord.ext.commands.Bot(
+
+bot: discord.Client = Bot(
     allowed_mentions=allowed_mentions,
     command_prefix=config.COMMAND_PREFIX,
     description="busting bots",
@@ -25,7 +27,10 @@ bot = discord.ext.commands.Bot(
 # default events
 @bot.event
 async def on_ready():
+    global Session
     logger.info(f"We have logged in as {bot.user}")
+    async with aiohttp.ClientSession() as session:
+        Session = session
 
 
 @bot.event

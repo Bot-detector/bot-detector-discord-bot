@@ -18,7 +18,7 @@ services:
       - botdetector-network
   api:
     build:
-      context: .
+      context: ../Bot-Detector-Core-Files
       dockerfile: Dockerfile
       args:
         root_path: ''
@@ -36,6 +36,7 @@ services:
       - botdetector-network
     depends_on:
       - mysql
+      
   discord:
     build:
       context: ../bot-detector-discord-bot
