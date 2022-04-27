@@ -23,7 +23,7 @@ class botDetectiveCommands(commands.Cog):
         # get a list of user names from the data
         user_names = [line for line in data.split("\n")]
         # validate that the user_names are in line with jagex naming convention
-        match = r"^[a-zA-Z0-9_]{1,12}$"
+        match = r"^[a-zA-Z0-9_\- ]{1,12}$"
         user_names = [name for name in user_names if re.match(match, name)]
         # parse data from pastebin => list of user names (list of strings)
         # post parsed data to api (list of strings)
