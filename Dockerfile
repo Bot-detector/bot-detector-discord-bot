@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r /project/requirements.txt
 
 COPY . /project/
 
-CMD ["python","main.py" ]
+CMD ["python","src/main.py" ]
