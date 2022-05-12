@@ -5,7 +5,6 @@ import subprocess
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
-from src.bot import Session
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class funCommands(commands.Cog):
         :param url: The url to make the request to.
         :return: The response from the request.
         """
-        async with Session.get(url) as response:
+        async with self.bot.get(url) as response:
             if response.status != 200:
                 logger.error({"status": response.status, "url": url})
                 return None

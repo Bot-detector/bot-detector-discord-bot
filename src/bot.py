@@ -4,6 +4,7 @@ import discord
 from discord.ext.commands import Bot
 import aiohttp
 from src import config
+from src.cogs import fun_commands
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,7 @@ bot: discord.Client = Bot(
 
 # register our own commands, these should be in the cogs folder
 # bot.add_cog(className(bot))
+bot.add_cog(fun_commands.funCommands(bot))
 
 # default events
 @bot.event
