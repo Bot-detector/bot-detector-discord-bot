@@ -1,4 +1,10 @@
-FROM python:3.9-slim
+FROM python:3.10-slim
+
+ARG api_port
+ENV UVICORN_PORT ${api_port}
+
+ARG root_path
+ENV UVICORN_ROOT_PATH ${root_path}
 
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -18,4 +24,4 @@ COPY . /project
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /project
 USER appuser
 
-CMD ["python", "src/main.py"]
+CMD ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0"] 

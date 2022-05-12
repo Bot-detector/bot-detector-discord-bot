@@ -41,17 +41,14 @@ services:
     build:
       context: ../bot-detector-discord-bot
       dockerfile: Dockerfile
+      args:
+        root_path: ''
+        api_port: 3000
     image: bot-detector/bd-discord:latest
     environment:
       - TOKEN=<YOUR TOKEN HERE>
-      - COMMAND_PREFIX=!
-      - DB_USER=botssuck
-      - DB_PASS=botdetector
-      - DB_HOST=mysql:3306
-      - DB_NAME_SUBMISSIONS=discord_dev
-      - DB_NAME_PLAYERS=playerdata_dev
-      - API_AUTH_TOKEN=verify_ban
-      - SUBMIT_RECIPIENT=178965680266149888
+    ports:
+      - "3000:3000"
     networks:
       - botdetector-network
     depends_on:
