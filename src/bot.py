@@ -24,15 +24,14 @@ bot: discord.Client = Bot(
 
 # register our own commands, these should be in the cogs folder
 # bot.add_cog(className(bot))
+
 bot.add_cog(fun_commands.funCommands(bot))
 
 # default events
 @bot.event
 async def on_ready():
-    global Session
     logger.info(f"We have logged in as {bot.user}")
-    async with aiohttp.ClientSession() as session:
-        Session = session
+    bot.Session = aiohttp.ClientSession()
 
 
 @bot.event
