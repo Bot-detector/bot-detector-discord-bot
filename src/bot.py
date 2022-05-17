@@ -4,6 +4,7 @@ import discord
 from discord.ext.commands import Bot
 import aiohttp
 from src import config
+from src.cogs import fun_commands
 
 logger = logging.getLogger(__name__)
 
@@ -24,13 +25,13 @@ bot: discord.Client = Bot(
 # register our own commands, these should be in the cogs folder
 # bot.add_cog(className(bot))
 
+bot.add_cog(fun_commands.funCommands(bot))
+
 # default events
 @bot.event
 async def on_ready():
-    global Session
     logger.info(f"We have logged in as {bot.user}")
-    async with aiohttp.ClientSession() as session:
-        Session = session
+    bot.Session = aiohttp.ClientSession()
 
 
 @bot.event

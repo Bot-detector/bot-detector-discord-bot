@@ -5,7 +5,6 @@ import subprocess
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
-from src.bot import Session
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +24,7 @@ class funCommands(commands.Cog):
         :param url: The url to make the request to.
         :return: The response from the request.
         """
-        async with Session.get(url) as response:
+        async with self.bot.Session.get(url) as response:
             if response.status != 200:
                 logger.error({"status": response.status, "url": url})
                 return None
@@ -67,7 +66,7 @@ class funCommands(commands.Cog):
             url = "https://cataas.com/cat/gif?json=true"
         else:
             url = "https://cataas.com/cat?json=true"
-
+        
         data = await self.__web_request(url)
         if data is None:
             await ctx.reply("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
