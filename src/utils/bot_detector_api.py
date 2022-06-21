@@ -1,3 +1,4 @@
 class Api():
-    def __init__(self) -> None:
-        pass
+    def __init__(self, token) -> None:
+        self.token = token
+    
