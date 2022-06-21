@@ -1,8 +1,9 @@
 import logging
 
+import aiohttp
 import discord
 from discord.ext.commands import Bot
-import aiohttp
+
 from src import config
 from src.cogs import fun_commands
 
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 activity = discord.Game("OSRS", type=discord.ActivityType.watching)
 allowed_mentions = discord.AllowedMentions(everyone=False, roles=False, users=True)
-intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True)
+intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True, message_content=True)
 
 
 bot: discord.Client = Bot(
@@ -25,18 +26,20 @@ bot: discord.Client = Bot(
 # register our own commands, these should be in the cogs folder
 # bot.add_cog(className(bot))
 
-bot.add_cog(fun_commands.funCommands(bot))
+
 
 # default events
 @bot.event
 async def on_ready():
     logger.info(f"We have logged in as {bot.user}")
     bot.Session = aiohttp.ClientSession()
+    await bot.add_cog(fun_commands.funCommands(bot))
 
 
 @bot.event
 async def on_connect():
     logger.info("Bot connected successfully.")
+    logger.info(f"{config.COMMAND_PREFIX=}")
 
 
 @bot.event

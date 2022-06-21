@@ -4,12 +4,12 @@ import subprocess
 
 import discord
 from discord.ext import commands
-from discord.ext.commands import Context
+from discord.ext.commands import Context, Cog
 
 logger = logging.getLogger(__name__)
 
 
-class funCommands(commands.Cog):
+class funCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
         """
         Initialize the funCommands class.
@@ -30,14 +30,15 @@ class funCommands(commands.Cog):
                 return None
             return await response.json()
 
-    @commands.command()
+    @commands.command(name="poke")
     async def poke(self, ctx: Context):
         """
         Ping the bot and the botDetective API.
         """
         logger.debug("poke")
-        ping_api = subprocess.check_call(["ping", "-c1", "www.osrsbotdetector.com"])
-        isServerUp = "Online" if not ping_api else "Uh-Oh"
+        url = "https://www.osrsbotdetector.com/api"
+        ping = await self.__web_request(url)
+        isServerUp = "Online" if ping is not None else "Uh-Oh"
 
         embed = discord.Embed(color=0x00FF)
         embed.add_field(name="Teehee", value=f":3", inline=False)

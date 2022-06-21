@@ -1,6 +1,6 @@
 import asyncio
 import logging
-
+import platform
 from fastapi import FastAPI
 
 from src import bot, config
@@ -11,8 +11,7 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_event():
-    asyncio.create_task(bot.bot.start(config.TOKEN))
-
+    await bot.bot.start(config.TOKEN)
 
 @app.get("/")
 async def read_root():
