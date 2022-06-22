@@ -5,7 +5,8 @@ import discord
 from discord.ext.commands import Bot
 
 from src import config
-from src.cogs import fun_commands
+from src.cogs.fun_commands import funCommands
+from src.cogs.bot_detective_commands import botDetectiveCommands
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +34,8 @@ bot: discord.Client = Bot(
 async def on_ready():
     logger.info(f"We have logged in as {bot.user}")
     bot.Session = aiohttp.ClientSession()
-    await bot.add_cog(fun_commands.funCommands(bot))
+    await bot.add_cog(funCommands(bot))
+    await bot.add_cog(botDetectiveCommands(bot))
 
 
 @bot.event

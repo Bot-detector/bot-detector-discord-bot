@@ -4,12 +4,16 @@ import os
 import sys
 
 import dotenv
+from src.utils.bot_detector_api import Api
 
 dotenv.load_dotenv(dotenv.find_dotenv(), verbose=True)
 
 TOKEN = os.environ.get('TOKEN')
 COMMAND_PREFIX = os.environ.get('COMMAND_PREFIX')
-
+API_TOKEN = os.environ.get("API_TOKEN")
+api = Api(
+    token=API_TOKEN
+)
 
 # setup logging
 file_handler = logging.FileHandler(filename="./error.log", mode='a')
