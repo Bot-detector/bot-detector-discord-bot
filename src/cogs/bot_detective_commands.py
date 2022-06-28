@@ -24,7 +24,13 @@ class botDetectiveCommands(commands.Cog):
         # validate that the user_names are in line with jagex naming convention
         match = r"^[a-zA-Z0-9_\- ]{1,12}$"
         user_names = [name for name in user_names if re.match(match, name)]
+        logger.debug(f"parsed names: {len(user_names)}")
         return user_names
+
+    def _batch(self, iterable, n=1) -> list:
+        l = len(iterable)
+        for ndx in range(0, l, n):
+            yield iterable[ndx : min(ndx + n, l)]
 
     # TODO: help message
     @commands.command()
@@ -74,14 +80,16 @@ class botDetectiveCommands(commands.Cog):
         players = await asyncio.gather(
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )
+        logger.debug(f"got players: {len(players)}")
 
-        embed = discord.Embed(title="Ban list", color=discord.Color.red())
-
-        for player in players:
-            if player is None:
-                continue
-            banned = True if player.get("label_jagex") == 2 else False
-            embed.add_field(name=player.get("name"), value=banned, inline=True)
-        embed.set_footer(text="True=Banned, False=Not banned")
-        await ctx.reply(embed=embed)
+        for batch in self._batch(players, n=24):
+            embed = discord.Embed(title="Ban list", color=discord.Color.red())
+            for player in batch:
+                player: dict
+                if player is None:
+                    continue
+                banned = True if player.get("label_jagex") == 2 else False
+                embed.add_field(name=player.get("name"), value=banned, inline=True)
+            embed.set_footer(text="True=Banned, False=Not banned")
+            await ctx.reply(embed=embed)
         return
