@@ -75,19 +75,13 @@ class botDetectiveCommands(commands.Cog):
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )
 
-        output = []
+        embed = discord.Embed(title="Ban list", color=discord.Color.red())
+
         for player in players:
             if player is None:
                 continue
             banned = True if player.get("label_jagex") == 2 else False
-            output.append({"player": player.get("name"), "banned": banned})
-
-        output = cleandoc(
-            f"""
-            ```js
-            {output}
-            ```
-            """
-        )
-        await ctx.reply(output)
+            embed.add_field(name=player.get("name"), value=banned, inline=True)
+        embed.set_footer(text="True=Banned, False=Not banned")
+        await ctx.reply(embed=embed)
         return
