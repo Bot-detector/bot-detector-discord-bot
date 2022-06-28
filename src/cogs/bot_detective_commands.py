@@ -82,14 +82,15 @@ class botDetectiveCommands(commands.Cog):
         )
         logger.debug(f"got players: {len(players)}")
 
-        for batch in self._batch(players, n=24):
+        for batch in self._batch(players, n=21):
             embed = discord.Embed(title="Ban list", color=discord.Color.red())
             for player in batch:
                 player: dict
                 if player is None:
                     continue
                 banned = True if player.get("label_jagex") == 2 else False
-                embed.add_field(name=player.get("name"), value=banned, inline=True)
+                value = f"```{banned}```" if banned else banned
+                embed.add_field(name=player.get("name"), value=value, inline=True)
             embed.set_footer(text="True=Banned, False=Not banned")
             await ctx.reply(embed=embed)
         return

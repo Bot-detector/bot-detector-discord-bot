@@ -16,15 +16,16 @@ class Api:
         url = self.url + "/v1/player"
         await self.session.post(url, params={"player_name": name, "token": self.token})
 
-    async def get_player(self, name: str) -> dict:
+    async def get_player(self, name: str, debug: bool = False) -> dict:
         url = self.url + "/v1/player"
         resp = await self.session.get(
-            url, params={
-                "player_name": name, 
+            url,
+            params={
+                "player_name": name,
                 "token": self.token,
                 "row_count": 1,
-                "page":1
-            }
+                "page": 1,
+            },
         )
         if resp.ok:
             data = await resp.json()
@@ -35,6 +36,7 @@ class Api:
                 data = data[0]
         else:
             logger.error(await resp.json())
-            data= None
-        logger.debug(f"{resp.status=}, {name=}")
+            data = None
+        if debug:
+            logger.debug(f"{resp.status=}, {name=}")
         return data
