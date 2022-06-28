@@ -85,9 +85,9 @@ class funCommands(Cog):
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("Who let the dogs out?")
+            await ctx.reply("Who let the dogs out?")
         else:
-            ctx.reply(data.get("link"))
+            await ctx.reply(data.get("link"))
         return
 
     @commands.command(aliases=["bird"])
@@ -100,9 +100,9 @@ class funCommands(Cog):
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("Birds all flew away. :(")
+            await ctx.reply("Birds all flew away. :(")
         else:
-            ctx.reply(data[0])
+            await ctx.reply(data[0])
         return
 
     @commands.command(aliases=["rabbit", "bun"])
@@ -115,7 +115,7 @@ class funCommands(Cog):
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("The buns went on the run.")
+            await ctx.reply("The buns went on the run.")
         else:
-            ctx.reply(data["media"]["gif"])
+            await ctx.reply(data["media"]["gif"])
         return
