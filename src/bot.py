@@ -4,7 +4,7 @@ import aiohttp
 import discord
 from discord.ext.commands import Bot
 
-from src import config, cogs
+from src import config
 from src.cogs.fun_commands import funCommands
 from src.cogs.bot_detective_commands import botDetectiveCommands
 from src.cogs.error_handler import errorHandler
