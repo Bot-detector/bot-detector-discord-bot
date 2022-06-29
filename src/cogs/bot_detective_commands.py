@@ -1,8 +1,6 @@
 import asyncio
-import json
 import logging
 import re
-from inspect import cleandoc
 from typing import List
 
 import aiohttp
@@ -24,10 +22,21 @@ class botDetectiveCommands(commands.Cog):
         # validate that the user_names are in line with jagex naming convention
         match = r"^[a-zA-Z0-9_\- ]{1,12}$"
         user_names = [name for name in user_names if re.match(match, name)]
+        user_names = list(set(user_names))
+        logger.debug(f"parsed names: {len(user_names)}")
         return user_names
+
+    def _batch(self, iterable, n=1) -> list:
+        l = len(iterable)
+        for ndx in range(0, l, n):
+            yield iterable[ndx : min(ndx + n, l)]
 
     # TODO: help message
     @commands.command()
+    @commands.is_owner()
+    @commands.has_any_role(
+        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+    )  # detective, headdetective, co-owner, tester (on tests server)
     async def submit(self, ctx: Context, url: str, label: str = None) -> None:
         logger.debug("received submission")
         # check if url is a pastebin url
@@ -52,6 +61,10 @@ class botDetectiveCommands(commands.Cog):
         return
 
     @commands.command()
+    @commands.is_owner()
+    @commands.has_any_role(
+        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+    )  # detective, headdetective, co-owner, tester (on tests server)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
         # validate pastebin
@@ -74,20 +87,29 @@ class botDetectiveCommands(commands.Cog):
         players = await asyncio.gather(
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )
+        logger.debug(f"got players: {len(players)}")
 
-        output = []
-        for player in players:
-            if player is None:
-                continue
-            banned = True if player.get("label_jagex") == 2 else False
-            output.append({"player": player.get("name"), "banned": banned})
+        embeds = []
+        i = 0
+        for batch in self._batch(players, n=21):
+            embed = discord.Embed(title="Ban list", color=discord.Color.red())
+            for player in batch:
+                player: dict
+                if player is None:
+                    continue
+                banned = True if player.get("label_jagex") == 2 else False
+                value = f"```{banned}```" if banned else banned
+                embed.add_field(name=player.get("name"), value=value, inline=True)
+            embed.set_footer(text="True=Banned, False=Not banned")
+            embeds.append(embed)
 
-        output = cleandoc(
-            f"""
-            ```js
-            {output}
-            ```
-            """
-        )
-        await ctx.reply(output)
+            # max 10 embeds per reply
+            if i != 0 and i % 9 == 0:
+                await ctx.reply(embeds=embeds)
+                embeds = []
+            i += 1
+        
+        # check if there are any embeds left
+        if embeds != []:
+            await ctx.reply(embeds=embeds)
         return
