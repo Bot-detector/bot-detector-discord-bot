@@ -1,8 +1,6 @@
 import asyncio
-import json
 import logging
 import re
-from inspect import cleandoc
 from typing import List
 
 import aiohttp
@@ -34,6 +32,10 @@ class botDetectiveCommands(commands.Cog):
 
     # TODO: help message
     @commands.command()
+    @commands.is_owner()
+    @commands.has_any_role(
+        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+    )  # detective, headdetective, co-owner, tester (on tests server)
     async def submit(self, ctx: Context, url: str, label: str = None) -> None:
         logger.debug("received submission")
         # check if url is a pastebin url
@@ -58,6 +60,10 @@ class botDetectiveCommands(commands.Cog):
         return
 
     @commands.command()
+    @commands.is_owner()
+    @commands.has_any_role(
+        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+    )  # detective, headdetective, co-owner, tester (on tests server)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
         # validate pastebin

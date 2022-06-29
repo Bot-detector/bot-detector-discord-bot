@@ -4,9 +4,10 @@ import aiohttp
 import discord
 from discord.ext.commands import Bot
 
-from src import config
+from src import config, cogs
 from src.cogs.fun_commands import funCommands
 from src.cogs.bot_detective_commands import botDetectiveCommands
+from src.cogs.error_handler import errorHandler
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +28,6 @@ bot: discord.Client = Bot(
 # register our own commands, these should be in the cogs folder
 # bot.add_cog(className(bot))
 
-
-
 # default events
 @bot.event
 async def on_ready():
@@ -36,6 +35,7 @@ async def on_ready():
     bot.Session = aiohttp.ClientSession()
     await bot.add_cog(funCommands(bot))
     await bot.add_cog(botDetectiveCommands(bot))
+    await bot.add_cog(errorHandler(bot))
 
 
 @bot.event
