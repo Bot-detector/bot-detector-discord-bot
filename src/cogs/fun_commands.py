@@ -35,7 +35,12 @@ class funCommands(Cog):
         """
         Ping the bot and the botDetective API.
         """
-        logger.debug("poke")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a poke"
+        }
+        logger.debug(debug)
         url = "https://www.osrsbotdetector.com/api"
         ping = await self.__web_request(url)
         isServerUp = "Online" if ping is not None else "Uh-Oh"
@@ -54,7 +59,12 @@ class funCommands(Cog):
         """
         Send a panic image.
         """
-        logger.debug("Panic")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a panic"
+        }
+        logger.debug(debug)
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
     @commands.command(name="meow")
@@ -62,7 +72,12 @@ class funCommands(Cog):
         """
         Send a random cat image.
         """
-        logger.debug("Meow")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a cat"
+        }
+        logger.debug(debug)
         if random.randint(0, 1) > 0:
             url = "https://cataas.com/cat/gif?json=true"
         else:
@@ -80,14 +95,19 @@ class funCommands(Cog):
         """
         Send a random dog image.
         """
-        logger.debug("woof")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a dog"
+        }
+        logger.debug(debug)
         url = "https://some-random-api.ml/img/dog"
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("Who let the dogs out?")
+            await ctx.reply("Who let the dogs out?")
         else:
-            ctx.reply(data.get("link"))
+            await ctx.reply(data.get("link"))
         return
 
     @commands.command(aliases=["bird"])
@@ -95,14 +115,19 @@ class funCommands(Cog):
         """
         Send a random bird image.
         """
-        logger.debug("birb")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a bird"
+        }
+        logger.debug(debug)
         url = "http://shibe.online/api/birds"
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("Birds all flew away. :(")
+            await ctx.reply("Birds all flew away. :(")
         else:
-            ctx.reply(data[0])
+            await ctx.reply(data[0])
         return
 
     @commands.command(aliases=["rabbit", "bun"])
@@ -110,12 +135,17 @@ class funCommands(Cog):
         """
         Send a random bunny image.
         """
-        logger.debug("bunny")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "requested a bunny"
+        }
+        logger.debug(debug)
         url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"
 
         data = await self.__web_request(url)
         if data is None:
-            ctx.reply("The buns went on the run.")
+            await ctx.reply("The buns went on the run.")
         else:
-            ctx.reply(data["media"]["gif"])
+            await ctx.reply(data["media"]["gif"])
         return
