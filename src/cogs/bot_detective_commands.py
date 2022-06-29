@@ -22,6 +22,7 @@ class botDetectiveCommands(commands.Cog):
         # validate that the user_names are in line with jagex naming convention
         match = r"^[a-zA-Z0-9_\- ]{1,12}$"
         user_names = [name for name in user_names if re.match(match, name)]
+        user_names = list(set(user_names))
         logger.debug(f"parsed names: {len(user_names)}")
         return user_names
 
@@ -88,6 +89,8 @@ class botDetectiveCommands(commands.Cog):
         )
         logger.debug(f"got players: {len(players)}")
 
+        embeds = []
+        i = 0
         for batch in self._batch(players, n=21):
             embed = discord.Embed(title="Ban list", color=discord.Color.red())
             for player in batch:
@@ -98,5 +101,15 @@ class botDetectiveCommands(commands.Cog):
                 value = f"```{banned}```" if banned else banned
                 embed.add_field(name=player.get("name"), value=value, inline=True)
             embed.set_footer(text="True=Banned, False=Not banned")
-            await ctx.reply(embed=embed)
+            embeds.append(embed)
+
+            # max 10 embeds per reply
+            if i != 0 and i % 9 == 0:
+                await ctx.reply(embeds=embeds)
+                embeds = []
+            i += 1
+        
+        # check if there are any embeds left
+        if embeds != []:
+            await ctx.reply(embeds=embeds)
         return
