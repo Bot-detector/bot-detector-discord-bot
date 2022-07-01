@@ -155,8 +155,10 @@ async def link_msg(joined_name, code) -> discord.Embed:
             6. Type into the Clan Chat: `!Code {code}`. It must match this exact pattern so that our clients can detect it properly.
 
             7. To confirm that your verification is complete type `!verify {joined_name}` in <#825189024074563614>
+            
+            8. If this is your first time linking, consider also using `!rankup` to obtain the `Verified` role, as well as any kc role you may be eligible for.
 
-            8. You may now use the `!excelban` command to receive an export of the bans you have contributed to. You also no longer need to
+            9. You may now use the `!excelban` command to receive an export of the bans you have contributed to. You also no longer need to
             specify a name whenever using the `!kc` command if you are trying to view your own "killcount".
 
         """)
@@ -166,7 +168,7 @@ async def link_msg(joined_name, code) -> discord.Embed:
 
             1. If you change the name of your account(s) you must repeat this process with your new RSN(s).
 
-            2. In the event of a name change please allow some time for your data to be transferred over.
+            2. In the event of a name change, you may ask for a kc transfer after linking your new RSN by opening a ticket in <#920169469039485028>. If we can confirm you were verified on both names, we'll transfer your stats over.
 
             3. If you use the plugin on multiple accounts and you have them linked, using the `!kc` command will show you your combined total. You will also see the ban breakdowns for all of your accounts in your `!excelban` export.
 
