@@ -18,6 +18,7 @@ class modCommands(Cog):
     @commands.command()
     @commands.has_permissions(kick_members=True)
     async def warn(self, ctx: Context):
+        logger.debug(f"{ctx.author}, is using warn.")
         embed = discord.Embed(title=f"WARNING", color=0xFF0000)
         name = "= WARNING MESSAGE ="
         value = "**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**\n**This is your only warning.**\n"
