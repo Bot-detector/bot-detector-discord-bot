@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class modCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
         """
-        Initialize the funCommands class.
+        Initialize the modCommands class.
         :param bot: The discord bot client.
         """
         self.bot = bot
