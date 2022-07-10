@@ -11,6 +11,7 @@ dotenv.load_dotenv(dotenv.find_dotenv(), verbose=True)
 TOKEN = os.environ.get('TOKEN')
 COMMAND_PREFIX = os.environ.get('COMMAND_PREFIX')
 API_TOKEN = os.environ.get("API_TOKEN")
+SQL_URI = os.environ.get("SQL_URI")
 
 api = Api(
     token=API_TOKEN
