@@ -123,22 +123,28 @@ class rsnLinkingCommands(commands.Cog):
             await ctx.send(f"{name} isn't a valid Runescape user name.")
             return
 
-        # TODO: check if player exists on the bot detector api
+        # check if player exists on the bot detector api
         player = await config.api.get_player(name=name)
         if not player:
             embed = await self.install_plugin_msg()
             await ctx.send(embed=embed)
 
-        linked_user = None  # TODO: get the db record for rsn & ctx.author.id
-        linked_status = None  # TODO: check if rsn & ctx.author.id are linked
+        # get the db record for rsn & ctx.author.id
+        linked_users = await config.api.get_discord_player(name)
+
+        linked_user = [
+            user for user in linked_users if user.get("Discord_id") == ctx.author.id
+        ]
 
         if linked_user:
+            linked_user = linked_user[0]
+            linked_status = True if linked_user.get("Verified_status") == 1 else False
             if linked_status:
                 embed = await self.verified_msg(name)
                 await ctx.send(embed=embed)
                 return
             else:
-                code = linked_user.get("code")
+                code = linked_user.get("Code")
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
                 await ctx.author.send(embed=embed)
@@ -146,6 +152,13 @@ class rsnLinkingCommands(commands.Cog):
 
         # generate random code
         code = string_processing.get_random_id()
+
+        # register verification
+        await config.api.post_discord_code(
+            discord_id=ctx.author.id, 
+            player_name=player.get('name'), 
+            code=code
+        )
 
         # send user via pm the random code
         embed = await self.link_msg(name, code)
@@ -155,11 +168,49 @@ class rsnLinkingCommands(commands.Cog):
     @commands.command(name="verify")
     async def verify(self, ctx: Context, name: str = None):
         logger.debug(f"verifying: {name}")
-        # TODO:
-        pass
+        player = await config.api.get_player(name=name)
+        if not player:
+            embed = await self.install_plugin_msg()
+            await ctx.send(embed=embed)
+
+        # get the db record for rsn & ctx.author.id
+        linked_users = await config.api.get_discord_player(name)
+
+        linked_user = [
+            user for user in linked_users if user.get("Discord_id") == ctx.author.id
+        ]
+
+        if linked_user:
+            linked_user = linked_user[0]
+            linked_status = True if linked_user.get("Verified_status") == 1 else False
+            if linked_status:
+                embed = await self.verified_msg(name)
+                await ctx.send(embed=embed)
+                return
+            else:
+                code = linked_user.get("Code")
+                # send user via pm the random code
+                embed = await self.link_msg(name, code)
+                await ctx.author.send(embed=embed)
+                return
+        else:
+            embed = await self.unverified_msg(name)
+            await ctx.reply(embed=embed)
+        return
+
 
     @commands.command(name="linked")
     async def linked(self, ctx: Context):
         logger.debug(f"getting links {ctx.author}")
         # TODO
-        pass
+        links = await config.api.get_discord_links(ctx.author.id)
+        
+        if len(links) == 0:
+            await ctx.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
+        
+        embed = discord.Embed(color=0x00ff00)
+
+        for link in links:
+            embed.add_field(name="Linked Accounts:", value=link.get('name'), inline=False)
+        await ctx.reply(embed=embed)
+        return

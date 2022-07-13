@@ -8,6 +8,7 @@ from src import config
 from src.cogs.fun_commands import funCommands
 from src.cogs.bot_detective_commands import botDetectiveCommands
 from src.cogs.error_handler import errorHandler
+from src.cogs.rsn_linking_commands import rsnLinkingCommands
 
 logger = logging.getLogger(__name__)
 
@@ -36,6 +37,7 @@ async def on_ready():
     await bot.add_cog(funCommands(bot))
     await bot.add_cog(botDetectiveCommands(bot))
     await bot.add_cog(errorHandler(bot))
+    await bot.add_cog(rsnLinkingCommands(bot))
 
 
 @bot.event
