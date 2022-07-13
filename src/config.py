@@ -11,9 +11,12 @@ dotenv.load_dotenv(dotenv.find_dotenv(), verbose=True)
 TOKEN = os.environ.get('TOKEN')
 COMMAND_PREFIX = os.environ.get('COMMAND_PREFIX')
 API_TOKEN = os.environ.get("API_TOKEN")
+SQL_URI = os.environ.get("SQL_URI")
+API_URL = "https://www.osrsbotdetector.com/dev"
 
 api = Api(
-    token=API_TOKEN
+    token=API_TOKEN,
+    url=API_URL
 )
 
 # setup logging
