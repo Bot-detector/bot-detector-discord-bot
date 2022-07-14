@@ -77,3 +77,8 @@ class Api:
         url = self.url + f"/discord/get_linked_accounts/{self.token}/{discord_id}"
         data = await self._webrequest(url, type="get")
         return data
+
+    async def get_project_stats(self) -> List[dict]:
+        url = self.url + "/site/dashboard/projectstats"
+        data = await self._webrequest(url, type="get")
+        return data

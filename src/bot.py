@@ -10,7 +10,7 @@ from src.cogs.bot_detective_commands import botDetectiveCommands
 from src.cogs.error_handler import errorHandler
 from src.cogs.rsn_linking_commands import rsnLinkingCommands
 from src.cogs.mod_commands import modCommands
-
+from src.cogs.project_stats import ProjectStatsCommands
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +40,8 @@ async def on_ready():
     await bot.add_cog(botDetectiveCommands(bot))
     await bot.add_cog(errorHandler(bot))
     await bot.add_cog(rsnLinkingCommands(bot))
-    await bot.add_cog(modCommands)
+    await bot.add_cog(modCommands(bot))
+    await bot.add_cog(ProjectStatsCommands(bot))
 
 
 
