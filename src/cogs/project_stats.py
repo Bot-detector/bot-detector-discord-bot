@@ -10,7 +10,7 @@ from inspect import cleandoc
 logger = logging.getLogger(__name__)
 
 
-class ProjectStatsCommands(Cog):
+class projectStatsCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
         """
         Initialize the modCommands class.
