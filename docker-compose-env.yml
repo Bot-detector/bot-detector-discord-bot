@@ -1,0 +1,20 @@
+version: '3'
+services:
+  discord:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        root_path: ''
+        api_port: 3000
+    image: bot-detector/bd-discord:latest
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    networks:
+      - botdetector-network
+    depends_on:
+      - api
+networks:
+  botdetector-network:

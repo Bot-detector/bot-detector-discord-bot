@@ -1,16 +1,25 @@
 import logging
 
+import aiohttp
 import discord
+from discord.ext.commands import Bot
 
 from src import config
+from src.cogs.fun_commands import funCommands
+from src.cogs.bot_detective_commands import botDetectiveCommands
+from src.cogs.error_handler import errorHandler
+from src.cogs.rsn_linking_commands import rsnLinkingCommands
+from src.cogs.mod_commands import modCommands
+from src.cogs.project_stats import projectStatsCommands
 
 logger = logging.getLogger(__name__)
 
 activity = discord.Game("OSRS", type=discord.ActivityType.watching)
 allowed_mentions = discord.AllowedMentions(everyone=False, roles=False, users=True)
-intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True)
+intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True, message_content=True)
 
-bot = discord.ext.commands.Bot(
+
+bot: discord.Client = Bot(
     allowed_mentions=allowed_mentions,
     command_prefix=config.COMMAND_PREFIX,
     description="busting bots",
@@ -26,11 +35,20 @@ bot = discord.ext.commands.Bot(
 @bot.event
 async def on_ready():
     logger.info(f"We have logged in as {bot.user}")
+    bot.Session = aiohttp.ClientSession()
+    await bot.add_cog(funCommands(bot))
+    await bot.add_cog(botDetectiveCommands(bot))
+    await bot.add_cog(errorHandler(bot))
+    await bot.add_cog(rsnLinkingCommands(bot))
+    await bot.add_cog(modCommands(bot))
+    await bot.add_cog(projectStatsCommands(bot))
+
 
 
 @bot.event
 async def on_connect():
     logger.info("Bot connected successfully.")
+    logger.info(f"{config.COMMAND_PREFIX=}")
 
 
 @bot.event

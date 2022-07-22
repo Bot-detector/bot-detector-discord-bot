@@ -1,0 +1,49 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: FastAPI",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "src.main:app"
+            ],
+            "jinja": true,
+            "justMyCode": true
+        },
+        // docker-compose up does not have a debugger
+        {
+            "name": "docker-compose up",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-compose up",
+            "python": {
+                "projectType": "fastapi"
+            },
+            "dockerServerReadyAction": {
+                "action": "openExternally",
+                "pattern": "Running on (http?://\\S+|[0-9]+)",
+                "uriFormat": "%s://localhost:%s/"
+            }
+        },
+        // does have a debugger
+        {
+            "name": "docker debug",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run",
+            "python": {
+                "projectType": "fastapi"
+            },
+            "dockerServerReadyAction": {
+                "action": "openExternally",
+                "pattern": "Running on (http?://\\S+|[0-9]+)",
+                "uriFormat": "%s://localhost:%s/"
+            }
+        }
+    ]
+}
