@@ -25,7 +25,7 @@ class modCommands(Cog):
         url = "https://user-images.githubusercontent.com/5789682/117366156-59327480-ae8e-11eb-8b08-6cf815d8a36e.png"
         embed.add_field(name=name, value=value, inline=False)
         embed.set_thumbnail(url=url)
-        ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
     # i don't think we want an update_all_roles command
     # i don't think we want an update_faq command
