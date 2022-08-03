@@ -1,11 +1,11 @@
 import logging
-import aiohttp
+from inspect import cleandoc
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from src import config
-from inspect import cleandoc
+from src.utils import string_processing
 
 logger = logging.getLogger(__name__)
 
@@ -335,7 +335,7 @@ class playerStatsCommands(Cog):
         831196988976529438, 843356013973078037
     )  # veriied, tester (on test discord)
     async def rankup(self, ctx: Context):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
         intro_msg = await ctx.reply("Searching for User...")
 
         linked_accounts = await config.api.get_discord_links(
@@ -402,5 +402,51 @@ class playerStatsCommands(Cog):
             url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif"
         )
         await ctx.reply(embed=embed)
+        await intro_msg.delete()
+        return
+
+    @commands.command()
+    @commands.has_any_role(
+        831196988976529438, 843356013973078037
+    )  # veriied, tester (on test discord)
+    async def predict(self, ctx: Context, *, player_name: str):
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
+        intro_msg = await ctx.reply(
+            "Searching the database for the predicted username."
+        )
+
+        data = await config.api.get_prediction(player_name)
+
+        if not data:
+            await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
+            await intro_msg.delete()
+
+        name =        data['player_name']
+        prediction =  data['prediction_label']
+        confidence =  data['prediction_confidence']
+        secondaries:dict = data['predictions_breakdown']
+
+        msg = cleandoc(f"""```diff
+            + Name: {name}
+            {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
+            {string_processing.plus_minus(confidence, 0.75)} Confidence: {float(confidence) * 100:.2f}%
+            ============
+            Prediction Breakdown
+        """)
+
+        msg += "\n"
+
+        for key, value in secondaries.items():
+            if value > 0:
+                msg += cleandoc(f"""
+                    {string_processing.plus_minus(key, 'Real_Player')} {key}: {float(value) * 100:.2f}%
+                """)
+
+                msg += "\n"
+
+        msg += "```"
+
+        
+        await ctx.reply(msg)
         await intro_msg.delete()
         return

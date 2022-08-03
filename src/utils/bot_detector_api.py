@@ -102,3 +102,9 @@ class Api:
         url = self.url + "/stats/contributions"
         data = await self._webrequest(url, json=players, type="post")
         return data
+    
+    async def get_prediction(self, player_name):
+        url = self.url + "/v1/prediction"
+        params={"name": player_name}
+        data = await self._webrequest(url, type="get", params=params)
+        return data
