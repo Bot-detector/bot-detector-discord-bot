@@ -15,6 +15,8 @@ class Api:
         self.session = aiohttp.ClientSession()
 
     def _sanitize_params(self, params: dict):
+        if params is None:
+            return None
         secure = ["token"]
         return {k: "***" if k in secure else v for k, v in params.items()}
 
@@ -38,7 +40,10 @@ class Api:
         if type == "get":
             data = await response.json()
         else:
-            data = None
+            try:
+                data = await response.json()
+            except:
+                data = None
         return data
 
     async def create_player(self, name: str) -> None:
@@ -91,4 +96,9 @@ class Api:
         url = self.url + "/v1/hiscore/Latest"
         params = {"player_id": player_id, "token": self.token}
         data = await self._webrequest(url, type="get", params=params)
+        return data
+
+    async def get_contributions(self, players):
+        url = self.url + "/stats/contributions"
+        data = await self._webrequest(url, json=players, type="post")
         return data
