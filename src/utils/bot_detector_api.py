@@ -73,12 +73,19 @@ class Api:
         data = {"discord_id": discord_id, "player_name": player_name, "code": code}
         await self._webrequest(url, type="post", json=data)
 
+    # TODO: API design
     async def get_discord_links(self, discord_id: str) -> List[dict]:
         url = self.url + f"/discord/get_linked_accounts/{self.token}/{discord_id}"
         data = await self._webrequest(url, type="get")
         return data
 
+    # TODO: API design
     async def get_project_stats(self) -> List[dict]:
         url = self.url + "/site/dashboard/projectstats"
         data = await self._webrequest(url, type="get")
+        return data
+    
+    async def get_hiscore_latest(self, player_id:int) -> List[dict]:
+        url = self.url + "/v1/hiscore/Latest"
+        data = await self._webrequest(url, type="get", params={"player_id": player_id, "token": self.token})
         return data
