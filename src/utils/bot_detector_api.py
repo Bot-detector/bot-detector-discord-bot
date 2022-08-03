@@ -14,11 +14,16 @@ class Api:
         self.url = url
         self.session = aiohttp.ClientSession()
 
+    def _sanitize_params(self, params: dict):
+        if params is None:
+            return None
+        secure = ["token"]
+        return {k: "***" if k in secure else v for k, v in params.items()}
+
     async def _webrequest(
         self, url: str, params: dict = None, json: dict = None, type: str = "get"
     ):
-        logger.debug(f"{type=}, {url=}, {params=}")
-
+        logger.debug(f"{type=}, {url=}, params={self._sanitize_params(params)}")
         # make web request
         if type == "get":
             response = await self.session.get(url, params=params)
@@ -26,17 +31,19 @@ class Api:
             response = await self.session.post(url, json=json)
         else:
             return None
-
         # handle response
         if not response.ok:
-            logger.error(f"{type=}, {url=}, {params=}")
+            logger.error(f"{type=}, {url=}, params={self._sanitize_params(params)}")
             return None
 
         # parse response
         if type == "get":
             data = await response.json()
         else:
-            data = None
+            try:
+                data = await response.json()
+            except:
+                data = None
         return data
 
     async def create_player(self, name: str) -> None:
@@ -45,13 +52,13 @@ class Api:
 
     async def get_player(self, name: str, debug: bool = False) -> dict:
         url = self.url + "/v1/player"
-        params={
-                "player_name": name,
-                "token": self.token,
-                "row_count": 1,
-                "page": 1,
-            }
-        data = await self._webrequest(url, type="get",params=params)
+        params = {
+            "player_name": name,
+            "token": self.token,
+            "row_count": 1,
+            "page": 1,
+        }
+        data = await self._webrequest(url, type="get", params=params)
         if data:
             data = data[0]
         return data
@@ -73,12 +80,31 @@ class Api:
         data = {"discord_id": discord_id, "player_name": player_name, "code": code}
         await self._webrequest(url, type="post", json=data)
 
+    # TODO: API design
     async def get_discord_links(self, discord_id: str) -> List[dict]:
         url = self.url + f"/discord/get_linked_accounts/{self.token}/{discord_id}"
         data = await self._webrequest(url, type="get")
         return data
 
+    # TODO: API design
     async def get_project_stats(self) -> List[dict]:
         url = self.url + "/site/dashboard/projectstats"
         data = await self._webrequest(url, type="get")
+        return data
+
+    async def get_hiscore_latest(self, player_id: int) -> List[dict]:
+        url = self.url + "/v1/hiscore/Latest"
+        params = {"player_id": player_id, "token": self.token}
+        data = await self._webrequest(url, type="get", params=params)
+        return data
+
+    async def get_contributions(self, players):
+        url = self.url + "/stats/contributions"
+        data = await self._webrequest(url, json=players, type="post")
+        return data
+    
+    async def get_prediction(self, player_name):
+        url = self.url + "/v1/prediction"
+        params={"name": player_name}
+        data = await self._webrequest(url, type="get", params=params)
         return data

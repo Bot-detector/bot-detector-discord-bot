@@ -11,6 +11,7 @@ from src.cogs.error_handler import errorHandler
 from src.cogs.rsn_linking_commands import rsnLinkingCommands
 from src.cogs.mod_commands import modCommands
 from src.cogs.project_stats import projectStatsCommands
+from src.cogs.player_stats_commands import playerStatsCommands
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,8 @@ async def on_ready():
     await bot.add_cog(rsnLinkingCommands(bot))
     await bot.add_cog(modCommands(bot))
     await bot.add_cog(projectStatsCommands(bot))
+    await bot.add_cog(playerStatsCommands(bot))
+    
 
 
 
