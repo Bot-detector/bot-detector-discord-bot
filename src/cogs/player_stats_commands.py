@@ -36,13 +36,13 @@ class playerStatsCommands(Cog):
 
         if not player_hiscore:
             await ctx.reply("Could not find the user in our database")
-        
-        player_hiscore:dict = player_hiscore[0]
+
+        player_hiscore: dict = player_hiscore[0]
         ts = player_hiscore.get("timestamp")
         # _ = [logger.debug({k:v}) for k,v in player_hiscore.items()]
 
         # same structure as in osrs
-        skills_list = [ 
+        skills_list = [
             'Attack',           'Hitpoints',    'Mining',
             'Strength',         'Agility',      'Smithing',
             'Defence',          'Herblore',     'Fishing',
@@ -54,16 +54,14 @@ class playerStatsCommands(Cog):
         ]
 
         embeds, i = [], 0
-        embed = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
+        embed = discord.Embed(
+            title=username, description="OSRS Hiscores Lookup", color=0x00FF00
+        )
         embed.set_footer(text=f"Updated on: {ts}")
         for skill in skills_list:
             xp = player_hiscore.get(skill.lower())
             # logger.debug(f"{skill} - {xp}")
-            embed.add_field(
-                name=f"{skill}",
-                value=f"EXP - {xp:,d}",
-                inline=True
-            )
+            embed.add_field(name=f"{skill}", value=f"EXP - {xp:,d}", inline=True)
         embeds.append(embed)
 
         exclude = ["id", "timestamp", "ts_date", "Player_id"]
@@ -75,26 +73,24 @@ class playerStatsCommands(Cog):
         for boss in bosses:
 
             if embed is None:
-                embed = discord.Embed(title=username, description="OSRS Hiscores Lookup", color=0x00ff00)
+                embed = discord.Embed(
+                    title=username, description="OSRS Hiscores Lookup", color=0x00FF00
+                )
                 embed.set_footer(text=f"Updated on: {ts}")
             kc = player_hiscore.get(boss)
-            
+
             # don't add empty kc
             if kc is None or kc <= 0:
                 continue
 
             # logger.debug({boss:kc})
-            embed.add_field(
-                name=f"{boss}",
-                value=f"KC - {kc:,d}",
-                inline=True
-            )
+            embed.add_field(name=f"{boss}", value=f"KC - {kc:,d}", inline=True)
 
             # max 7 rows of 3 in an embed
             if len(embed.fields) >= 21:
                 embeds.append(embed)
                 embed = None
-            
+
             # max 10 embeds per reply
             if len(embeds) >= 9:
                 await ctx.reply(embeds=embeds)
