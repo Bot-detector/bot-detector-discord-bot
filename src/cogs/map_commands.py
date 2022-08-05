@@ -14,12 +14,11 @@ import numpy as np
 import pandas as pd
 import PIL
 import seaborn as sns
-from config import TOKEN
+from src.config import API_TOKEN
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 
 logger = logging.getLogger(__name__)
-
 
 PATREON_ROLE = 830782790786220104
 
@@ -47,7 +46,9 @@ class mapCommands(Cog):
 
     @commands.command()
     async def region(self, ctx, *, regionName):
-        dataRegion = await self.__getHeatmapRegion(self.bot.session, regionName, TOKEN)
+        dataRegion = await self.__getHeatmapRegion(
+            self.bot.session, regionName, API_TOKEN
+        )
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -107,7 +108,9 @@ class mapCommands(Cog):
                     await ctx.reply("https://i.redd.it/lel3o4e2hhp11.jpg")
 
         else:
-            dataRegion = await self.__getHeatmapRegion(self.bot.session, region, TOKEN)
+            dataRegion = await self.__getHeatmapRegion(
+                self.bot.session, region, API_TOKEN
+            )
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -156,7 +159,9 @@ class mapCommands(Cog):
             msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region}.png"
 
         else:
-            dataRegion = await self.__getHeatmapRegion(self.bot.session, region, TOKEN)
+            dataRegion = await self.__getHeatmapRegion(
+                self.bot.session, region, API_TOKEN
+            )
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -192,7 +197,7 @@ class mapCommands(Cog):
 
         region_id = int(region_id)
 
-        data = await self.__getHeatmapData(self.bot.session, region_id, TOKEN)
+        data = await self.__getHeatmapData(self.bot.session, region_id, API_TOKEN)
         df = pd.DataFrame(data)
 
         if df.empty:
@@ -314,18 +319,18 @@ class mapCommands(Cog):
     async def __CleanupImages(self, filename):
         os.remove(filename)
 
-    async def __getHeatmapRegion(self, session, regionName, TOKEN):
+    async def __getHeatmapRegion(self, session, regionName, API_TOKEN):
         json = {"region": regionName}
-        url = f"https://www.osrsbotdetector.com/api/discord/region/{TOKEN}/{regionName}"
+        url = f"https://www.osrsbotdetector.com/api/discord/region/{API_TOKEN}/{regionName}"
 
         async with session.get(url, json=json) as r:
             if r.status == 200:
                 data = await r.json()
                 return data
 
-    async def __getHeatmapData(self, session, region_id, TOKEN):
+    async def __getHeatmapData(self, session, region_id, API_TOKEN):
         json = {"region_id": region_id}
-        url = f"https://www.osrsbotdetector.com/api/discord/heatmap/{TOKEN}"
+        url = f"https://www.osrsbotdetector.com/api/discord/heatmap/{API_TOKEN}"
 
         async with session.get(url, json=json) as r:
             if r.status == 200:
