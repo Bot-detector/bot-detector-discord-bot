@@ -47,7 +47,7 @@ class mapCommands(Cog):
             return await response.json()
 
     @commands.command()
-    async def region(self, ctx:Context, *, region_name:str):
+    async def region(self, ctx: Context, *, region_name: str):
         dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
@@ -82,7 +82,7 @@ class mapCommands(Cog):
 
     @commands.command(aliases=["hm"])
     @commands.has_role(PATREON_ROLE)
-    async def heatmap(self, ctx:Context, *, region):
+    async def heatmap(self, ctx: Context, *, region):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -149,7 +149,7 @@ class mapCommands(Cog):
         await info_msg.delete()
 
     @commands.command()
-    async def map(self, ctx, *, region=None):
+    async def map(self, ctx: Context, *, region=None):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -311,9 +311,6 @@ class mapCommands(Cog):
         plt.savefig(filename, bbox_inches="tight", pad_inches=0)
         plt.figure().clear()
         plt.close("all")
-
-    async def __CleanupImages(self, filename):
-        os.remove(filename)
 
     def __displayDuplicates(self, df):
         dfRegion = df.drop_duplicates(subset=["region_name"], keep="first")
