@@ -108,3 +108,14 @@ class Api:
         params={"name": player_name}
         data = await self._webrequest(url, type="get", params=params)
         return data
+    
+    async def get_heatmap_region(self, region_name):
+        url = self.url + f"/discord/region/{self.token}/{region_name}"
+        data = await self._webrequest(url, type="get", params=None)
+        return data
+    
+    async def get_heatmap_data(self, region_id):
+        url = self.url + f"/discord/heatmap/{self.token}"
+        params = {"region_id": region_id}
+        data = await self._webrequest(url, type="get", params=params)
+        return data

@@ -4,6 +4,7 @@ import math
 import os
 import random
 import subprocess
+from typing import Union
 import urllib
 from datetime import date
 from inspect import cleandoc
@@ -14,9 +15,10 @@ import numpy as np
 import pandas as pd
 import PIL
 import seaborn as sns
-from src.config import API_TOKEN
+from src.config import API_TOKEN, api
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
+
 
 logger = logging.getLogger(__name__)
 
@@ -45,10 +47,8 @@ class mapCommands(Cog):
             return await response.json()
 
     @commands.command()
-    async def region(self, ctx, *, regionName):
-        dataRegion = await self.__getHeatmapRegion(
-            self.bot.session, regionName, API_TOKEN
-        )
+    async def region(self, ctx:Context, *, region_name:str):
+        dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -57,20 +57,20 @@ class mapCommands(Cog):
                 color=discord.Colour.dark_red(),
                 description=cleandoc(
                     f"""
-                                "{regionName}" does not correspond with any of our labeled regions.
-                                It is possible that we just need to add it. Please let us know if so!
-                                """
+                        {region_name} does not correspond with any of our labeled regions.
+                        It is possible that we just need to add it. Please let us know if so!
+                    """
                 ),
             )
 
             return await ctx.send(embed=embed)
 
         if len(dfRegion) < 30:
-            regionTrueName, region_id = self.__Autofill(dfRegion, regionName)
+            regionTrueName, region_id = self.__Autofill(dfRegion, region_name)
 
             msg = cleandoc(
                 f"""```diff
-                Input: {regionName}
+                Input: {region_name}
                 Selection From: {', '.join(str(elem) for elem in dfRegion['region_name'].values)}
                 Selected: {regionTrueName}
             ```"""
@@ -82,7 +82,7 @@ class mapCommands(Cog):
 
     @commands.command(aliases=["hm"])
     @commands.has_role(PATREON_ROLE)
-    async def heatmap(self, ctx, *, region):
+    async def heatmap(self, ctx:Context, *, region):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -108,9 +108,7 @@ class mapCommands(Cog):
                     await ctx.reply("https://i.redd.it/lel3o4e2hhp11.jpg")
 
         else:
-            dataRegion = await self.__getHeatmapRegion(
-                self.bot.session, region, API_TOKEN
-            )
+            dataRegion = await api.get_heatmap_region(region_name=region)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -159,9 +157,7 @@ class mapCommands(Cog):
             msg = f"https://raw.githubusercontent.com/Ferrariic/OSRS-Visible-Region-Images/main/Region_Maps/{region}.png"
 
         else:
-            dataRegion = await self.__getHeatmapRegion(
-                self.bot.session, region, API_TOKEN
-            )
+            dataRegion = await api.get_heatmap_region(region_name=region)
             dfDataRegion = pd.DataFrame(dataRegion)
             dfRegion = self.__displayDuplicates(dfDataRegion)
 
@@ -197,7 +193,7 @@ class mapCommands(Cog):
 
         region_id = int(region_id)
 
-        data = await self.__getHeatmapData(self.bot.session, region_id, API_TOKEN)
+        data = await api.get_heatmap_data(region_id=region_id)
         df = pd.DataFrame(data)
 
         if df.empty:
@@ -318,24 +314,6 @@ class mapCommands(Cog):
 
     async def __CleanupImages(self, filename):
         os.remove(filename)
-
-    async def __getHeatmapRegion(self, session, regionName, API_TOKEN):
-        json = {"region": regionName}
-        url = f"https://www.osrsbotdetector.com/api/discord/region/{API_TOKEN}/{regionName}"
-
-        async with session.get(url, json=json) as r:
-            if r.status == 200:
-                data = await r.json()
-                return data
-
-    async def __getHeatmapData(self, session, region_id, API_TOKEN):
-        json = {"region_id": region_id}
-        url = f"https://www.osrsbotdetector.com/api/discord/heatmap/{API_TOKEN}"
-
-        async with session.get(url, json=json) as r:
-            if r.status == 200:
-                data = await r.json()
-                return data
 
     def __displayDuplicates(self, df):
         dfRegion = df.drop_duplicates(subset=["region_name"], keep="first")
