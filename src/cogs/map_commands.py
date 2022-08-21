@@ -22,7 +22,7 @@ from discord.ext.commands import Cog, Context
 
 logger = logging.getLogger(__name__)
 
-PATREON_ROLE = 830782790786220104
+PATREON_ROLE = 905511360677445693  # 830782790786220104
 
 
 class mapCommands(Cog):
@@ -48,6 +48,7 @@ class mapCommands(Cog):
 
     @commands.command()
     async def region(self, ctx: Context, *, region_name: str):
+        ctx.send("test")
         dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
@@ -87,7 +88,7 @@ class mapCommands(Cog):
             return await ctx.send("Please enter a region name or region ID.")
 
         info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
-        await ctx.trigger_typing()
+        await ctx.typing()
 
         if region.isdigit():
             regionTrueName = f"Region ID: {region}"
@@ -95,7 +96,6 @@ class mapCommands(Cog):
 
             if not mapFilePath:
                 await self.map(ctx=ctx, region=region)
-
                 await ctx.reply("We have no data on this region yet.")
             else:
                 try:
@@ -148,7 +148,7 @@ class mapCommands(Cog):
 
         await info_msg.delete()
 
-    @commands.command()
+    @commands.command("map")
     async def map(self, ctx: Context, *, region=None):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
