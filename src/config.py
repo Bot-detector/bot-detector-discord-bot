@@ -42,3 +42,4 @@ logging.basicConfig(level=logging.DEBUG, handlers=handlers)
 
 logging.getLogger("discord").setLevel(logging.WARNING)
 logging.getLogger("uvicorn").setLevel(logging.DEBUG)
+logging.getLogger("matplotlib").setLevel(logging.WARNING)
