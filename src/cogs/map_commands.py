@@ -22,7 +22,8 @@ from discord.ext.commands import Cog, Context
 
 logger = logging.getLogger(__name__)
 
-PATREON_ROLE = 905511360677445693  # 830782790786220104
+PATREON_ROLE = 905511360677445693
+TESTER_ROLE = 843356013973078037
 
 
 class mapCommands(Cog):
@@ -82,7 +83,7 @@ class mapCommands(Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["hm"])
-    @commands.has_role(PATREON_ROLE)
+    @commands.has_any_role(PATREON_ROLE, TESTER_ROLE)
     async def heatmap(self, ctx: Context, *, region):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")

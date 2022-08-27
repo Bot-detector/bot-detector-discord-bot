@@ -3,6 +3,8 @@ import logging
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
+import traceback
+import sys
 
 logger = logging.getLogger(__name__)
 
@@ -49,3 +51,4 @@ class errorHandler(commands.Cog):
         else:
             await ctx.reply("An error occured.")
             logger.error(error)
+            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
