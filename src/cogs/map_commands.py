@@ -49,7 +49,6 @@ class mapCommands(Cog):
 
     @commands.command()
     async def region(self, ctx: Context, *, region_name: str):
-        ctx.send("test")
         dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
