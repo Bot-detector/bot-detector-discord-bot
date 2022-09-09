@@ -171,7 +171,7 @@ class rsnLinkingCommands(commands.Cog):
         player = await config.api.get_player(name=name)
         if not player:
             embed = await self.install_plugin_msg()
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
 
         # get the db record for rsn & ctx.author.id
         linked_users = await config.api.get_discord_player(name)
@@ -185,7 +185,9 @@ class rsnLinkingCommands(commands.Cog):
             linked_status = True if linked_user.get("Verified_status") == 1 else False
             if linked_status:
                 embed = await self.verified_msg(name)
-                await ctx.send(embed=embed)
+                verified_role = discord.utils.find(lambda r: r.id == 831196988976529438, ctx.author.guild.roles)
+                await ctx.author.add_roles(verified_role)
+                await ctx.reply(embed=embed)
                 return
             else:
                 code = linked_user.get("Code")

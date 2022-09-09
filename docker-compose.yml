@@ -47,6 +47,7 @@ services:
     image: bot-detector/bd-discord:latest
     environment:
       - TOKEN=<YOUR TOKEN HERE>
+      - API_TOKEN=verify_ban
       - COMMAND_PREFIX=$
     ports:
       - "3000:3000"
