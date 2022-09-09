@@ -18,6 +18,7 @@ EASTER_EGGS = {
     "tedious": "Theeeee collection log",
     "ltt": "https://www.lttstore.com",
     "a q p": "( ͡° ͜ʖ ͡°)",
+    "beep boop": "boop beep",
 }
 
 
@@ -133,7 +134,7 @@ async def startup():
             bot.error_file = error_file
             bot.loop = asyncio.get_event_loop()
 
-            print(f'{config.TOKEN=}')
+            print(f"{config.TOKEN=}")
             await bot.start(config.TOKEN)
 
     print("Bot is going night-night.")

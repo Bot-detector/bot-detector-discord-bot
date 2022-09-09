@@ -12,12 +12,15 @@ from src.cogs.rsn_linking_commands import rsnLinkingCommands
 from src.cogs.mod_commands import modCommands
 from src.cogs.project_stats import projectStatsCommands
 from src.cogs.player_stats_commands import playerStatsCommands
+from src.cogs.map_commands import mapCommands
 
 logger = logging.getLogger(__name__)
 
 activity = discord.Game("OSRS", type=discord.ActivityType.watching)
 allowed_mentions = discord.AllowedMentions(everyone=False, roles=False, users=True)
-intents = discord.Intents(messages=True, guilds=True, members=True, reactions=True, message_content=True)
+intents = discord.Intents(
+    messages=True, guilds=True, members=True, reactions=True, message_content=True
+)
 
 
 bot: discord.Client = Bot(
@@ -44,8 +47,7 @@ async def on_ready():
     await bot.add_cog(modCommands(bot))
     await bot.add_cog(projectStatsCommands(bot))
     await bot.add_cog(playerStatsCommands(bot))
-    
-
+    await bot.add_cog(mapCommands(bot))
 
 
 @bot.event
