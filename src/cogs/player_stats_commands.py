@@ -132,6 +132,8 @@ bot_hunter_roles = [
     },  # 2000000 Bans
 ]
 
+VERIFIED_PLAYER_ROLE = 831196988976529438
+TESTER_ROLE = 843356013973078037
 
 class playerStatsCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -143,7 +145,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        831196988976529438, 843356013973078037
+        VERIFIED_PLAYER_ROLE, TESTER_ROLE
     )  # veriied, tester (on test discord)
     async def lookup(self, ctx: Context, *, player_name):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, looking up: {player_name}")
@@ -245,7 +247,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        831196988976529438, 843356013973078037
+        VERIFIED_PLAYER_ROLE, TESTER_ROLE
     )  # veriied, tester (on test discord)
     async def kc(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
@@ -332,7 +334,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        831196988976529438, 843356013973078037
+        VERIFIED_PLAYER_ROLE, TESTER_ROLE
     )  # veriied, tester (on test discord)
     async def rankup(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
@@ -407,7 +409,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        831196988976529438, 843356013973078037
+        VERIFIED_PLAYER_ROLE, TESTER_ROLE
     )  # veriied, tester (on test discord)
     async def predict(self, ctx: Context, *, player_name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")

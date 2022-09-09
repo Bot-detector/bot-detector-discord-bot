@@ -11,6 +11,10 @@ from src.config import api
 
 logger = logging.getLogger(__name__)
 
+DETECTIVE_ROLE = 830507560783183888
+HEAD_DETECTIVE_ROLE = 855341635079503872
+OWNER_ROLE = 817917060796776469
+TESTER_ROLE = 843356013973078037
 
 class botDetectiveCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -35,7 +39,7 @@ class botDetectiveCommands(commands.Cog):
     @commands.command()
     @commands.is_owner()
     @commands.has_any_role(
-        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE, TESTER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def submit(self, ctx: Context, url: str, label: str = None) -> None:
         logger.debug("received submission")
@@ -63,7 +67,7 @@ class botDetectiveCommands(commands.Cog):
     @commands.command()
     @commands.is_owner()
     @commands.has_any_role(
-        830507560783183888, 855341635079503872, 817917814798155866, 843356013973078037
+        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE, TESTER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
