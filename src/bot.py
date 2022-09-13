@@ -2,17 +2,19 @@ import logging
 
 import aiohttp
 import discord
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, Context
 
 from src import config
-from src.cogs.fun_commands import funCommands
+from src.utils import checks
 from src.cogs.bot_detective_commands import botDetectiveCommands
 from src.cogs.error_handler import errorHandler
-from src.cogs.rsn_linking_commands import rsnLinkingCommands
-from src.cogs.mod_commands import modCommands
-from src.cogs.project_stats import projectStatsCommands
-from src.cogs.player_stats_commands import playerStatsCommands
+from src.cogs.fun_commands import funCommands
 from src.cogs.map_commands import mapCommands
+from src.cogs.mod_commands import modCommands
+from src.cogs.player_stats_commands import playerStatsCommands
+from src.cogs.project_stats import projectStatsCommands
+from src.cogs.rsn_linking_commands import rsnLinkingCommands
+
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +34,13 @@ bot: discord.Client = Bot(
     intents=intents,
 )
 
-# register our own commands, these should be in the cogs folder
-# bot.add_cog(className(bot))
+@bot.check
+async def globally_block_dms(ctx: Context):
+    return ctx.guild is not None
+
+@bot.check
+async def globally_check_channel(ctx: Context):
+    return await checks.is_allowed_channel(ctx)
 
 # default events
 @bot.event

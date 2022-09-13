@@ -3,6 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
+from src.utils.checks import STAFF_ROLE, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ class modCommands(Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
+    @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
     async def warn(self, ctx: Context):
         logger.debug(f"{ctx.author}, is using warn.")
         embed = discord.Embed(title=f"WARNING", color=0xFF0000)

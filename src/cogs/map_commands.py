@@ -2,9 +2,6 @@ import fnmatch
 import logging
 import math
 import os
-import random
-import subprocess
-from typing import Union
 import urllib
 from datetime import date
 from inspect import cleandoc
@@ -15,15 +12,12 @@ import numpy as np
 import pandas as pd
 import PIL
 import seaborn as sns
-from src.config import API_TOKEN, api
+from src.config import api
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
-
+from src.utils.checks import PATREON_ROLE, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
-
-PATREON_ROLE = 905511360677445693
-TESTER_ROLE = 843356013973078037
 
 
 class mapCommands(Cog):
@@ -82,7 +76,7 @@ class mapCommands(Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["hm"])
-    @commands.has_any_role(PATREON_ROLE, TESTER_ROLE)
+    @commands.has_any_role(PATREON_ROLE, OWNER_ROLE)
     async def heatmap(self, ctx: Context, *, region):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
