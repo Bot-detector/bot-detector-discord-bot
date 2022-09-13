@@ -20,10 +20,15 @@ class Api:
         secure = ["token"]
         return {k: "***" if k in secure else v for k, v in params.items()}
 
+    def __sanitize_url(self, string:str, values:list) -> str:
+        for v in values:
+            string = string.replace(v)
+        return string
+
     async def _webrequest(
         self, url: str, params: dict = None, json: dict = None, type: str = "get"
     ):
-        logger.debug(f"{type=}, {url=}, params={self._sanitize_params(params)}")
+        logger.debug(f"{type=}, url={self.__sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}")
         # make web request
         if type == "get":
             response = await self.session.get(url, params=params)
@@ -33,7 +38,7 @@ class Api:
             return None
         # handle response
         if not response.ok:
-            logger.error(f"{type=}, {url=}, params={self._sanitize_params(params)}")
+            logger.error(f"{type=}, url={self.__sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}")
             return None
 
         # parse response

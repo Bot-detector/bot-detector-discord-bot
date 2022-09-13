@@ -3,6 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
+from src.utils.checks import STAFF_ROLE, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +17,16 @@ class modCommands(Cog):
         self.bot = bot
 
     @commands.command()
-    @commands.has_permissions(kick_members=True)
+    @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
     async def warn(self, ctx: Context):
-        logger.debug(f"{ctx.author}, is using warn.")
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"is using warn"
+        }
+        logger.debug(debug)
+
         embed = discord.Embed(title=f"WARNING", color=0xFF0000)
         name = "= WARNING MESSAGE ="
         value = "**Do not attempt to contact the Jmods or Admins in any channel regarding the status of your Runescape account: Doing so will result in an automatic permanent ban.**\n**This is your only warning.**\n"

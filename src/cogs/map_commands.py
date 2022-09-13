@@ -2,9 +2,6 @@ import fnmatch
 import logging
 import math
 import os
-import random
-import subprocess
-from typing import Union
 import urllib
 from datetime import date
 from inspect import cleandoc
@@ -15,15 +12,12 @@ import numpy as np
 import pandas as pd
 import PIL
 import seaborn as sns
-from src.config import API_TOKEN, api
+from src.config import api
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
-
+from src.utils.checks import PATREON_ROLE, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
-
-PATREON_ROLE = 905511360677445693
-TESTER_ROLE = 843356013973078037
 
 
 class mapCommands(Cog):
@@ -49,6 +43,14 @@ class mapCommands(Cog):
 
     @commands.command()
     async def region(self, ctx: Context, *, region_name: str):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested region {region_name}"
+        }
+        logger.debug(debug)
+
         dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
@@ -82,8 +84,15 @@ class mapCommands(Cog):
         await ctx.send(msg)
 
     @commands.command(aliases=["hm"])
-    @commands.has_any_role(PATREON_ROLE, TESTER_ROLE)
+    @commands.has_any_role(PATREON_ROLE, OWNER_ROLE)
     async def heatmap(self, ctx: Context, *, region):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested heatmap {region}"
+        }
+        logger.debug(debug)
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -150,6 +159,13 @@ class mapCommands(Cog):
 
     @commands.command("map")
     async def map(self, ctx: Context, *, region=None):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested map {region}"
+        }
+        logger.debug(debug)
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 

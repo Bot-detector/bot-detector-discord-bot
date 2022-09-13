@@ -8,13 +8,10 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from src.config import api
+from src.utils.checks import DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
 
-DETECTIVE_ROLE = 830507560783183888
-HEAD_DETECTIVE_ROLE = 855341635079503872
-OWNER_ROLE = 817917060796776469
-TESTER_ROLE = 843356013973078037
 
 class botDetectiveCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -35,14 +32,17 @@ class botDetectiveCommands(commands.Cog):
         for ndx in range(0, l, n):
             yield iterable[ndx : min(ndx + n, l)]
 
-    # TODO: help message
     @commands.command()
-    @commands.is_owner()
     @commands.has_any_role(
-        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE, TESTER_ROLE
+        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def submit(self, ctx: Context, url: str, label: str = None) -> None:
-        logger.debug("received submission")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "Send submission"
+        }
+        logger.debug(debug)
         # check if url is a pastebin url
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")
@@ -65,12 +65,17 @@ class botDetectiveCommands(commands.Cog):
         return
 
     @commands.command()
-    @commands.is_owner()
     @commands.has_any_role(
-        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE, TESTER_ROLE
+        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "Send ban list"
+        }
+        logger.debug(debug)
         # validate pastebin
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")

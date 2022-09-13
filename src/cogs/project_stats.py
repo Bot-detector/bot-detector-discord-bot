@@ -58,6 +58,7 @@ class projectStatsCommands(Cog):
 
     @commands.command()
     async def stats(self, ctx: Context):
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting stats")
         project_stats: dict = await config.api.get_project_stats()
         logger.debug(f"{project_stats=}")
 

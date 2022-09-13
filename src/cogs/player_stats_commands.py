@@ -6,6 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from src import config
 from src.utils import string_processing
+from src.utils.checks import VERIFIED_PLAYER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -132,8 +133,6 @@ bot_hunter_roles = [
     },  # 2000000 Bans
 ]
 
-VERIFIED_PLAYER_ROLE = 831196988976529438
-TESTER_ROLE = 843356013973078037
 
 class playerStatsCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -145,7 +144,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE, TESTER_ROLE
+        VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
     async def lookup(self, ctx: Context, *, player_name):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, looking up: {player_name}")
@@ -247,7 +246,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE, TESTER_ROLE
+        VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
     async def kc(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
@@ -334,7 +333,7 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE, TESTER_ROLE
+        VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
     async def rankup(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
@@ -409,10 +408,10 @@ class playerStatsCommands(Cog):
 
     @commands.command()
     @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE, TESTER_ROLE
+        VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
     async def predict(self, ctx: Context, *, player_name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
         intro_msg = await ctx.reply(
             "Searching the database for the predicted username."
         )
