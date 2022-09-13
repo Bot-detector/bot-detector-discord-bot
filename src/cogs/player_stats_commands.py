@@ -411,7 +411,7 @@ class playerStatsCommands(Cog):
         VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
     async def predict(self, ctx: Context, *, player_name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
         intro_msg = await ctx.reply(
             "Searching the database for the predicted username."
         )

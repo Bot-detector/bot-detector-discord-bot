@@ -37,7 +37,12 @@ class botDetectiveCommands(commands.Cog):
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def submit(self, ctx: Context, url: str, label: str = None) -> None:
-        logger.debug("received submission")
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "Send submission"
+        }
+        logger.debug(debug)
         # check if url is a pastebin url
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")
@@ -65,6 +70,12 @@ class botDetectiveCommands(commands.Cog):
     )  # detective, headdetective, co-owner, tester (on tests server)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": "Send ban list"
+        }
+        logger.debug(debug)
         # validate pastebin
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")

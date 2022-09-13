@@ -111,7 +111,7 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.command(name="link")
     async def link(self, ctx: Context, *, name: str = None):
-        logger.debug(f"linking: {name}")
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting link, {name=}")
         # check if a name is given
         if not name:
             await ctx.send(
@@ -167,7 +167,7 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.command(name="verify")
     async def verify(self, ctx: Context, name: str = None):
-        logger.debug(f"verifying: {name}")
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}")
         player = await config.api.get_player(name=name)
         if not player:
             embed = await self.install_plugin_msg()
@@ -203,8 +203,7 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.command(name="linked")
     async def linked(self, ctx: Context):
-        logger.debug(f"getting links {ctx.author}")
-        # TODO
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting linked")
         links = await config.api.get_discord_links(ctx.author.id)
         
         if len(links) == 0:

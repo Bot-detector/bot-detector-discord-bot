@@ -43,6 +43,14 @@ class mapCommands(Cog):
 
     @commands.command()
     async def region(self, ctx: Context, *, region_name: str):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested region {region_name}"
+        }
+        logger.debug(debug)
+
         dataRegion = await api.get_heatmap_region(region_name=region_name)
         dfDataRegion = pd.DataFrame(dataRegion)
         dfRegion = self.__displayDuplicates(dfDataRegion)
@@ -78,6 +86,13 @@ class mapCommands(Cog):
     @commands.command(aliases=["hm"])
     @commands.has_any_role(PATREON_ROLE, OWNER_ROLE)
     async def heatmap(self, ctx: Context, *, region):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested heatmap {region}"
+        }
+        logger.debug(debug)
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
@@ -144,6 +159,13 @@ class mapCommands(Cog):
 
     @commands.command("map")
     async def map(self, ctx: Context, *, region=None):
+        """"""
+        debug = {
+            "author": ctx.author.name,
+            "author_id": ctx.author.id,
+            "msg": f"Requested map {region}"
+        }
+        logger.debug(debug)
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
