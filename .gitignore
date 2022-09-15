@@ -7,4 +7,4 @@ venv/
 .idea/
 error.log
 *.bak
-.png
+*.png

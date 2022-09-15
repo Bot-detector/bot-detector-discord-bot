@@ -40,7 +40,7 @@ class botDetectiveCommands(commands.Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "Send submission"
+            "msg": "Send submission",
         }
         logger.debug(debug)
         # check if url is a pastebin url
@@ -73,7 +73,7 @@ class botDetectiveCommands(commands.Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "Send ban list"
+            "msg": "Send ban list",
         }
         logger.debug(debug)
         # validate pastebin
@@ -104,7 +104,7 @@ class botDetectiveCommands(commands.Cog):
             embed = discord.Embed(title="Ban list", color=discord.Color.red())
             for player in batch:
                 player: dict
-                if player is None:
+                if len(player) == 0:
                     continue
                 banned = True if player.get("label_jagex") == 2 else False
                 value = f"```{banned}```" if banned else banned
@@ -117,7 +117,7 @@ class botDetectiveCommands(commands.Cog):
                 await ctx.reply(embeds=embeds)
                 embeds = []
             i += 1
-        
+
         # check if there are any embeds left
         if embeds != []:
             await ctx.reply(embeds=embeds)
