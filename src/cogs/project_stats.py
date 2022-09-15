@@ -6,9 +6,14 @@ from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from src import config
 from inspect import cleandoc
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
+class Stats(BaseModel):
+    total_bans: int
+    total_real_players: int
+    total_accounts: int
 
 class projectStatsCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -20,7 +25,7 @@ class projectStatsCommands(Cog):
 
     async def get_active_installs(self) -> int:
         session: aiohttp.ClientSession = self.bot.Session
-        url = "https://api.runelite.net/runelite-1.8.27/pluginhub"
+        url = "https://api.runelite.net/runelite/pluginhub"
 
         response = await session.get(url)
 
@@ -44,11 +49,11 @@ class projectStatsCommands(Cog):
             value=cleandoc(
                 f"""
                 Players Analyzed: {total_accounts:,}
-                Confirmed Players: {(confirmed_players):,}
+                Confirmed Players: {confirmed_players:,}
                 Total Bans: {confirmed_bans:,}
                 Active Installs: {active_installs:,}
             """
-            ),
+            )
         )
 
         embed.set_thumbnail(
@@ -60,16 +65,31 @@ class projectStatsCommands(Cog):
     async def stats(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting stats")
         project_stats: dict = await config.api.get_project_stats()
-        logger.debug(f"{project_stats=}")
+        logger.info(f"{project_stats=}")
 
+        # validate stats
+        stats = Stats(**project_stats)
+        
         active_installs = await self.get_active_installs()
-        logger.debug(f"{active_installs=}")
+        active_installs = active_installs if active_installs else ''
+        logger.info(f"{active_installs=}")
 
-        embed = await self.create_stats_embed(
-            total_accounts=project_stats.get("total_accounts"),
-            confirmed_players=project_stats.get("total_real_players"),
-            confirmed_bans=project_stats.get("total_bans"),
-            active_installs=active_installs,
+        embed = discord.Embed(title="Bot Detector Plugin", color=0x00FF00)
+        embed.add_field(
+            name="= Project Stats =",
+            inline=False,
+            value=cleandoc(
+                f"""
+                Players Analyzed: {stats.total_accounts:,}
+                Confirmed Players: {stats.total_real_players:,}
+                Total Bans: {stats.total_bans:,}
+                Active Installs: {active_installs:,}
+            """
+            )
+        )
+
+        embed.set_thumbnail(
+            url="https://user-images.githubusercontent.com/5789682/117360948-60a24f80-ae87-11eb-8a5a-7ba57f85deb2.png"
         )
         await ctx.reply(embed=embed)
         return
