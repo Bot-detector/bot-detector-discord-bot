@@ -22,7 +22,7 @@ class Api:
 
     def __sanitize_url(self, string: str, values: list) -> str:
         for v in values:
-            string = string.replace(v)
+            string = string.replace(v, '***')
         return string
 
     async def _webrequest(
