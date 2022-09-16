@@ -41,7 +41,7 @@ class mapCommands(Cog):
                 return None
             return await response.json()
 
-    @commands.command()
+    @commands.hybrid_command()
     async def region(self, ctx: Context, *, region_name: str):
         """"""
         debug = {
@@ -83,7 +83,7 @@ class mapCommands(Cog):
 
         await ctx.send(msg)
 
-    @commands.command(aliases=["hm"])
+    @commands.hybrid_command(aliases=["hm"])
     @commands.has_any_role(PATREON_ROLE, OWNER_ROLE)
     async def heatmap(self, ctx: Context, *, region):
         """"""
@@ -157,7 +157,7 @@ class mapCommands(Cog):
 
         await info_msg.delete()
 
-    @commands.command("map")
+    @commands.hybrid_command("map")
     async def map(self, ctx: Context, *, region=None):
         """"""
         debug = {

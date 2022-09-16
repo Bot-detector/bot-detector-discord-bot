@@ -34,6 +34,8 @@ bot: discord.Client = Bot(
     intents=intents,
 )
 
+
+
 @bot.check
 async def globally_block_dms(ctx: Context):
     return ctx.guild is not None
@@ -55,7 +57,7 @@ async def on_ready():
     await bot.add_cog(projectStatsCommands(bot))
     await bot.add_cog(playerStatsCommands(bot))
     await bot.add_cog(mapCommands(bot))
-
+    await bot.tree.sync()
 
 @bot.event
 async def on_connect():

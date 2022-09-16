@@ -48,6 +48,9 @@ class errorHandler(commands.Cog):
         if isinstance(error, commands.MissingAnyRole):
             logger.debug(f"user: {ctx.author}, {error}")
             await ctx.reply("You are missing at least one of the required roles")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            logger.debug(f"user: {ctx.author}, {error}")
+            await ctx.reply(str(error))
         else:
             await ctx.reply("An error occured.")
             logger.error(error)

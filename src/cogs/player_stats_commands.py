@@ -142,7 +142,7 @@ class playerStatsCommands(Cog):
         """
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
@@ -244,7 +244,7 @@ class playerStatsCommands(Cog):
             await ctx.reply(embeds=embeds)
         await intro_msg.delete()
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
@@ -331,7 +331,7 @@ class playerStatsCommands(Cog):
         await intro_msg.delete()
         return
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)
@@ -406,7 +406,7 @@ class playerStatsCommands(Cog):
         await intro_msg.delete()
         return
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         VERIFIED_PLAYER_ROLE
     )  # veriied, tester (on test discord)

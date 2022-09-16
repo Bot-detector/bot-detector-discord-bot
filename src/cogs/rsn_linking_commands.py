@@ -109,7 +109,7 @@ class rsnLinkingCommands(commands.Cog):
 
         return embed
 
-    @commands.command(name="link")
+    @commands.hybrid_command(name="link")
     async def link(self, ctx: Context, *, name: str = None):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting link, {name=}")
         # check if a name is given
@@ -165,7 +165,7 @@ class rsnLinkingCommands(commands.Cog):
         await ctx.author.send(embed=embed)
         return
 
-    @commands.command(name="verify")
+    @commands.hybrid_command(name="verify")
     async def verify(self, ctx: Context, name: str = None):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}")
         player = await config.api.get_player(name=name)
@@ -201,7 +201,7 @@ class rsnLinkingCommands(commands.Cog):
         return
 
 
-    @commands.command(name="linked")
+    @commands.hybrid_command(name="linked")
     async def linked(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting linked")
         links = await config.api.get_discord_links(ctx.author.id)

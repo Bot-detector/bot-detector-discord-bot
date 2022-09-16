@@ -32,7 +32,7 @@ class botDetectiveCommands(commands.Cog):
         for ndx in range(0, l, n):
             yield iterable[ndx : min(ndx + n, l)]
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)
@@ -64,7 +64,7 @@ class botDetectiveCommands(commands.Cog):
         await ctx.reply("Thank you for submitting your list.")
         return
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
     )  # detective, headdetective, co-owner, tester (on tests server)

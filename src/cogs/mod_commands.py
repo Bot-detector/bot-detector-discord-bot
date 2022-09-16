@@ -16,7 +16,7 @@ class modCommands(Cog):
         """
         self.bot = bot
 
-    @commands.command()
+    @commands.hybrid_command()
     @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
     async def warn(self, ctx: Context):
         """"""

@@ -30,7 +30,7 @@ class funCommands(Cog):
                 return None
             return await response.json()
 
-    @commands.command(name="poke")
+    @commands.hybrid_command(name="poke")
     async def poke(self, ctx: Context):
         """
         Ping the bot and the botDetective API.
@@ -54,7 +54,7 @@ class funCommands(Cog):
         await ctx.reply(embed=embed)
         pass
 
-    @commands.command()
+    @commands.hybrid_command()
     async def panic(self, ctx: Context):
         """
         Send a panic image.
@@ -67,7 +67,7 @@ class funCommands(Cog):
         logger.debug(debug)
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
 
-    @commands.command(name="meow")
+    @commands.hybrid_command(name="meow")
     async def meow(self, ctx: Context):
         """
         Send a random cat image.
@@ -90,7 +90,7 @@ class funCommands(Cog):
             await ctx.reply("https://cataas.com" + data["url"])
         return
 
-    @commands.command()
+    @commands.hybrid_command()
     async def woof(self, ctx: Context):
         """
         Send a random dog image.
@@ -110,7 +110,7 @@ class funCommands(Cog):
             await ctx.reply(data.get("link"))
         return
 
-    @commands.command(aliases=["bird"])
+    @commands.hybrid_command(aliases=["bird"])
     async def birb(self, ctx: Context):
         """
         Send a random bird image.
@@ -130,7 +130,7 @@ class funCommands(Cog):
             await ctx.reply(data[0])
         return
 
-    @commands.command(aliases=["rabbit", "bun"])
+    @commands.hybrid_command(aliases=["rabbit", "bun"])
     async def bunny(self, ctx: Context):
         """
         Send a random bunny image.
