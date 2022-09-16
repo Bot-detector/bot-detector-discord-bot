@@ -105,7 +105,7 @@ class mapCommands(Cog):
             mapFilePath = await self.__runAnalysis(regionTrueName, region)
 
             if not mapFilePath:
-                await self.map(ctx=ctx, region=region)
+                await self.map(ctx, region=region)
                 await ctx.reply("We have no data on this region yet.")
             else:
                 try:
@@ -140,7 +140,7 @@ class mapCommands(Cog):
                 mapFilePath = await self.__runAnalysis(regionTrueName, region_id)
 
                 if not mapFilePath:
-                    await self.map(ctx=ctx, region=region)
+                    await self.map(ctx, region=region)
                     await ctx.reply("We have no data on this region yet.")
 
                 else:
