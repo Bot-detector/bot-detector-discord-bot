@@ -1,4 +1,5 @@
 import logging
+from typing import Literal, Optional
 
 import aiohttp
 import discord
@@ -15,7 +16,6 @@ from src.cogs.player_stats_commands import playerStatsCommands
 from src.cogs.project_stats import projectStatsCommands
 from src.cogs.rsn_linking_commands import rsnLinkingCommands
 from src.utils import checks
-from typing import Optional, Literal
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ async def globally_block_dms(ctx: Context):
 @bot.check
 async def globally_check_channel(ctx: Context):
     return await checks.is_allowed_channel(ctx)
+
 
 @bot.event
 async def setup_hook():
