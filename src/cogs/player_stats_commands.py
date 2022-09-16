@@ -143,9 +143,7 @@ class playerStatsCommands(Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE
-    )  # veriied, tester (on test discord)
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # veriied
     async def lookup(self, ctx: Context, *, player_name):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, looking up: {player_name}")
         intro_msg = await ctx.reply("Searching for User...")
@@ -245,9 +243,7 @@ class playerStatsCommands(Cog):
         await intro_msg.delete()
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE
-    )  # veriied, tester (on test discord)
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # verified
     async def kc(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
         intro_msg = await ctx.reply("Searching for User...")
@@ -332,9 +328,7 @@ class playerStatsCommands(Cog):
         return
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE
-    )  # veriied, tester (on test discord)
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # veriied, tester (on test discord)
     async def rankup(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
         intro_msg = await ctx.reply("Searching for User...")
@@ -407,9 +401,6 @@ class playerStatsCommands(Cog):
         return
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        VERIFIED_PLAYER_ROLE
-    )  # veriied, tester (on test discord)
     async def predict(self, ctx: Context, *, player_name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
         intro_msg = await ctx.reply(

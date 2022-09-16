@@ -35,8 +35,8 @@ class botDetectiveCommands(commands.Cog):
     @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )  # detective, headdetective, co-owner, tester (on tests server)
-    async def submit(self, ctx: Context, url: str, label: str = None) -> None:
+    )  # detective, head-detective, co-owner
+    async def submit(self, ctx: Context, url: str) -> None:
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
@@ -67,7 +67,7 @@ class botDetectiveCommands(commands.Cog):
     @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )  # detective, headdetective, co-owner, tester (on tests server)
+    )  # detective, head-detective, co-owner
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
         debug = {
@@ -104,7 +104,7 @@ class botDetectiveCommands(commands.Cog):
             embed = discord.Embed(title="Ban list", color=discord.Color.red())
             for player in batch:
                 player: dict
-                if len(player) == 0:
+                if not player:
                     continue
                 banned = True if player.get("label_jagex") == 2 else False
                 value = f"```{banned}```" if banned else banned
