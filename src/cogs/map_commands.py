@@ -96,7 +96,8 @@ class mapCommands(Cog):
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
 
-        info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
+
+        # info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
         await ctx.typing()
 
         if region.isdigit():
@@ -155,7 +156,8 @@ class mapCommands(Cog):
                 msg = ">30 Regions selected. Please refine your search."
                 await ctx.reply(msg)
 
-        await info_msg.delete()
+        # await info_msg.delete()
+        return
 
     @commands.hybrid_command("map")
     async def map(self, ctx: Context, *, region=None):
