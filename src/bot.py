@@ -2,10 +2,10 @@ import logging
 
 import aiohttp
 import discord
-from discord.ext.commands import Bot, Context
+from discord.ext import commands
+from discord.ext.commands import Bot, Context, Greedy
 
 from src import config
-from src.utils import checks
 from src.cogs.bot_detective_commands import botDetectiveCommands
 from src.cogs.error_handler import errorHandler
 from src.cogs.fun_commands import funCommands
@@ -14,7 +14,8 @@ from src.cogs.mod_commands import modCommands
 from src.cogs.player_stats_commands import playerStatsCommands
 from src.cogs.project_stats import projectStatsCommands
 from src.cogs.rsn_linking_commands import rsnLinkingCommands
-
+from src.utils import checks
+from typing import Optional, Literal
 
 logger = logging.getLogger(__name__)
 
@@ -35,20 +36,17 @@ bot: discord.Client = Bot(
 )
 
 
-
 @bot.check
 async def globally_block_dms(ctx: Context):
     return ctx.guild is not None
+
 
 @bot.check
 async def globally_check_channel(ctx: Context):
     return await checks.is_allowed_channel(ctx)
 
-# default events
 @bot.event
-async def on_ready():
-    logger.info(f"We have logged in as {bot.user}")
-    bot.Session = aiohttp.ClientSession()
+async def setup_hook():
     await bot.add_cog(funCommands(bot))
     await bot.add_cog(botDetectiveCommands(bot))
     await bot.add_cog(errorHandler(bot))
@@ -59,6 +57,14 @@ async def on_ready():
     await bot.add_cog(mapCommands(bot))
     await bot.tree.sync()
 
+
+# default events
+@bot.event
+async def on_ready():
+    logger.info(f"We have logged in as {bot.user}")
+    bot.Session = aiohttp.ClientSession()
+
+
 @bot.event
 async def on_connect():
     logger.info("Bot connected successfully.")
@@ -68,3 +74,41 @@ async def on_connect():
 @bot.event
 async def on_disconnect():
     logger.info("Bot disconnected.")
+
+
+@bot.command()
+@commands.guild_only()
+@commands.is_owner()
+async def sync(
+    ctx: Context,
+    guilds: Greedy[discord.Object],
+    spec: Optional[Literal["~", "*", "^"]] = None,
+) -> None:
+    if not guilds:
+        if spec == "~":
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "*":
+            ctx.bot.tree.copy_global_to(guild=ctx.guild)
+            synced = await ctx.bot.tree.sync(guild=ctx.guild)
+        elif spec == "^":
+            ctx.bot.tree.clear_commands(guild=ctx.guild)
+            await ctx.bot.tree.sync(guild=ctx.guild)
+            synced = []
+        else:
+            synced = await ctx.bot.tree.sync()
+
+        await ctx.send(
+            f"Synced {len(synced)} commands {'globally' if spec is None else 'to the current guild.'}"
+        )
+        return
+
+    ret = 0
+    for guild in guilds:
+        try:
+            await ctx.bot.tree.sync(guild=guild)
+        except discord.HTTPException:
+            pass
+        else:
+            ret += 1
+
+    await ctx.send(f"Synced the tree to {ret}/{len(guilds)}.")
