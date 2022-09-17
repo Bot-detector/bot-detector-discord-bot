@@ -85,6 +85,7 @@ async def sync(
     guilds: Greedy[discord.Object],
     spec: Optional[Literal["~", "*", "^"]] = None,
 ) -> None:
+    logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting sync, {spec=}")
     if not guilds:
         if spec == "~":
             synced = await ctx.bot.tree.sync(guild=ctx.guild)

@@ -110,7 +110,7 @@ class rsnLinkingCommands(commands.Cog):
         return embed
 
     @commands.hybrid_command(name="link")
-    async def link(self, ctx: Context, *, name: str = None):
+    async def link(self, ctx: Context, *, name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting link, {name=}")
         # check if a name is given
         if not name:
@@ -128,6 +128,7 @@ class rsnLinkingCommands(commands.Cog):
         if not player:
             embed = await self.install_plugin_msg()
             await ctx.send(embed=embed)
+            return
 
         # get the db record for rsn & ctx.author.id
         linked_users = await config.api.get_discord_player(name)
@@ -166,7 +167,7 @@ class rsnLinkingCommands(commands.Cog):
         return
 
     @commands.hybrid_command(name="verify")
-    async def verify(self, ctx: Context, name: str = None):
+    async def verify(self, ctx: Context, name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}")
         player = await config.api.get_player(name=name)
         if not player:
