@@ -146,7 +146,7 @@ class playerStatsCommands(Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # veriied
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # verified
     async def lookup(self, ctx: Context, *, player_name):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, looking up: {player_name}")
         intro_msg = await ctx.reply("Searching for User...")
