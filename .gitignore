@@ -4,9 +4,7 @@ __pycache__/
 pycache/
 venv
 venv/
-.vscode
-.vscode/
 .idea/
 error.log
 *.bak
-docker-compose.yaml
+*.png

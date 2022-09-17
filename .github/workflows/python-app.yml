@@ -1,54 +1,35 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: Python application
+name: Docker Image CI
 
 on:
   push:
-    paths-ignore:
-      - 'FAQ.json'
-    branches: [ main ]
-    
-jobs:
-  clean:
-    runs-on: self-hosted
-    steps:
-      - name: Clean Directory
-        run: |
-          sudo systemctl stop discordbot.service
-          sudo rm -rf __pycache__
+    branches: [main]
 
+jobs:
   build:
     runs-on: self-hosted
-    needs: [clean]
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Install dependencies
-      run: |
-        python3.9 -m venv env
-        source ./env/bin/activate
-        python3.9 -m pip install --upgrade pip
-        pip3 install flake8 pytest
-        if [ -f requirements.txt ]; then pip3 install -r requirements.txt; fi
-        
-  deploy:
-    runs-on: self-hosted
-    needs: [build]
-    steps:
-      - name: setup_env_vars
+      - uses: actions/checkout@v2
+      - name: Set Up ENV
         run: |
           echo "${{ secrets.TOKEN }}" > .env
-          echo "${{ secrets.DB_HOST }}" >> .env
-          echo "${{ secrets.DB_USER }}" >> .env
-          echo "${{ secrets.DB_PASS }}" >> .env
-          echo "${{ secrets.DB_NAME_SUBMISSIONS }}" >> .env
-          echo "${{ secrets.DB_NAME_PLAYERS }}" >> .env
-          echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
-          echo "${{ secrets.DISCORD_BOT_ID }}" >> .env
-          echo "${{ secrets.API_AUTH_TOKEN}}" >> .env
           echo "${{ secrets.API_AUTH_TOKEN }}" >> .env
           echo "COMMAND_PREFIX='!'" >> .env
-          
-      - name: run_bot
-        run: |
-          sudo systemctl start discordbot.service
+
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile -t bot-detector/bd-discord-bot:latest
+
+      - name: Tag Image
+        run: docker tag bot-detector/bd-discord-bot:latest hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
+
+      - name: Login to Docker Registry
+        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login https://hub.osrsbotdetector.com -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
+
+      - name: Push Image to Registry
+        run: docker push hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
+
+      - name: Apply Possible Deployment Changes
+        run: kubectl apply -f deployment/bd-discord-bot-deploy.yml
+
+      - name: Restart Deployment for Possible Container Changes
+        run: kubectl rollout restart deploy bd-discord-bot
