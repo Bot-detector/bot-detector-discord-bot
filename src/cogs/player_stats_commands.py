@@ -1,13 +1,14 @@
 import logging
+from datetime import datetime
 from inspect import cleandoc
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
+from osrsbox import items_api
 from src import config
 from src.utils import string_processing
 from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
-from osrsbox import items_api
 
 logger = logging.getLogger(__name__)
 ITEMS = items_api.load()
@@ -458,23 +459,29 @@ class playerStatsCommands(Cog):
         return
 
     @commands.hybrid_command()
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def pwned(self, ctx: Context, player_name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting pwned: {player_name}")
+        logger.debug(
+            f"{ctx.author.name=}, {ctx.author.id=}, Requesting pwned: {player_name}"
+        )
         player = await config.api.get_player(name=player_name)
 
         if not player:
             await ctx.reply(f"I couldn't get data for {player_name} :(")
             return
 
-        if player.get('label_jagex') == 2:
+        if player.get("label_jagex") == 2:
             await ctx.reply(f"{player_name} has been banned")
         else:
             await ctx.reply(f"{player_name} has NOT been banned")
         return
-    
+
     @commands.hybrid_command()
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def gear(self, ctx: Context, player_name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting gear: {player_name}")
+        logger.debug(
+            f"{ctx.author.name=}, {ctx.author.id=}, Requesting gear: {player_name}"
+        )
         sighting = await config.api.get_latest_sighting(name=player_name)
 
         if not sighting:
@@ -489,8 +496,8 @@ class playerStatsCommands(Cog):
         equipped_items = 0
 
         for k, v in sighting[0].items():
-            k:str
-            v:int
+            k: str
+            v: int
             k = k.split("_")[1]
             k = k.capitalize()
 
@@ -498,10 +505,12 @@ class playerStatsCommands(Cog):
                 try:
                     item_name = ITEMS.lookup_by_item_id(v).name
                 except KeyError:
-                    item_name = "Something currently unrecognizable. Perhaps a new item?"
+                    item_name = (
+                        "Something currently unrecognizable. Perhaps a new item?"
+                    )
 
                 equipped_items += 1
-                
+
                 embed.add_field(name=k, value=item_name, inline=False)
 
         if equipped_items == 0:
@@ -512,4 +521,79 @@ class playerStatsCommands(Cog):
             )
             embed.set_thumbnail(url="https://i.imgur.com/rYz39o6.png")
         await ctx.reply(embed=embed)
+        return
 
+    @commands.hybrid_command()
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)
+    async def xpgain(self, ctx: Context, player_name: str):
+        logger.debug(
+            f"{ctx.author.name=}, {ctx.author.id=}, Requesting xpgain: {player_name}"
+        )
+
+        gains = await config.api.get_xp_gainz(name=player_name)
+
+        if not gains:
+            await ctx.reply(f"I couldn't locate {player_name}'s hiscores gains. Sorry!")
+            return
+
+        embed = discord.Embed(
+            title=f"{player_name}'s Last Seen Equipment",
+            color=discord.Colour.dark_gold(),
+        )
+
+        gains: dict
+        latest_data: dict = gains.get("latest")
+        second_latest_data: dict = gains.get("second")
+
+        embed = discord.Embed(
+            title=f"{player_name}'s Latest Daily XP/KC Gains",
+            color=discord.Colour.dark_gold(),
+        )
+
+        diffs = 0
+
+        # TODO remove these from the API output
+        keys_to_remove = ["id", "Player_id", "ts_date"]
+        [latest_data.pop(key) for key in keys_to_remove]
+
+        timestamp = latest_data.pop("timestamp")
+
+        for k, v in latest_data.items():
+            k = " ".join(k.split("_"))
+            k = k.capitalize()
+
+            if v is None:
+                v = 0
+
+            if v > 0:
+                embed.add_field(name=k, value=f"{v:,d}", inline=True)
+                diffs += 1
+
+        if diffs == 0:
+            await ctx.reply(
+                f"It doesn't appear that {player_name} has trained anything recently. Slacker!"
+            )
+
+        else:
+            if second_latest_data:
+                # 2021-11-06T17:53:18
+                dt_format = "%Y-%m-%dT%H:%M:%S"
+                # dt_format = "%a, %d %b %Y %H:%M:%S %Z"
+                latest_ts = datetime.strptime(timestamp, dt_format)
+                second_latest_ts = datetime.strptime(
+                    second_latest_data.pop("timestamp"), dt_format
+                )
+                timestamp_delta = latest_ts - second_latest_ts
+
+                embed.add_field(
+                    name="Duration", value=f"{timestamp_delta}", inline=False
+                )
+            else:
+                embed.add_field(
+                    name="Duration", value="Insufficient data", inline=False
+                )
+
+            embed.set_footer(text=f"Last Updated: {timestamp}")
+            await ctx.reply(embed=embed)
+
+        return
