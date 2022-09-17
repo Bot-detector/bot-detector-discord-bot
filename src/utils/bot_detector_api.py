@@ -22,7 +22,7 @@ class Api:
 
     def __sanitize_url(self, string: str, values: list) -> str:
         for v in values:
-            string = string.replace(v, '***')
+            string = string.replace(v, "***")
         return string
 
     async def _webrequest(
@@ -130,5 +130,11 @@ class Api:
     async def get_heatmap_data(self, region_id):
         url = self.url + f"/discord/heatmap/{self.token}"
         params = {"region_id": region_id}
+        data = await self._webrequest(url, type="post", json=params)
+        return data
+
+    async def get_latest_sighting(self, name: str):
+        url = self.url + f"/discord/get_latest_sighting/{self.token}"
+        params = {"player_name": name}
         data = await self._webrequest(url, type="post", json=params)
         return data
