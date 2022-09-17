@@ -35,7 +35,7 @@ class botDetectiveCommands(commands.Cog):
     @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )  # detective, head-detective, co-owner
+    )
     async def submit(self, ctx: Context, url: str) -> None:
         debug = {
             "author": ctx.author.name,
@@ -67,7 +67,7 @@ class botDetectiveCommands(commands.Cog):
     @commands.hybrid_command()
     @commands.has_any_role(
         DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )  # detective, head-detective, co-owner
+    )
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
         debug = {

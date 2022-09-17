@@ -243,7 +243,7 @@ class playerStatsCommands(Cog):
         await intro_msg.delete()
 
     @commands.hybrid_command()
-    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # verified
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def kc(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
         intro_msg = await ctx.reply("Searching for User...")
@@ -328,7 +328,7 @@ class playerStatsCommands(Cog):
         return
 
     @commands.hybrid_command()
-    @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # veriied, tester (on test discord)
+    @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def rankup(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
         intro_msg = await ctx.reply("Searching for User...")
