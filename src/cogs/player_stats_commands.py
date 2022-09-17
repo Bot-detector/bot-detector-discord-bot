@@ -265,16 +265,17 @@ class playerStatsCommands(Cog):
             await ctx.reply(embed=embed)
             await intro_msg.delete()
             return
-        
+
         linked_accounts = [
             {"name": acc.get("name")}
             for acc in linked_accounts
             if acc.get("Verified_status") == 1
         ]
         patreon = ctx.author.get_role(PATREON_ROLE)
-    
-        data = await config.api.get_contributions(players=linked_accounts, patreon=patreon)
-        print(data)
+
+        data = await config.api.get_contributions(
+            players=linked_accounts, patreon=patreon
+        )
 
         if not data:
             await ctx.reply("No data found, ")
@@ -288,8 +289,6 @@ class playerStatsCommands(Cog):
         total_reports = int(data["total"]["reports"])
         total_bans = int(data["total"]["bans"])
         total_possible_bans = int(data["total"]["possible_bans"])
-
-        
 
         embed = discord.Embed(
             title=f"{linked_accounts[0].get('name')}'s Stats", color=0x00FF00
@@ -321,11 +320,11 @@ class playerStatsCommands(Cog):
             )
 
         if patreon:
-            total_xp_removed = int(data['total']['total_xp_removed'])
+            total_xp_removed = int(data["total"]["total_xp_removed"])
             embed.add_field(
                 name="Total exp removed:", value=f"{total_xp_removed:,d}", inline=False
             )
-            
+
         embed.set_thumbnail(
             url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif"
         )
@@ -416,15 +415,13 @@ class playerStatsCommands(Cog):
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
-        intro_msg = await ctx.reply(
-            "Searching the database for the predicted username."
-        )
+        await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
 
         if not data:
             await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
-            await intro_msg.delete()
+            return
 
         name = data["player_name"]
         prediction = data["prediction_label"]
@@ -456,5 +453,19 @@ class playerStatsCommands(Cog):
         msg += "```"
 
         await ctx.reply(msg)
-        await intro_msg.delete()
+        return
+
+    @commands.hybrid_command()
+    async def pwned(self, ctx: Context, player_name: str):
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting pwned: {player_name}")
+        player = await config.api.get_player(name=player_name)
+
+        if not player:
+            await ctx.reply(f"I couldn't get data for {player_name} :(")
+            return
+
+        if player.get('label_jagex') == 2:
+            await ctx.reply(f"{player_name} has been banned")
+        else:
+            await ctx.reply(f"{player_name} has NOT been banned")
         return
