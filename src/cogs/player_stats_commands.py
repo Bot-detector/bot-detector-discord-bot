@@ -415,15 +415,13 @@ class playerStatsCommands(Cog):
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
-        intro_msg = await ctx.reply(
-            "Searching the database for the predicted username."
-        )
+        await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
 
         if not data:
             await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
-            await intro_msg.delete()
+            return
 
         name = data["player_name"]
         prediction = data["prediction_label"]
@@ -455,5 +453,19 @@ class playerStatsCommands(Cog):
         msg += "```"
 
         await ctx.reply(msg)
-        await intro_msg.delete()
+        return
+
+    @commands.hybrid_command()
+    async def pwned(self, ctx: Context, player_name: str):
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting pwned: {player_name}")
+        player = await config.api.get_player(name=player_name)
+
+        if not player:
+            await ctx.reply(f"I couldn't get data for {player_name} :(")
+            return
+
+        if player.get('label_jagex') == 2:
+            await ctx.reply(f"{player_name} has been banned")
+        else:
+            await ctx.reply(f"{player_name} has NOT been banned")
         return
