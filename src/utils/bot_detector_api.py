@@ -35,7 +35,7 @@ class Api:
         if type == "get":
             response = await self.session.get(url, params=params)
         elif type == "post":
-            response = await self.session.post(url, json=json)
+            response = await self.session.post(url, json=json, params=params)
         else:
             return None
         # handle response
@@ -107,9 +107,12 @@ class Api:
         data = await self._webrequest(url, type="get", params=params)
         return data
 
-    async def get_contributions(self, players):
+    async def get_contributions(self, players, patreon: bool = False):
         url = self.url + "/stats/contributions"
-        data = await self._webrequest(url, json=players, type="post")
+        params = dict()
+        if patreon:
+            params = {"token": self.token}
+        data = await self._webrequest(url, json=players, type="post", params=params)
         return data
 
     async def get_prediction(self, player_name):

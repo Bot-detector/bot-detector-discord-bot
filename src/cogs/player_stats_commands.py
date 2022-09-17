@@ -6,7 +6,7 @@ from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from src import config
 from src.utils import string_processing
-from src.utils.checks import VERIFIED_PLAYER_ROLE
+from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -265,12 +265,17 @@ class playerStatsCommands(Cog):
             await ctx.reply(embed=embed)
             await intro_msg.delete()
             return
+        
         linked_accounts = [
             {"name": acc.get("name")}
             for acc in linked_accounts
             if acc.get("Verified_status") == 1
         ]
-        data = await config.api.get_contributions(players=linked_accounts)
+        patreon = ctx.author.get_role(PATREON_ROLE)
+    
+        data = await config.api.get_contributions(players=linked_accounts, patreon=patreon)
+        print(data)
+
         if not data:
             await ctx.reply("No data found, ")
             await intro_msg.delete()
@@ -283,6 +288,8 @@ class playerStatsCommands(Cog):
         total_reports = int(data["total"]["reports"])
         total_bans = int(data["total"]["bans"])
         total_possible_bans = int(data["total"]["possible_bans"])
+
+        
 
         embed = discord.Embed(
             title=f"{linked_accounts[0].get('name')}'s Stats", color=0x00FF00
@@ -313,6 +320,12 @@ class playerStatsCommands(Cog):
                 name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False
             )
 
+        if patreon:
+            total_xp_removed = int(data['total']['total_xp_removed'])
+            embed.add_field(
+                name="Total exp removed:", value=f"{total_xp_removed:,d}", inline=False
+            )
+            
         embed.set_thumbnail(
             url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif"
         )
