@@ -141,7 +141,6 @@ class Api:
 
     async def get_xp_gainz(self, name: str):
         url = self.url + f"/discord/get_xp_gains/{self.token}"
-        print(url)
         params = {"player_name": name}
         data = await self._webrequest(url, type="post", json=params)
         return data
