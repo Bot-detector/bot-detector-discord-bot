@@ -7,8 +7,10 @@ from discord.ext.commands import Cog, Context
 from src import config
 from src.utils import string_processing
 from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
+from osrsbox import items_api
 
 logger = logging.getLogger(__name__)
+ITEMS = items_api.load()
 
 bot_hunter_roles = [
     {
@@ -469,3 +471,45 @@ class playerStatsCommands(Cog):
         else:
             await ctx.reply(f"{player_name} has NOT been banned")
         return
+    
+    @commands.hybrid_command()
+    async def gear(self, ctx: Context, player_name: str):
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting gear: {player_name}")
+        sighting = await config.api.get_latest_sighting(name=player_name)
+
+        if not sighting:
+            await ctx.reply(f"I was unable to grab {player_name}'s latest outfit.")
+            return
+
+        embed = discord.Embed(
+            title=f"{player_name}'s Last Seen Equipment",
+            color=discord.Colour.dark_gold(),
+        )
+
+        equipped_items = 0
+
+        for k, v in sighting[0].items():
+            k:str
+            v:int
+            k = k.split("_")[1]
+            k = k.capitalize()
+
+            if v:
+                try:
+                    item_name = ITEMS.lookup_by_item_id(v).name
+                except KeyError:
+                    item_name = "Something currently unrecognizable. Perhaps a new item?"
+
+                equipped_items += 1
+                
+                embed.add_field(name=k, value=item_name, inline=False)
+
+        if equipped_items == 0:
+            embed.add_field(
+                name="(O_O;)",
+                value=f"It appears that {player_name} was last seen.. naked.",
+                inline=False,
+            )
+            embed.set_thumbnail(url="https://i.imgur.com/rYz39o6.png")
+        await ctx.reply(embed=embed)
+

@@ -56,7 +56,6 @@ async def setup_hook():
     await bot.add_cog(projectStatsCommands(bot))
     await bot.add_cog(playerStatsCommands(bot))
     await bot.add_cog(mapCommands(bot))
-    await bot.tree.sync()
 
 
 # default events
@@ -64,6 +63,7 @@ async def setup_hook():
 async def on_ready():
     logger.info(f"We have logged in as {bot.user}")
     bot.Session = aiohttp.ClientSession()
+    await bot.tree.sync()
 
 
 @bot.event
