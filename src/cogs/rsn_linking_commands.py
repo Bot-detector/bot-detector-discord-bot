@@ -173,6 +173,7 @@ class rsnLinkingCommands(commands.Cog):
         if not player:
             embed = await self.install_plugin_msg()
             await ctx.reply(embed=embed)
+            return
 
         # get the db record for rsn & ctx.author.id
         linked_users = await config.api.get_discord_player(name)
