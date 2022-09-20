@@ -149,7 +149,7 @@ class playerStatsCommands(Cog):
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # verified
     async def lookup(self, ctx: Context, *, player_name):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, looking up: {player_name}")
-        intro_msg = await ctx.reply("Searching for User...")
+        await ctx.typing()
 
         player = await config.api.get_player(player_name)
 
@@ -243,13 +243,13 @@ class playerStatsCommands(Cog):
 
         if embeds != []:
             await ctx.reply(embeds=embeds)
-        await intro_msg.delete()
+        return
 
     @commands.hybrid_command()
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def kc(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting kc")
-        intro_msg = await ctx.reply("Searching for User...")
+        await ctx.typing()
 
         linked_accounts = await config.api.get_discord_links(
             discord_id=str(ctx.author.id)
@@ -266,7 +266,6 @@ class playerStatsCommands(Cog):
                 )
             )
             await ctx.reply(embed=embed)
-            await intro_msg.delete()
             return
 
         linked_accounts = [
@@ -282,7 +281,6 @@ class playerStatsCommands(Cog):
 
         if not data:
             await ctx.reply("No data found, ")
-            await intro_msg.delete()
             return
 
         manual_reports = int(data["manual"]["reports"])
@@ -339,14 +337,13 @@ class playerStatsCommands(Cog):
             )
 
         await ctx.reply(embed=embed)
-        await intro_msg.delete()
         return
 
     @commands.hybrid_command()
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)
     async def rankup(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting rankup")
-        intro_msg = await ctx.reply("Searching for User...")
+        await ctx.typing()
 
         linked_accounts = await config.api.get_discord_links(
             discord_id=str(ctx.author.id)
@@ -362,7 +359,6 @@ class playerStatsCommands(Cog):
                 )
             )
             await ctx.reply(embed=embed)
-            await intro_msg.delete()
             return
 
         linked_accounts = [
@@ -382,7 +378,6 @@ class playerStatsCommands(Cog):
                 color=discord.Colour.dark_red(),
             )
             ctx.reply(embed=embed)
-            await intro_msg.delete()
             return
 
         role = role_dict[0]
@@ -395,7 +390,6 @@ class playerStatsCommands(Cog):
                 color=new_role.color,
             )
             ctx.reply(embed=embed)
-            await intro_msg.delete()
             return
 
         # cleanup
@@ -412,7 +406,6 @@ class playerStatsCommands(Cog):
             url="https://user-images.githubusercontent.com/45152844/116952387-8ac1fa80-ac58-11eb-8a31-5fe0fc6f5f88.gif"
         )
         await ctx.reply(embed=embed)
-        await intro_msg.delete()
         return
 
     @commands.hybrid_command()
