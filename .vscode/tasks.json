@@ -1,0 +1,48 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		// docker compose
+		{
+			"type": "docker-compose",
+			"label": "docker-compose up",
+			"dockerCompose": {
+				"up": {
+					"detached": false,
+					"build": true
+				},
+				"files": [
+					"${workspaceFolder}/docker-compose.yml"
+				]
+			}
+		},
+		// build docker image
+		{
+			"type": "docker-build",
+			"label": "docker-build",
+			"dockerBuild": {
+				"context": "${workspaceFolder}",
+				"dockerfile": "${workspaceFolder}/Dockerfile",
+				"tag": "bd-discord:latest"
+			}
+		},
+		// run docker image
+		{
+			"type": "docker-run",
+			"label": "docker-run",
+			"dependsOn": ["docker-build"],
+			"dockerRun": {
+				"containerName": "bd-discord",
+				"image": "bd-discord:latest",
+				"env": {},
+				"ports": [{
+					"containerPort": 3000,
+					"hostPort": 3000
+				}]
+			},
+			"python": {
+				"module": "uvicorn",
+				"args": ["src.main:app","--host=0.0.0.0","--port=3000"]
+			},
+		}
+	]
+}

@@ -2,46 +2,34 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
-
   build:
-
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set Up ENV
-      run: |
+      - uses: actions/checkout@v2
+      - name: Set Up ENV
+        run: |
           echo "${{ secrets.TOKEN }}" > .env
-          echo "${{ secrets.DB_HOST }}" >> .env
-          echo "${{ secrets.DB_USER }}" >> .env
-          echo "${{ secrets.DB_PASS }}" >> .env
-          echo "${{ secrets.DB_NAME_SUBMISSIONS }}" >> .env
-          echo "${{ secrets.DB_NAME_PLAYERS }}" >> .env
-          echo "${{ secrets.SUBMIT_RECIPIENT }}" >> .env
-          echo "${{ secrets.DISCORD_BOT_ID }}" >> .env
-          echo "${{ secrets.API_AUTH_TOKEN}}" >> .env
           echo "${{ secrets.API_AUTH_TOKEN }}" >> .env
           echo "COMMAND_PREFIX='!'" >> .env
-    
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile -t bot-detector/bd-discord-bot:latest
 
-    - name: Tag Image
-      run: docker tag bot-detector/bd-discord-bot:latest hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
-      
-    - name: Login to Docker Registry
-      run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login https://hub.osrsbotdetector.com -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
+      - name: Build the Docker image
+        run: docker build . --file Dockerfile -t bot-detector/bd-discord-bot:latest
 
-    - name: Push Image to Registry
-      run: docker push hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
+      - name: Tag Image
+        run: docker tag bot-detector/bd-discord-bot:latest hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
 
-    - name: Apply Possible Deployment Changes
-      run: kubectl apply -f bd-discord-bot-deploy.yml
+      - name: Login to Docker Registry
+        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login https://hub.osrsbotdetector.com -u "${{ secrets.DOCKER_REGISTRY_USERNAME }}" --password-stdin
 
-    - name: Restart Deployment for Possible Container Changes
-      run: kubectl rollout restart deploy bd-discord-bot
+      - name: Push Image to Registry
+        run: docker push hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
 
+      - name: Apply Possible Deployment Changes
+        run: kubectl apply -f deployment/bd-discord-bot-deploy.yml
 
+      - name: Restart Deployment for Possible Container Changes
+        run: kubectl rollout restart deploy bd-discord-bot
