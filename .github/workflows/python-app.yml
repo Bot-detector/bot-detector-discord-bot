@@ -13,8 +13,8 @@ jobs:
       - name: Set Up ENV
         run: |
           echo "${{ secrets.TOKEN }}" > .env
-          echo "${{ secrets.API_AUTH_TOKEN }}" >> .env
-          echo "COMMAND_PREFIX='!'" >> .env
+          echo "${{ secrets.API_TOKEN }}" >> .env
+          echo "${{ secrets.COMMAND_PREFIX }}" >> .env
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile -t bot-detector/bd-discord-bot:latest
