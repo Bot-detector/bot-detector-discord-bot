@@ -1,12 +1,11 @@
 import logging
-from dis import disco
 from inspect import cleandoc
 
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 from src import config
-from src.utils import string_processing
+from src.utils import string_processing, checks
 
 logger = logging.getLogger(__name__)
 
@@ -178,9 +177,12 @@ class rsnLinkingCommands(commands.Cog):
         # get the db record for rsn & ctx.author.id
         linked_users = await config.api.get_discord_player(name)
 
-        linked_user = [
-            user for user in linked_users if user.get("Discord_id") == ctx.author.id
-        ]
+        if ctx.author.get_role(checks.PREVILEGED_ROLES):
+            linked_user = linked_users
+        else:
+            linked_user = [
+                user for user in linked_users if user.get("Discord_id") == ctx.author.id
+            ]
 
         if linked_user:
             linked_user = linked_user[0]
