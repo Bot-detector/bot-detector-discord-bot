@@ -74,7 +74,7 @@ class rsnLinkingCommands(commands.Cog):
                 Please read through these instructions.
                 1. Open Old School Runescape through RuneLite.
                 2. Login as: '{name}'
-                3. Join the clan channel: 'Ferrariic'.
+                3. Join the clan channel: 'Bot Detector'.
                 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel.
                 5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-detector-commands.
                 6. Type into the Clan Chat: '!Code {code}'.
@@ -156,9 +156,7 @@ class rsnLinkingCommands(commands.Cog):
 
         # register verification
         await config.api.post_discord_code(
-            discord_id=ctx.author.id, 
-            player_name=player.get('name'), 
-            code=code
+            discord_id=ctx.author.id, player_name=player.get("name"), code=code
         )
 
         # send user via pm the random code
@@ -168,7 +166,9 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.hybrid_command(name="verify")
     async def verify(self, ctx: Context, name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}")
+        logger.debug(
+            f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}"
+        )
         player = await config.api.get_player(name=name)
         if not player:
             embed = await self.install_plugin_msg()
@@ -187,7 +187,9 @@ class rsnLinkingCommands(commands.Cog):
             linked_status = True if linked_user.get("Verified_status") == 1 else False
             if linked_status:
                 embed = await self.verified_msg(name)
-                verified_role = discord.utils.find(lambda r: r.id == 831196988976529438, ctx.author.guild.roles)
+                verified_role = discord.utils.find(
+                    lambda r: r.id == 831196988976529438, ctx.author.guild.roles
+                )
                 await ctx.author.add_roles(verified_role)
                 await ctx.reply(embed=embed)
                 return
@@ -202,18 +204,21 @@ class rsnLinkingCommands(commands.Cog):
             await ctx.reply(embed=embed)
         return
 
-
     @commands.hybrid_command(name="linked")
     async def linked(self, ctx: Context):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting linked")
         links = await config.api.get_discord_links(ctx.author.id)
-        
+
         if len(links) == 0:
-            await ctx.send("You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account.")
-        
-        embed = discord.Embed(color=0x00ff00)
+            await ctx.send(
+                "You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account."
+            )
+
+        embed = discord.Embed(color=0x00FF00)
 
         for link in links:
-            embed.add_field(name="Linked Accounts:", value=link.get('name'), inline=False)
+            embed.add_field(
+                name="Linked Accounts:", value=link.get("name"), inline=False
+            )
         await ctx.reply(embed=embed)
         return
