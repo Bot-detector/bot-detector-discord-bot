@@ -381,8 +381,6 @@ class playerStatsCommands(Cog):
             return
 
         role = role_dict[0]
-        print(role)
-        print(ctx.author.roles)
         new_role = discord.utils.find(
             lambda r: r.id == role.get("role_id"), ctx.author.guild.roles
         )
