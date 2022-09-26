@@ -155,8 +155,6 @@ class mapCommands(Cog):
             else:
                 msg = ">30 Regions selected. Please refine your search."
                 await ctx.reply(msg)
-
-        # await info_msg.delete()
         return
 
     @commands.hybrid_command("map")
