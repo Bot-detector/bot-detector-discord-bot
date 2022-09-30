@@ -13,6 +13,11 @@ logger = logging.getLogger(__name__)
 class rsnLinkingCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
         self.bot = bot
+    
+    def _batch(self, iterable, n=1) -> list:
+        l = len(iterable)
+        for ndx in range(0, l, n):
+            yield iterable[ndx : min(ndx + n, l)]
 
     async def verified_msg(self, name: str) -> discord.Embed:
         embed = discord.Embed(title=f"{name}'s Status:", color=0x00FF00)
@@ -177,7 +182,7 @@ class rsnLinkingCommands(commands.Cog):
         # get the db record for rsn & ctx.author.id
         linked_users = await config.api.get_discord_player(name)
 
-        if ctx.author.get_role(checks.PREVILEGED_ROLES):
+        if any(ctx.author.get_role(r) for r in checks.PREVILEGED_ROLES):
             linked_user = linked_users
         else:
             linked_user = [
@@ -216,11 +221,22 @@ class rsnLinkingCommands(commands.Cog):
                 "You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account."
             )
 
-        embed = discord.Embed(color=0x00FF00)
+        embeds = []
+        for i, batch in enumerate(self._batch(links, n=21)):
+            embed = discord.Embed(title="Linked Accounts",color=0x00FF00)
+            for link in batch:
+                link: dict
+                if not link:
+                    continue
+                embed.add_field(name="a",value=link.get("name"), inline=True) # inline=False
+            embeds.append(embed)
 
-        for link in links:
-            embed.add_field(
-                name="Linked Accounts:", value=link.get("name"), inline=False
-            )
-        await ctx.reply(embed=embed)
+            # max 10 embeds per reply
+            if i != 0 and i % 9 == 0:
+                await ctx.reply(embeds=embeds)
+                embeds = []
+
+        # check if there are any embeds left
+        if embeds != []:
+            await ctx.reply(embeds=embeds)
         return
