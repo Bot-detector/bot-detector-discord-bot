@@ -228,7 +228,7 @@ class rsnLinkingCommands(commands.Cog):
                 link: dict
                 if not link:
                     continue
-                embed.add_field(name="a",value=link.get("name"), inline=True) # inline=False
+                embed.add_field(name="Account:",value=link.get("name"), inline=True) # inline=False
             embeds.append(embed)
 
             # max 10 embeds per reply
