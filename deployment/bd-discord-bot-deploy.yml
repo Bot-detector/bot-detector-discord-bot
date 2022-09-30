@@ -24,16 +24,9 @@ spec:
       labels:
         app: bd-discord-bot
     spec:
-      volumes:
-        - name: discord-storage
-          persistentVolumeClaim:
-            claimName: longhorn-discord-storage
       containers:
         - name: bd-discord-bot
           image: hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
           imagePullPolicy: Always
-          volumeMounts:
-            - name: discord-storage
-              mountPath: /code/data
       imagePullSecrets:
         - name: regcred
