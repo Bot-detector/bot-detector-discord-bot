@@ -377,7 +377,7 @@ class playerStatsCommands(Cog):
                 description="You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
                 color=discord.Colour.dark_red(),
             )
-            ctx.reply(embed=embed)
+            await ctx.reply(embed=embed)
             return
 
         role = role_dict[0]
