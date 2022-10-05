@@ -377,15 +377,15 @@ class playerStatsCommands(Cog):
                 description="You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
                 color=discord.Colour.dark_red(),
             )
-            ctx.reply(embed=embed)
+            await ctx.reply(embed=embed)
             return
 
         role = role_dict[0]
         new_role = discord.utils.find(
             lambda r: r.id == role.get("role_id"), ctx.author.guild.roles
         )
-        
-        if ctx.author.get_role(role.get('role_id')):
+
+        if ctx.author.get_role(role.get("role_id")):
             embed = discord.Embed(
                 description=f"You are not yet eligible for a new role. Only **{role.get('max') - bans}** more confirmed bans and you'll be there! :D",
                 color=new_role.color,
