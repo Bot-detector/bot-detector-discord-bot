@@ -269,7 +269,7 @@ class playerStatsCommands(Cog):
             return
 
         linked_accounts = [
-            {"name": acc.get("name")}
+            {"name": acc.get("name"), "primary_rsn": acc.get("primary_rsn")}
             for acc in linked_accounts
             if acc.get("Verified_status") == 1
         ]
@@ -291,9 +291,15 @@ class playerStatsCommands(Cog):
         total_bans = int(data["total"]["bans"])
         total_possible_bans = int(data["total"]["possible_bans"])
 
-        embed = discord.Embed(
-            title=f"{linked_accounts[0].get('name')}'s Stats", color=0x00FF00
-        )
+        primary_rsn = None
+        for account in linked_accounts:
+            if account.get("primary_rsn") == 1:
+                primary_rsn = account.get("name")
+
+        if not primary_rsn:
+            primary_rsn = linked_accounts[0].get("name")
+
+        embed = discord.Embed(title=f"{primary_rsn}'s Stats", color=0x00FF00)
 
         if manual_reports == 0:
             report_accuracy = None
