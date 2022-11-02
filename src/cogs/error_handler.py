@@ -5,6 +5,9 @@ from discord.ext import commands
 from discord.ext.commands import Context
 import traceback
 import sys
+import aiohttp
+from discord import Webhook
+from src import config
 
 logger = logging.getLogger(__name__)
 
@@ -60,3 +63,8 @@ class errorHandler(commands.Cog):
                 type(error), error, error.__traceback__, file=sys.stderr
             )
             await ctx.send("An error occured.")
+            
+            if config.WEBHOOK:
+                async with aiohttp.ClientSession() as session:
+                    webhook = Webhook.from_url(config.WEBHOOK, session=session)
+                    await webhook.send(traceback.format_exc(), username='bd-error')

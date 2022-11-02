@@ -49,6 +49,8 @@ services:
       - TOKEN=<YOUR TOKEN HERE>
       - API_TOKEN=verify_ban
       - COMMAND_PREFIX=$
+      - WEBHOOK=
+      - API_URL=
     ports:
       - "3000:3000"
     networks:
