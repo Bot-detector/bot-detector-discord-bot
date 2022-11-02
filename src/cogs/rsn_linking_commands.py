@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class rsnLinkingCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
         self.bot = bot
-    
+
     def _batch(self, iterable, n=1) -> list:
         l = len(iterable)
         for ndx in range(0, l, n):
@@ -153,7 +153,7 @@ class rsnLinkingCommands(commands.Cog):
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
                 await ctx.author.send(embed=embed)
-                await ctx.reply('Please check your pm')
+                await ctx.reply("Please check your pm")
                 return
 
         # generate random code
@@ -167,7 +167,7 @@ class rsnLinkingCommands(commands.Cog):
         # send user via pm the random code
         embed = await self.link_msg(name, code)
         await ctx.author.send(embed=embed)
-        await ctx.reply('Please check your pm')
+        await ctx.reply("Please check your pm")
         return
 
     @commands.hybrid_command(name="verify")
@@ -207,7 +207,7 @@ class rsnLinkingCommands(commands.Cog):
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
                 await ctx.author.send(embed=embed)
-                await ctx.reply('Please check your pm')
+                await ctx.reply("Please check your pm")
                 return
         else:
             embed = await self.unverified_msg(name)
@@ -226,12 +226,14 @@ class rsnLinkingCommands(commands.Cog):
 
         embeds = []
         for i, batch in enumerate(self._batch(links, n=21)):
-            embed = discord.Embed(title="Linked Accounts",color=0x00FF00)
+            embed = discord.Embed(title="Linked Accounts", color=0x00FF00)
             for link in batch:
                 link: dict
                 if not link:
                     continue
-                embed.add_field(name="Account:",value=link.get("name"), inline=True) # inline=False
+                embed.add_field(
+                    name="Account:", value=link.get("name"), inline=True
+                )  # inline=False
             embeds.append(embed)
 
             # max 10 embeds per reply
