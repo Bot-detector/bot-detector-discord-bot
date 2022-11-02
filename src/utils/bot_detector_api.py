@@ -32,7 +32,9 @@ class Api:
         json: dict = None,
         type: str = "get",
         debug: bool = True,
+        repeat: int = 0
     ):
+        max_repeat = 3
         debug_text = f"{type=}, url={self.__sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}"
         if debug:
             logger.debug(debug_text)
@@ -48,7 +50,12 @@ class Api:
 
         # handle response
         if response.status >= 500:
-            self._webrequest(url, params, json, type, debug)
+            if repeat >= max_repeat:
+                logger.error({"error": await response.text(), "debug": debug_text})
+                return None
+            repeat += 1
+            data = await self._webrequest(url, params, json, type, debug, repeat)
+            return data
         elif not response.ok:
             logger.error({"error": await response.text(), "debug": debug_text})
             return None
