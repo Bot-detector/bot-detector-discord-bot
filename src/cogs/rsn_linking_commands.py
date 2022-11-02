@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class rsnLinkingCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
         self.bot = bot
-    
+
     def _batch(self, iterable, n=1) -> list:
         l = len(iterable)
         for ndx in range(0, l, n):
@@ -118,20 +118,20 @@ class rsnLinkingCommands(commands.Cog):
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting link, {name=}")
         # check if a name is given
         if not name:
-            await ctx.send(
+            await ctx.reply(
                 "Please specify the RSN of the account you'd wish to link. !link <RSN>"
             )
             return
         # check if the name is valid
         if not string_processing.is_valid_rsn(name):
-            await ctx.send(f"{name} isn't a valid Runescape user name.")
+            await ctx.reply(f"{name} isn't a valid Runescape user name.")
             return
 
         # check if player exists on the bot detector api
         player = await config.api.get_player(name=name)
         if not player:
             embed = await self.install_plugin_msg()
-            await ctx.send(embed=embed)
+            await ctx.reply(embed=embed)
             return
 
         # get the db record for rsn & ctx.author.id
@@ -146,13 +146,14 @@ class rsnLinkingCommands(commands.Cog):
             linked_status = True if linked_user.get("Verified_status") == 1 else False
             if linked_status:
                 embed = await self.verified_msg(name)
-                await ctx.send(embed=embed)
+                await ctx.reply(embed=embed)
                 return
             else:
                 code = linked_user.get("Code")
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
                 await ctx.author.send(embed=embed)
+                await ctx.reply("Please check your pm")
                 return
 
         # generate random code
@@ -166,6 +167,7 @@ class rsnLinkingCommands(commands.Cog):
         # send user via pm the random code
         embed = await self.link_msg(name, code)
         await ctx.author.send(embed=embed)
+        await ctx.reply("Please check your pm")
         return
 
     @commands.hybrid_command(name="verify")
@@ -205,6 +207,7 @@ class rsnLinkingCommands(commands.Cog):
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
                 await ctx.author.send(embed=embed)
+                await ctx.reply("Please check your pm")
                 return
         else:
             embed = await self.unverified_msg(name)
@@ -223,12 +226,14 @@ class rsnLinkingCommands(commands.Cog):
 
         embeds = []
         for i, batch in enumerate(self._batch(links, n=21)):
-            embed = discord.Embed(title="Linked Accounts",color=0x00FF00)
+            embed = discord.Embed(title="Linked Accounts", color=0x00FF00)
             for link in batch:
                 link: dict
                 if not link:
                     continue
-                embed.add_field(name="Account:",value=link.get("name"), inline=True) # inline=False
+                embed.add_field(
+                    name="Account:", value=link.get("name"), inline=True
+                )  # inline=False
             embeds.append(embed)
 
             # max 10 embeds per reply
