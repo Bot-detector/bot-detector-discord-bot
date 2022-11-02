@@ -41,23 +41,18 @@ class Api:
         match type:
             case "get":
                 response = await self.session.get(url, params=params)
-
-                # handle response
-                if not response.ok:
-                    logger.error({"error":await response.text(),"debug":debug_text})
-                    return None
-
             case "post":
                 response = await self.session.post(url, json=json, params=params)
-
-                # handle response
-                if not response.ok:
-                    logger.error({"error":await response.text(),"debug":debug_text})
-                    return None
-
             case _:
                 return None
 
+        # handle response
+        if response.status >= 500:
+            self._webrequest(url, params, json, type, debug)
+        elif not response.ok:
+            logger.error({"error": await response.text(), "debug": debug_text})
+            return None
+        
         # parse response
         try:
             data = await response.json()
