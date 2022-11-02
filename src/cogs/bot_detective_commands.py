@@ -27,6 +27,7 @@ class botDetectiveCommands(commands.Cog):
 
         data = await resp.text()
         return data
+
     async def _parse_pastebin(self, data: str) -> List[str]:
         # get a list of user names from the data
         user_names = [line for line in data.split("\r\n")]
@@ -43,9 +44,7 @@ class botDetectiveCommands(commands.Cog):
             yield iterable[ndx : min(ndx + n, l)]
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )
+    @commands.has_any_role(DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE)
     async def submit(self, ctx: Context, url: str) -> None:
         debug = {
             "author": ctx.author.name,
@@ -68,12 +67,13 @@ class botDetectiveCommands(commands.Cog):
         if data is None:
             await ctx.reply("could not get pastebin")
             return
-        print(data)
+
         # parse data from pastebin
         user_names = await self._parse_pastebin(data)
-        print(user_names)
 
-        await ctx.reply(f"Received, {len(user_names)}. Thank you for submitting your list")
+        await ctx.reply(
+            f"Received, {len(user_names)}. Thank you for submitting your list"
+        )
         # post parsed data to api (list of strings)
         logger.debug(f"posting, {len(user_names)} to api")
         asyncio.gather(*[api.create_player(name) for name in user_names])
@@ -81,9 +81,7 @@ class botDetectiveCommands(commands.Cog):
         return
 
     @commands.hybrid_command()
-    @commands.has_any_role(
-        DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE
-    )
+    @commands.has_any_role(DETECTIVE_ROLE, HEAD_DETECTIVE_ROLE, OWNER_ROLE)
     async def ban_list(self, ctx: Context, url: str) -> None:
         """ """
         debug = {
@@ -92,9 +90,10 @@ class botDetectiveCommands(commands.Cog):
             "msg": "Send ban list",
         }
         logger.debug(debug)
+
         # max interaction time is 3 sec, with defer it is 15 min
         await ctx.defer()
-        
+
         # check if url is a pastebin url
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")
@@ -109,13 +108,6 @@ class botDetectiveCommands(commands.Cog):
 
         user_names = await self._parse_pastebin(data)
 
-        # players = list()
-        # for name in user_names:
-        #     name = name.replace("_", " ")
-        #     player = await api.get_player(name, debug=True) 
-        #     players.append(
-        #         player
-        #     )
         players = await asyncio.gather(
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )
