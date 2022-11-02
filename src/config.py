@@ -12,7 +12,8 @@ TOKEN = os.environ.get("TOKEN")
 COMMAND_PREFIX = os.environ.get("COMMAND_PREFIX")
 API_TOKEN = os.environ.get("API_TOKEN")
 SQL_URI = os.environ.get("SQL_URI")
-API_URL = "https://www.osrsbotdetector.com/api"
+API_URL = os.environ.get("API_URL")
+WEBHOOK = os.environ.get("WEBHOOK")
 
 api = Api(token=API_TOKEN, url=API_URL)
 
