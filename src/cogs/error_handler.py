@@ -25,6 +25,7 @@ class errorHandler(commands.Cog):
         """
 
         # This prevents any commands with local handlers being handled here in on_command_error.
+        print("error", error)
         if hasattr(ctx.command, "on_error"):
             return
 
@@ -45,13 +46,17 @@ class errorHandler(commands.Cog):
             logger.debug(f"ignored: {error}")
             return
 
-        if isinstance(error, commands.MissingAnyRole):
+        if isinstance(error, commands.DisabledCommand):
+            await ctx.send(f"{ctx.command} has been disabled.")
+        elif isinstance(error, commands.MissingAnyRole):
             logger.debug(f"user: {ctx.author}, {error}")
-            await ctx.reply("You are missing at least one of the required roles")
+            await ctx.send("You are missing at least one of the required roles")
         elif isinstance(error, commands.MissingRequiredArgument):
             logger.debug(f"user: {ctx.author}, {error}")
-            await ctx.reply(str(error))
+            await ctx.send(str(error))
         else:
-            await ctx.reply("An error occured.")
-            logger.error(error)
-            traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
+            logger.error({"error": error})
+            traceback.print_exception(
+                type(error), error, error.__traceback__, file=sys.stderr
+            )
+            await ctx.send("An error occured.")
