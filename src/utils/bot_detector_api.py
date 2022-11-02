@@ -26,11 +26,17 @@ class Api:
         return string
 
     async def _webrequest(
-        self, url: str, params: dict = None, json: dict = None, type: str = "get"
+        self,
+        url: str,
+        params: dict = None,
+        json: dict = None,
+        type: str = "get",
+        debug: bool = True,
     ):
-        logger.debug(
-            f"{type=}, url={self.__sanitize_url(url, [self.token])}, params={self._sanitize_params(params)}"
-        )
+        if debug:
+            logger.debug(
+                f"{type=}, url={self.__sanitize_url(url, [self.token])}, params={self._sanitize_params(params)}"
+            )
         # make web request
         if type == "get":
             response = await self.session.get(url, params=params)
@@ -55,9 +61,15 @@ class Api:
                 data = None
         return data
 
-    async def create_player(self, name: str) -> None:
+    async def create_player(self, name: str, debug: bool = False) -> None:
         url = self.url + "/v1/player"
-        await self.session.post(url, params={"player_name": name, "token": self.token})
+        data = await self._webrequest(
+            url,
+            type="post",
+            params={"player_name": name, "token": self.token},
+            debug=debug,
+        )
+        return data
 
     async def get_player(self, name: str, debug: bool = False) -> dict:
         url = self.url + "/v1/player"
@@ -67,7 +79,7 @@ class Api:
             "row_count": 1,
             "page": 1,
         }
-        data = await self._webrequest(url, type="get", params=params)
+        data = await self._webrequest(url, type="get", params=params, debug=debug)
         if data:
             data = data[0]
         return data
