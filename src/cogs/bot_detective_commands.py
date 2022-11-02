@@ -17,6 +17,16 @@ class botDetectiveCommands(commands.Cog):
     def __init__(self, bot: discord.Client) -> None:
         self.bot = bot
 
+    async def _get_pastebin(self, url) -> str:
+        url = url.replace("https://pastebin.com/", "https://pastebin.com/raw/")
+        # get data from pastebin
+        resp: aiohttp.ClientResponse = await self.bot.Session.get(url)
+
+        if not resp.ok:
+            return None
+
+        data = await resp.text()
+        return data
     async def _parse_pastebin(self, data: str) -> List[str]:
         # get a list of user names from the data
         user_names = [line for line in data.split("\r\n")]
@@ -43,25 +53,31 @@ class botDetectiveCommands(commands.Cog):
             "msg": "Send submission",
         }
         logger.debug(debug)
+
+        # max interaction time is 3 sec, with defer it is 15 min
+        await ctx.defer()
+
         # check if url is a pastebin url
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")
             return
 
-        # get data from pastebin
-        resp: aiohttp.ClientResponse = await self.bot.Session.get(url)
+        # get data
+        data = await self._get_pastebin(url)
 
-        if not resp.ok:
-            await ctx.reply("could not get the pastebin")
+        if data is None:
+            await ctx.reply("could not get pastebin")
             return
-
-        data = await resp.text()
+        print(data)
         # parse data from pastebin
         user_names = await self._parse_pastebin(data)
+        print(user_names)
 
-        await asyncio.gather(*[api.create_player(name) for name in user_names])
+        await ctx.reply(f"Received, {len(user_names)}. Thank you for submitting your list")
         # post parsed data to api (list of strings)
-        await ctx.reply("Thank you for submitting your list.")
+        logger.debug(f"posting, {len(user_names)} to api")
+        asyncio.gather(*[api.create_player(name) for name in user_names])
+        logger.debug(f"[DONE] posting, {len(user_names)} to api")
         return
 
     @commands.hybrid_command()
@@ -76,23 +92,30 @@ class botDetectiveCommands(commands.Cog):
             "msg": "Send ban list",
         }
         logger.debug(debug)
-        # validate pastebin
+        # max interaction time is 3 sec, with defer it is 15 min
+        await ctx.defer()
+        
+        # check if url is a pastebin url
         if not url.startswith("https://pastebin.com/"):
             await ctx.reply("Please submit a pastebin url.")
             return
 
-        # get data from pastebin
-        resp: aiohttp.ClientResponse = await self.bot.Session.get(url)
+        # get data
+        data = await self._get_pastebin(url)
 
-        # validate response
-        if not resp.ok:
-            await ctx.reply("could not get the pastebin")
+        if data is None:
+            await ctx.reply("could not get pastebin")
             return
 
-        # parse data from pastebin
-        data = await resp.text()
         user_names = await self._parse_pastebin(data)
 
+        # players = list()
+        # for name in user_names:
+        #     name = name.replace("_", " ")
+        #     player = await api.get_player(name, debug=True) 
+        #     players.append(
+        #         player
+        #     )
         players = await asyncio.gather(
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )

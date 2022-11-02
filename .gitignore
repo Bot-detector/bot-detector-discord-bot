@@ -4,6 +4,8 @@ __pycache__/
 pycache/
 venv
 venv/
+.venv
+.venv/
 .idea/
 error.log
 *.bak
