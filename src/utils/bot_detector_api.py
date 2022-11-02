@@ -44,7 +44,7 @@ class Api:
 
                 # handle response
                 if not response.ok:
-                    logger.error(debug_text)
+                    logger.error({"error":await response.text(),"debug":debug_text})
                     return None
 
             case "post":
@@ -52,7 +52,7 @@ class Api:
 
                 # handle response
                 if not response.ok:
-                    logger.error(debug_text)
+                    logger.error({"error":await response.text(),"debug":debug_text})
                     return None
 
             case _:
