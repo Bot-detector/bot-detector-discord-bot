@@ -33,32 +33,38 @@ class Api:
         type: str = "get",
         debug: bool = True,
     ):
+        debug_text = f"{type=}, url={self.__sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}"
         if debug:
-            logger.debug(
-                f"{type=}, url={self.__sanitize_url(url, [self.token])}, params={self._sanitize_params(params)}"
-            )
+            logger.debug(debug_text)
+
         # make web request
-        if type == "get":
-            response = await self.session.get(url, params=params)
-        elif type == "post":
-            response = await self.session.post(url, json=json, params=params)
-        else:
-            return None
-        # handle response
-        if not response.ok:
-            logger.error(
-                f"{type=}, url={self.__sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}"
-            )
-            return None
+        match type:
+            case "get":
+                response = await self.session.get(url, params=params)
+
+                # handle response
+                if not response.ok:
+                    logger.error(debug_text)
+                    return None
+
+            case "post":
+                response = await self.session.post(url, json=json, params=params)
+
+                # handle response
+                if not response.ok:
+                    logger.error(debug_text)
+                    return None
+
+            case _:
+                return None
 
         # parse response
-        if type == "get":
+        try:
             data = await response.json()
-        else:
-            try:
-                data = await response.json()
-            except:
-                data = None
+        except Exception as e:
+            if type == "get":
+                logger.error({"error": str(e), "debug": debug_text})
+            data = None
         return data
 
     async def create_player(self, name: str, debug: bool = False) -> None:

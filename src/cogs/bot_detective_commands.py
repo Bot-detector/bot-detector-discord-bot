@@ -112,6 +112,8 @@ class botDetectiveCommands(commands.Cog):
             *[api.get_player(name.replace("_", " ")) for name in user_names]
         )
         logger.debug(f"got players: {len(players)}")
+        players = [p for p in players if p is not None]
+        logger.debug(f"got players: {len(players)}")
 
         embeds = []
         i = 0
