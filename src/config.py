@@ -15,6 +15,8 @@ SQL_URI = os.environ.get("SQL_URI")
 API_URL = os.environ.get("API_URL")
 WEBHOOK = os.environ.get("WEBHOOK")
 
+SECRETS = [TOKEN, API_TOKEN, API_URL, WEBHOOK]
+
 api = Api(token=API_TOKEN, url=API_URL)
 
 # setup logging
