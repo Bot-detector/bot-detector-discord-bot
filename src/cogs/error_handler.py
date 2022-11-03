@@ -58,13 +58,26 @@ class errorHandler(commands.Cog):
             logger.debug(f"user: {ctx.author}, {error}")
             await ctx.send(str(error))
         else:
-            logger.error({"error": error})
             traceback.print_exception(
                 type(error), error, error.__traceback__, file=sys.stderr
             )
-            await ctx.send("An error occured.")
             
+            logger.error({"error": error})
+            await ctx.send("An error occured.")
+
             if config.WEBHOOK:
                 async with aiohttp.ClientSession() as session:
                     webhook = Webhook.from_url(config.WEBHOOK, session=session)
-                    await webhook.send(traceback.format_exc(), username='bd-error')
+                    error_traceback = traceback.format_exception(
+                        type(error), error, error.__traceback__
+                    )
+                    error_message = (
+                        f"`{ctx.author}` running `{ctx.command}` caused `{error.__class__.__name__}`\n"
+                        f"Message Link: {ctx.message.jump_url}\n"
+                        f"```{''.join(error_traceback)}```"
+                    )
+                    error_message = "".join(error_message)
+
+                    for secret in config.SECRETS:
+                        error_message = error_message.replace(secret, "***")
+                    await webhook.send(error_message, username="bd-error")
