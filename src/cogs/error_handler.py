@@ -50,13 +50,15 @@ class errorHandler(commands.Cog):
             return
 
         if isinstance(error, commands.DisabledCommand):
-            await ctx.send(f"{ctx.command} has been disabled.")
+            await ctx.reply(f"{ctx.command} has been disabled.")
         elif isinstance(error, commands.MissingAnyRole):
             logger.debug(f"user: {ctx.author}, {error}")
-            await ctx.send("You are missing at least one of the required roles")
+            await ctx.reply("You are missing at least one of the required roles")
         elif isinstance(error, commands.MissingRequiredArgument):
             logger.debug(f"user: {ctx.author}, {error}")
-            await ctx.send(str(error))
+            await ctx.reply(str(error))
+        elif isinstance(error, commands.CheckFailure):
+            await ctx.reply("You can only message in the allowed channels, in the bot detector guild.")
         else:
             traceback.print_exception(
                 type(error), error, error.__traceback__, file=sys.stderr
