@@ -15,6 +15,7 @@ from src.cogs.mod_commands import modCommands
 from src.cogs.player_stats_commands import playerStatsCommands
 from src.cogs.project_stats import projectStatsCommands
 from src.cogs.rsn_linking_commands import rsnLinkingCommands
+from src.cogs.event_commands import eventCommands
 from src.utils import checks
 
 logger = logging.getLogger(__name__)
@@ -56,6 +57,7 @@ async def setup_hook():
     await bot.add_cog(projectStatsCommands(bot))
     await bot.add_cog(playerStatsCommands(bot))
     await bot.add_cog(mapCommands(bot))
+    await bot.add_cog(eventCommands(bot))
 
 
 # default events
