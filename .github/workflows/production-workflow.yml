@@ -17,6 +17,7 @@ jobs:
           echo "${{ secrets.COMMAND_PREFIX }}" >> .env
           echo "${{ secrets.WEBHOOK }}" >> .env
           echo "${{ secrets.API_URL }}" >> .env
+          echo "${{ secrets.SQL_URI }}" >> .env
 
       - name: Build the Docker image
         run: docker build . --file Dockerfile -t bot-detector/bd-discord-bot:latest
