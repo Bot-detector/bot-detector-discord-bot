@@ -19,7 +19,7 @@ class eventCommands(Cog):
         """
         self.bot = bot
 
-    @commands.hybrid_command(name="event")
+    @commands.hybrid_command(name="event", description="join or leave a discord event.")
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)  # verified
     async def _event(
         self, ctx: Context, action: Literal["join", "leave"], event_name: str
@@ -92,8 +92,11 @@ class eventCommands(Cog):
             event = await discord_api.create_event(event_name=event_name)
         except ValueError:
             await ctx.reply("an event with that name already exists")
+            return
+
         event = event[0]
         await ctx.reply(f"Successfully created the event {event['event_name']}.")
+        return
     
     @commands.hybrid_command(name="delete_event")
     @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
@@ -118,3 +121,4 @@ class eventCommands(Cog):
         )
 
         await ctx.reply("delete event")
+        return
