@@ -421,7 +421,6 @@ class playerStatsCommands(Cog):
         await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
-
         if not data:
             await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
             return
@@ -429,6 +428,7 @@ class playerStatsCommands(Cog):
         name = data["player_name"]
         prediction = data["prediction_label"]
         confidence = data["prediction_confidence"]
+        confidence = confidence if confidence else 0
         secondaries: dict = data["predictions_breakdown"]
 
         msg = cleandoc(
