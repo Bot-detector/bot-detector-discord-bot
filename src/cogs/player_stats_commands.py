@@ -421,7 +421,6 @@ class playerStatsCommands(Cog):
         await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
-        print(data)
         if not data:
             await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
             return
