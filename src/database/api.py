@@ -122,11 +122,15 @@ class discordApi:
         Returns:
             Optional[Dict[str, Any]]: A dictionary containing the data for the newly created event participant, or None if the player is already participating in the event.
         """
-        # check if player is already participating in the event
+        # get the event participant
         event_participant = await self.get_event_participants(
             event_id=event_id, 
             verification_id=verification_id
         )
+        
+        exists = False
+
+        # check if participant is already present
         if event_participant:
             event_participant:dict = event_participant[0]
             participating = event_participant.get('participating')
