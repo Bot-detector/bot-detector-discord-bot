@@ -4,13 +4,14 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: base
       args:
-        root_path: ''
+        root_path: '/'
         api_port: 3000
     command: uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
     container_name: python-discord-bot
     volumes:
-      - ../Bot-Detector-Discord-Bot/src:/project/src
+      - ../Bot-Detector-Discord-Bot/src:/project/src:rw
     env_file:
       - .env
     ports:
