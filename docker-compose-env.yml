@@ -7,14 +7,15 @@ services:
       args:
         root_path: ''
         api_port: 3000
-    image: bot-detector/bd-discord:latest
+    command: uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
+    container_name: python-discord-bot
+    volumes:
+      - ../Bot-Detector-Discord-Bot/src:/project/src
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - 3000:3000
     networks:
       - botdetector-network
-    depends_on:
-      - api
 networks:
   botdetector-network:
