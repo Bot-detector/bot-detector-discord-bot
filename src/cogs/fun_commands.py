@@ -38,7 +38,7 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a poke"
+            "msg": "requested a poke",
         }
         logger.debug(debug)
         url = "https://www.osrsbotdetector.com/api"
@@ -62,7 +62,7 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a panic"
+            "msg": "requested a panic",
         }
         logger.debug(debug)
         await ctx.send("https://i.imgur.com/xAhgsgC.png")
@@ -75,14 +75,14 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a cat"
+            "msg": "requested a cat",
         }
         logger.debug(debug)
         if random.randint(0, 1) > 0:
             url = "https://cataas.com/cat/gif?json=true"
         else:
             url = "https://cataas.com/cat?json=true"
-        
+
         data = await self.__web_request(url)
         if data is None:
             await ctx.reply("Ouw souwce fo' cats am cuwwentwy down, sowwy :3")
@@ -98,7 +98,7 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a dog"
+            "msg": "requested a dog",
         }
         logger.debug(debug)
         url = "https://some-random-api.ml/img/dog"
@@ -118,7 +118,7 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a bird"
+            "msg": "requested a bird",
         }
         logger.debug(debug)
         url = "http://shibe.online/api/birds"
@@ -138,7 +138,7 @@ class funCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": "requested a bunny"
+            "msg": "requested a bunny",
         }
         logger.debug(debug)
         url = "https://api.bunnies.io/v2/loop/random/?media=gif,png"

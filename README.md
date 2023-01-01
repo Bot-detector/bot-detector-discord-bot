@@ -11,7 +11,12 @@ python -m venv venv
 venv\Scripts\activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
-``` 
+```
+## setup pre-commit
+```
+pre-commit --version
+pre-commit install
+```
 # for admin purposes saving & upgrading
 
 ```

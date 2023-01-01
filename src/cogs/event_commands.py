@@ -48,9 +48,9 @@ class eventCommands(Cog):
         event_participants = list()
         for account in linked_accounts:
             participant = await discord_api.get_event_participants(
-                event_id=event["id"], 
+                event_id=event["id"],
                 verification_id=account["Entry"],
-                participating=True
+                participating=True,
             )
             if participant:
                 event_participants.append(participant)
@@ -77,7 +77,7 @@ class eventCommands(Cog):
                         event_id=event["id"], verification_id=account["Entry"]
                     )
                 await ctx.send("Successfully left the event.")
-    
+
     @commands.hybrid_command()
     @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
     async def create_event(self, ctx: Context, event_name: str):
@@ -97,7 +97,7 @@ class eventCommands(Cog):
         event = event[0]
         await ctx.reply(f"Successfully created the event {event['event_name']}.")
         return
-    
+
     @commands.hybrid_command(name="delete_event")
     @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
     async def delete_event(self, ctx: Context, event_name: str):
@@ -105,7 +105,7 @@ class eventCommands(Cog):
         Deletes a discord event.
 
         Args:
-            event_name (str): The name of the event to delete. 
+            event_name (str): The name of the event to delete.
         """
         # delete event
         event = await discord_api.get_event(event_name, active=True)
@@ -115,9 +115,7 @@ class eventCommands(Cog):
 
         event = event[0]
         await discord_api.update_event(
-            event_id=event["id"], 
-            event_name=event["event_name"],
-            active=False
+            event_id=event["id"], event_name=event["event_name"], active=False
         )
 
         await ctx.reply("delete event")
