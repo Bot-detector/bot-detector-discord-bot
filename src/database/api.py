@@ -124,16 +124,15 @@ class discordApi:
         """
         # get the event participant
         event_participant = await self.get_event_participants(
-            event_id=event_id, 
-            verification_id=verification_id
+            event_id=event_id, verification_id=verification_id
         )
-        
+
         exists = False
 
         # check if participant is already present
         if event_participant:
-            event_participant:dict = event_participant[0]
-            participating = event_participant.get('participating')
+            event_participant: dict = event_participant[0]
+            participating = event_participant.get("participating")
             if participating == False:
                 exists = True
             else:

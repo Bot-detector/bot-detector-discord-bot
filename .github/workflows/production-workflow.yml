@@ -32,7 +32,7 @@ jobs:
         run: docker push hub.osrsbotdetector.com/bot-detector/bd-discord-bot:latest
 
       - name: Apply Possible Deployment Changes
-        run: kubectl apply -f deployment/bd-discord-bot-deploy.yml
+        run: kubectl apply -f deployment/prd/
 
       - name: Restart Deployment for Possible Container Changes
         run: kubectl rollout restart deploy bd-discord-bot
