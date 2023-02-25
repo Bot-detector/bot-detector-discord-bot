@@ -4,7 +4,7 @@ from sqlalchemy.dialects.mysql import TEXT, TINYINT
 from src.core.database import Base
 
 
-class discordVerification(Base):
+class DiscordVerification(Base):
     __tablename__ = "discordVerification"
 
     Entry = Column("Entry", Integer, primary_key=True)

@@ -5,8 +5,9 @@ from datetime import datetime
 from src.core.database import Base
 
 
-class discordEvent(Base):
+class DiscordEvent(Base):
     __tablename__ = "discordEvent"
+
     id = Column("id", Integer, primary_key=True)
     created_at = Column("created_at", DATETIME, default=datetime.utcnow)
     updated_at = Column("updated_at", DATETIME, onupdate=datetime.utcnow)

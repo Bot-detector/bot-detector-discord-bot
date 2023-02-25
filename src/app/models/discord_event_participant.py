@@ -5,7 +5,7 @@ from datetime import datetime
 from src.core.database import Base
 
 
-class discordEventParticipant(Base):
+class DiscordEventParticipant(Base):
     __tablename__ = "discordEventParticipant"
 
     id = Column("id", Integer, primary_key=True)
