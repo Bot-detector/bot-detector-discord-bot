@@ -58,12 +58,14 @@ class errorHandler(commands.Cog):
             logger.debug(f"user: {ctx.author}, {error}")
             await ctx.reply(str(error))
         elif isinstance(error, commands.CheckFailure):
-            await ctx.reply("You can only message in the allowed channels, in the bot detector guild.")
+            await ctx.reply(
+                "You can only message in the allowed channels, in the bot detector guild."
+            )
         else:
             traceback.print_exception(
                 type(error), error, error.__traceback__, file=sys.stderr
             )
-            
+
             logger.error({"error": error})
             await ctx.send("An error occured.")
 

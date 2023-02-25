@@ -24,25 +24,29 @@ class discordVerification(Base):
     verified_status = Column("verified_status", TINYINT)
     token_used = Column("token_used", Integer, server_default=None)
 
+
 class discordEvent(Base):
-    __tablename__ = 'discordEvent'
-    id = Column('id', Integer, primary_key=True)
-    created_at = Column('created_at', DATETIME, default=datetime.utcnow)
-    updated_at = Column('updated_at', DATETIME, onupdate=datetime.utcnow)
-    event_name = Column('event_name', VARCHAR(50), unique=True)
-    active = Column('active', TINYINT, default=1)
+    __tablename__ = "discordEvent"
+    id = Column("id", Integer, primary_key=True)
+    created_at = Column("created_at", DATETIME, default=datetime.utcnow)
+    updated_at = Column("updated_at", DATETIME, onupdate=datetime.utcnow)
+    event_name = Column("event_name", VARCHAR(50), unique=True)
+    active = Column("active", TINYINT, default=1)
+
 
 class discordEventParticipant(Base):
     __tablename__ = "discordEventParticipant"
 
     id = Column("id", Integer, primary_key=True)
-    created_at = Column('created_at', DATETIME, default=datetime.utcnow)
-    updated_at = Column('updated_at', DATETIME, onupdate=datetime.utcnow)
+    created_at = Column("created_at", DATETIME, default=datetime.utcnow)
+    updated_at = Column("updated_at", DATETIME, onupdate=datetime.utcnow)
     event_id = Column("event_id", Integer)
     verification_id = Column("verification_id", Integer)
     participating = Column("participating", TINYINT)
 
+
 #############################################################################
+
 
 def random_code_factory() -> str:
     letters = string.digits
@@ -73,15 +77,17 @@ class discordVerificationRead(discordVerificationBase):
     Entry: int
     Code: str
 
+
 # TODO: split read & write
 class discordEvent(SQLModel):
-    __tablename__ = 'discordEvent'
+    __tablename__ = "discordEvent"
 
     id: int = Field(primary_key=True)
     created_at: datetime = Field(default=datetime.utcnow)
     updated_at: datetime = Field(onupdate=datetime.utcnow)
     event_name: str = Field(unique=True)
     active: Optional[int] = Field(default=1)
+
 
 class discordEventParticipant(SQLModel):
     __tablename__ = "discordEventParticipant"

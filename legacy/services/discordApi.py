@@ -1,6 +1,10 @@
 from pydantic import BaseModel, Field
 from sqlmodel import select
-from src.database.models import discordVerification, discordVerificationCreate, discordVerificationRead
+from src.database.models import (
+    discordVerification,
+    discordVerificationCreate,
+    discordVerificationRead,
+)
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from typing import Optional
@@ -58,9 +62,7 @@ class discordAPI:
             data = await session.execute(statement)
             return data.scalars().all()
 
-    async def create_discord_verification(
-        self, user: discordVerificationCreate
-    ):
+    async def create_discord_verification(self, user: discordVerificationCreate):
         """
         Create a new discord verification in the database.
 

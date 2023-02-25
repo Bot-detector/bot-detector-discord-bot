@@ -12,7 +12,8 @@ from src.services import DiscordAPI
 class PaginationParams(BaseModel):
     limit: int = Field(default=10, gt=0, lt=100)
     offset: int = Field(default=0, ge=0)
-    
+
+
 @pytest.mark.asyncio
 async def test_get_discord_verifications(session_factory, test_discord_verification):
     async with session_factory() as session:
