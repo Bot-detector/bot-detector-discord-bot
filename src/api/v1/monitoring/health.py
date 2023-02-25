@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.schemas.extras.health import Health
+from src.app.schemas.extras.health import Health
 from src.core.config import CONFIG
 
 router = APIRouter()

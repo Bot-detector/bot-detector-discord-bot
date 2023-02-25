@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
-from .health import router
+from src.api.v1.monitoring import health
 
-monitoring_router = APIRouter()
-monitoring_router.include_router(router, prefix="v1/health", tags=["Health"])
+router = APIRouter()
+router.include_router(health.router, prefix="/health", tags=["Health"])
 
 __all__ = ["monitoring_router"]
