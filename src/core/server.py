@@ -6,8 +6,8 @@ from src.core.config import CONFIG
 
 def create_app() -> FastAPI:
     _app = FastAPI(
-        title="FastAPI Boilerplate",
-        description="FastAPI Boilerplate by @iam-abbas",
+        title="Bot-Detector-Discord-API",
+        description="Bot-Detector-Discord-API",
         version=CONFIG.RELEASE_VERSION,
     )
     return _app

@@ -10,7 +10,7 @@
             "request": "launch",
             "module": "uvicorn",
             "args": [
-                "src.main:app",
+                "src.core.server:app",
                 "--reload"
             ],
             "jinja": true,
