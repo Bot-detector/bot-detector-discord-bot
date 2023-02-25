@@ -7,14 +7,14 @@
 
 ```mermaid
 flowchart TD
-   user <-->|/command| discord_bot
+   user <--> |/command| discord_bot
 
-   database <--> |tables| models
-   models <--> |crud| repositories
-   external_api <--> |logic| controllers
-   repositories <--> |logic| controllers
+   src.core.database <--> |tables| src.app.models
+   src.app.models <--> |crud| src.app.repositories
+   external_api <--> |logic| src.app.controllers
+   src.app.repositories <--> |logic| src.app.controllers
 
-   controllers <--> |input validation| schemas
+   src.app.controllers <--> |input validation| src.app.schemas
 
-   schemas <--> |endpoints| discord_bot
+   src.app.schemas <--> |endpoints| discord_bot
 ```
