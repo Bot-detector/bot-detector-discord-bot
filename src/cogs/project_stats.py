@@ -10,10 +10,12 @@ from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
+
 class Stats(BaseModel):
     total_bans: int
     total_real_players: int
     total_accounts: int
+
 
 class projectStatsCommands(Cog):
     def __init__(self, bot: discord.Client) -> None:
@@ -53,7 +55,7 @@ class projectStatsCommands(Cog):
                 Total Bans: {confirmed_bans:,}
                 Active Installs: {active_installs:,}
             """
-            )
+            ),
         )
 
         embed.set_thumbnail(
@@ -69,9 +71,9 @@ class projectStatsCommands(Cog):
 
         # validate stats
         stats = Stats(**project_stats)
-        
+
         active_installs = await self.get_active_installs()
-        active_installs = active_installs if active_installs else ''
+        active_installs = active_installs if active_installs else ""
         logger.info(f"{active_installs=}")
 
         embed = discord.Embed(title="Bot Detector Plugin", color=0x00FF00)
@@ -85,7 +87,7 @@ class projectStatsCommands(Cog):
                 Total Bans: {stats.total_bans:,}
                 Active Installs: {active_installs:,}
             """
-            )
+            ),
         )
 
         embed.set_thumbnail(

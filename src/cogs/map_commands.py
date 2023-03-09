@@ -47,7 +47,7 @@ class mapCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": f"Requested region {region_name}"
+            "msg": f"Requested region {region_name}",
         }
         logger.debug(debug)
 
@@ -90,12 +90,11 @@ class mapCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": f"Requested heatmap {region}"
+            "msg": f"Requested heatmap {region}",
         }
         logger.debug(debug)
         if not region:
             return await ctx.send("Please enter a region name or region ID.")
-
 
         # info_msg = await ctx.send("Getting that map ready for you. One moment, please!")
         await ctx.typing()
@@ -163,7 +162,7 @@ class mapCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": f"Requested map {region}"
+            "msg": f"Requested map {region}",
         }
         logger.debug(debug)
         if not region:

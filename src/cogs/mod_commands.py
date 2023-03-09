@@ -23,7 +23,7 @@ class modCommands(Cog):
         debug = {
             "author": ctx.author.name,
             "author_id": ctx.author.id,
-            "msg": f"is using warn"
+            "msg": f"is using warn",
         }
         logger.debug(debug)
 

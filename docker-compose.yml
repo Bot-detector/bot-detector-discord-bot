@@ -28,7 +28,7 @@ services:
       - sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/playerdata_dev
       - discord_sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/discord_dev
       - token=verify_ban
-    volumes: 
+    volumes:
       - '../Bot-Detector-Core-Files/api:/code/api'
     ports:
       - "5000:5000"
@@ -36,7 +36,7 @@ services:
       - botdetector-network
     depends_on:
       - mysql
-      
+
   discord:
     build:
       context: ../bot-detector-discord-bot
