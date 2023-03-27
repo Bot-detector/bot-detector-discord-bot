@@ -10,7 +10,7 @@ from sqlalchemy import (
 from sqlalchemy.dialects.mysql import TINYINT, VARCHAR
 from sqlalchemy.orm import relationship
 
-from src.core.database import Base
+from src.core.database.session import Base
 
 
 class DiscordEvent(Base):
