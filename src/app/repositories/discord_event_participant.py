@@ -1,3 +1,4 @@
+from sqlalchemy import insert, select, update, delete, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.models.discord_event_participant import DiscordEventParticipant
 
@@ -7,25 +8,36 @@ class DiscordEventParticipantRepository:
         self.session = session
 
     async def create(self, event_id: int, verification_id: int):
-        participant = DiscordEventParticipant(
+        sql = insert(DiscordEventParticipant).values(
             event_id=event_id, verification_id=verification_id
         )
-        self.session.add(participant)
+        result = await self.session.execute(sql)
         await self.session.commit()
-        return participant
+        return result.inserted_primary_key[0]
 
-    async def read(self, participant_id: int):
-        return await self.session.get(DiscordEventParticipant, participant_id)
+    async def read(self, participant_id: int = None, event_id: int = None):
+        sql = select(DiscordEventParticipant).where(
+            or_(
+                DiscordEventParticipant.verification_id == participant_id,
+                DiscordEventParticipant.event_id == event_id,
+            )
+        )
+
+        result = await self.session.execute(sql)
+        return result.scalar_one_or_none()
 
     async def update(self, participant_id: int, participating: bool):
-        participant = await self.session.get(DiscordEventParticipant, participant_id)
-        if participant:
-            participant.participating = participating
-            await self.session.commit()
-        return participant
+        sql = (
+            update(DiscordEventParticipant)
+            .where(DiscordEventParticipant.verification_id == participant_id)
+            .values(participating=participating)
+        )
+        await self.session.execute(sql)
+        await self.session.commit()
 
     async def delete(self, participant_id: int):
-        participant = await self.session.get(DiscordEventParticipant, participant_id)
-        if participant:
-            await self.session.delete(participant)
-            await self.session.commit()
+        sql = delete(DiscordEventParticipant).where(
+            DiscordEventParticipant.id == participant_id
+        )
+        await self.session.execute(sql)
+        await self.session.commit()

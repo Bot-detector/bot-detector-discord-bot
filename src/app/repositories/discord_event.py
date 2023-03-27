@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select, update, delete
+from sqlalchemy import insert, select, update, delete, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.models.discord_event import DiscordEvent
 
@@ -13,8 +13,10 @@ class DiscordEventRepository:
         await self.session.commit()
         return result.inserted_primary_key[0]
 
-    async def read(self, event_id: int):
-        sql = select(DiscordEvent).where(DiscordEvent.id == event_id)
+    async def read(self, event_id: int, event_name: str):
+        sql = select(DiscordEvent).where(
+            or_(DiscordEvent.id == event_id, DiscordEvent.event_name == event_name)
+        )
         result = await self.session.execute(sql)
         return result.scalar_one_or_none()
 
