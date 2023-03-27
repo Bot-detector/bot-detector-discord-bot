@@ -1,4 +1,4 @@
-from sqlalchemy import insert, select, update, delete, or_
+from sqlalchemy import and_, insert, select, update, delete, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.models.discord_event_participant import DiscordEventParticipant
 
@@ -16,15 +16,14 @@ class DiscordEventParticipantRepository:
         return result.inserted_primary_key[0]
 
     async def read(self, participant_id: int = None, event_id: int = None):
-        sql = select(DiscordEventParticipant).where(
-            or_(
-                DiscordEventParticipant.verification_id == participant_id,
-                DiscordEventParticipant.event_id == event_id,
-            )
-        )
+        sql = select(DiscordEventParticipant)
+        if participant_id is not None:
+            sql = sql.where(DiscordEventParticipant.verification_id == participant_id)
+        if event_id is not None:
+            sql = sql.where(DiscordEventParticipant.event_id == event_id)
 
         result = await self.session.execute(sql)
-        return result.scalar_one_or_none()
+        return result.scalars().all()
 
     async def update(self, participant_id: int, participating: bool):
         sql = (
@@ -35,9 +34,12 @@ class DiscordEventParticipantRepository:
         await self.session.execute(sql)
         await self.session.commit()
 
-    async def delete(self, participant_id: int):
+    async def delete(self, participant_id: int, event_id: int):
         sql = delete(DiscordEventParticipant).where(
-            DiscordEventParticipant.id == participant_id
+            and_(
+                DiscordEventParticipant.verification_id == participant_id,
+                DiscordEventParticipant.event_id == event_id,
+            )
         )
         await self.session.execute(sql)
         await self.session.commit()

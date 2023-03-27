@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import (
     async_scoped_session,
     create_async_engine,
 )
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql.expression import Delete, Insert, Update
 
 from src.core.config import CONFIG
@@ -30,6 +31,9 @@ engines = {
     "writer": create_async_engine(CONFIG.MYSQL_URL, pool_recycle=3600),
     "reader": create_async_engine(CONFIG.MYSQL_URL, pool_recycle=3600),
 }
+
+engines["reader"].echo = False
+engines["writer"].echo = False
 
 
 class RoutingSession(Session):

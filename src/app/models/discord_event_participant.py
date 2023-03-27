@@ -32,9 +32,4 @@ class DiscordEventParticipant(Base):
     updated_at = Column("updated_at", DATETIME, onupdate=datetime.utcnow)
     event_id = Column("event_id", Integer)
     verification_id = Column("verification_id", Integer)
-    participating = Column("participating", TINYINT, server_default=1)
-
-    event = relationship("DiscordEvent", back_populates="discordEventParticipant")
-    verification = relationship(
-        "DiscordVerification", back_populates="discordEventParticipant"
-    )
+    participating = Column("participating", TINYINT, server_default="1")

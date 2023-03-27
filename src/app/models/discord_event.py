@@ -22,7 +22,3 @@ class DiscordEvent(Base):
     updated_at = Column("updated_at", DATETIME, onupdate=datetime.utcnow)
     event_name = Column("event_name", VARCHAR(50), unique=True)
     active = Column("active", TINYINT, default=1)
-
-    discordEventParticipant = relationship(
-        "DiscordEventParticipant", back_populates="event"
-    )

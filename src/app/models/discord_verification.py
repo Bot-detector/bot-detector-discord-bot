@@ -37,13 +37,7 @@ class DiscordVerification(Base):
     id = Column("Entry", Integer, primary_key=True)
     discord_id = Column("Discord_id", Integer, nullable=False)
     player_id = Column("Player_id", Integer, nullable=False)
-    primary_rsn = Column("primary_rsn", TINYINT, server_default=0)
+    primary_rsn = Column("primary_rsn", TINYINT, server_default="0")
     code = Column("Code", TEXT, nullable=False)
-    verified_status = Column("Verified_status", TINYINT, server_default=0)
+    verified_status = Column("Verified_status", TINYINT, server_default="0")
     token_used = Column("token_used", Integer, server_default=None)
-
-    Player = relationship("Players", back_populates="discordVerification")
-    Tokens_ = relationship("Tokens", back_populates="discordVerification")
-    discordEventParticipant = relationship(
-        "DiscordEventParticipant", back_populates="verification"
-    )
