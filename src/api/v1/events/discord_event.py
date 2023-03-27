@@ -4,6 +4,7 @@ from src.app.repositories.discord_event import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database.session import get_session
+from src.core.fastapi.dependencies.auth import authenticate_user
 from typing import Annotated
 
 
@@ -20,6 +21,7 @@ router = APIRouter()
 async def get_discord_event(
     event_id: Annotated[int, Query()] = None,
     event_name: Annotated[str, Query()] = None,
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventRepository = Depends(get_discord_event_repository),
 ):
     event = await repo.read(event_id, event_name)
@@ -29,6 +31,7 @@ async def get_discord_event(
 @router.post("/")
 async def create_discord_event(
     event_name: Annotated[str, Body(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventRepository = Depends(get_discord_event_repository),
 ):
     event_id = await repo.create(event_name)
@@ -39,6 +42,7 @@ async def create_discord_event(
 async def update_discord_event(
     event_id: Annotated[int, Body(...)],
     event_name: Annotated[str, Body(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventRepository = Depends(get_discord_event_repository),
 ):
     updated_rows = await repo.update(event_id, event_name)
@@ -48,6 +52,7 @@ async def update_discord_event(
 @router.delete("/")
 async def delete_discord_event(
     event_id: Annotated[int, Query(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventRepository = Depends(get_discord_event_repository),
 ):
     deleted_rows = await repo.delete(event_id)

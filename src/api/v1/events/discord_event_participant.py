@@ -4,6 +4,7 @@ from src.app.repositories.discord_event_participant import (
 )
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.database.session import get_session
+from src.core.fastapi.dependencies.auth import authenticate_user
 from typing import Annotated
 
 router = APIRouter()
@@ -19,6 +20,7 @@ async def get_discord_event_participant_repository(
 async def get_discord_event_participants(
     event_id: Annotated[int, Query()] = None,
     participant_id: Annotated[int, Query()] = None,
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventParticipantRepository = Depends(
         get_discord_event_participant_repository
     ),
@@ -31,6 +33,7 @@ async def get_discord_event_participants(
 async def add_discord_event_participant(
     event_id: Annotated[int, Query(...)],
     verification_id: Annotated[int, Query(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventParticipantRepository = Depends(
         get_discord_event_participant_repository
     ),
@@ -43,6 +46,7 @@ async def add_discord_event_participant(
 async def update_discord_event_participant(
     participant_id: Annotated[int, Query(...)],
     participating: Annotated[bool, Query(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventParticipantRepository = Depends(
         get_discord_event_participant_repository
     ),
@@ -55,6 +59,7 @@ async def update_discord_event_participant(
 async def remove_discord_event_participant(
     event_id: Annotated[int, Query(...)],
     participant_id: Annotated[int, Query(...)],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordEventParticipantRepository = Depends(
         get_discord_event_participant_repository
     ),

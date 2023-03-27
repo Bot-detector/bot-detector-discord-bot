@@ -9,6 +9,7 @@ from src.app.schemas.requests.discord_verification import (
     DiscordVerificationCreateRequest,
 )
 from src.core.database.session import get_session
+from src.core.fastapi.dependencies.auth import authenticate_user
 
 router = APIRouter()
 
@@ -22,6 +23,7 @@ async def get_discord_verification_repository(
 @router.post("/")
 async def create_discord_verification(
     verification_data: DiscordVerificationCreateRequest,
+    usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):
     code = str(randint(1000, 9999))
@@ -37,6 +39,7 @@ async def create_discord_verification(
 async def read_discord_verification(
     verification_id: Annotated[int, Query()] = None,
     player_id: Annotated[int, Query()] = None,
+    usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):
     verification = await repo.read(verification_id, player_id)
@@ -47,6 +50,7 @@ async def read_discord_verification(
 async def update_discord_verification(
     verification_id: Annotated[int, Query()],
     verified_status: Annotated[bool, Query()],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):
     await repo.update(verification_id, verified_status)
@@ -56,6 +60,7 @@ async def update_discord_verification(
 @router.delete("/")
 async def delete_discord_verification(
     verification_id: Annotated[int, Query()],
+    usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):
     await repo.delete(verification_id)

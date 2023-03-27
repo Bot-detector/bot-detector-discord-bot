@@ -14,6 +14,7 @@ class Config(BaseSettings):
     MYSQL_URL: str
     API_URL: str
     WEBHOOK: str
+    BEARER: str
     RELEASE_VERSION: str = "0.1"
     SECRETS: list = []
 
@@ -23,6 +24,7 @@ class Config(BaseSettings):
             data["API_TOKEN"],
             data["MYSQL_URL"],
             data["WEBHOOK"],
+            data["BEARER"],
         ]
         super().__init__(**data)
 
@@ -35,4 +37,5 @@ CONFIG: Config = Config(
     API_URL=os.environ.get("API_URL"),
     WEBHOOK=os.environ.get("WEBHOOK"),
     RELEASE_VERSION="0.1",
+    BEARER=os.environ.get("BEARER"),
 )
