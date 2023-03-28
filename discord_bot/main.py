@@ -11,9 +11,14 @@ from core.config import CONFIG
 
 logger = logging.getLogger(__name__)
 
+
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        await bot.load_extension("app.controllers")
+
+
 intents = Intents.default()
-bot = commands.Bot(command_prefix=CONFIG.COMMAND_PREFIX, intents=intents)
-bot.load_extension("app.controllers")
+bot = MyBot(command_prefix=CONFIG.COMMAND_PREFIX, intents=intents)
 
 
 @bot.event
@@ -33,7 +38,7 @@ async def on_disconnect():
     logger.info("Bot disconnected.")
 
 
-@bot.listen
+@bot.listen("on_command")
 async def on_command(ctx: Context):
     _log = {"author": ctx.author}
     _log["command"] = "text" if ctx.interaction is None else "slash"

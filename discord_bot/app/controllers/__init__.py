@@ -1,11 +1,17 @@
+# app/controllers/__init__.py
 from discord.ext.commands import Bot
-from controllers import event, fun, linking, map, mod, stats
+from . import event, fun, linking, map, mod, stats
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-def setup(client: Bot):
-    client.add_cog(event.Extension(client))
-    client.add_cog(fun.Extension(client))
-    client.add_cog(linking.Extension(client))
-    client.add_cog(map.Extension(client))
-    client.add_cog(mod.Extension(client))
-    client.add_cog(stats.Extension(client))
+async def setup(bot: Bot):
+    await bot.add_cog(event.Extension(bot))
+    await bot.add_cog(fun.Extension(bot))
+    await bot.add_cog(linking.Extension(bot))
+    await bot.add_cog(map.Extension(bot))
+    await bot.add_cog(mod.Extension(bot))
+    await bot.add_cog(stats.Extension(bot))
+
+    logger.info("setup success")
