@@ -23,7 +23,7 @@ async def measure_latency(url="https://www.osrsbotdetector.com/api/", timeout=5)
             return None
 
 
-async def mycommand(ctx: Context):
+async def ping(ctx: Context):
     _latency = await measure_latency()
     _status = "Offline" if _latency is None else "Online"
 
