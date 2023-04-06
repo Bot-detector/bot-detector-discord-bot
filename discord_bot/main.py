@@ -11,8 +11,15 @@ from discord.ext.commands import Context
 # Import your logging configuration
 import core.logging
 from core.config import CONFIG
+from enum import Enum
 
 logger = logging.getLogger(__name__)
+
+
+class SyncOption(str, Enum):
+    GLOBAL = "~"
+    CURRENT_GUILD = "*"
+    CLEAR_COMMANDS = "^"
 
 
 class MyBot(commands.Bot):
@@ -65,15 +72,6 @@ async def on_command(ctx: Context):
     if ctx.interaction is None:
         if random.randint(0, 100) == 0:
             await ctx.reply(random.choice(responses))
-
-
-from enum import Enum
-
-
-class SyncOption(str, Enum):
-    GLOBAL = "~"
-    CURRENT_GUILD = "*"
-    CLEAR_COMMANDS = "^"
 
 
 @bot.command()
