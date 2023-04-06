@@ -2,7 +2,6 @@
 import aiohttp
 import asyncio
 from time import time
-from discord.ext import commands
 from discord.ext.commands import Context
 import logging
 import discord
@@ -29,6 +28,6 @@ async def ping(ctx: Context):
 
     embed = discord.Embed(color=0x00FF)
     embed.add_field(name="Teehee", value=f":3", inline=False)
-    embed.add_field(name="Discord Ping:", value=f"{_latency:.3f} ms", inline=False)
-    embed.add_field(name="BD API Status:", value=f"{_status}", inline=False)
+    embed.add_field(name="API Ping:", value=f"{_latency:.3f} ms", inline=False)
+    embed.add_field(name="API Status:", value=f"{_status}", inline=False)
     await ctx.reply(embed=embed)
