@@ -1,4 +1,7 @@
 import aiohttp
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class CataasAPI:
@@ -9,6 +12,22 @@ class CataasAPI:
     def __init__(self) -> None:
         self.base_url = "https://cataas.com/cat"
 
+    async def _make_request(self, url: str) -> bytes:
+        """
+        Helper method to make a web request and return the response content as bytes.
+
+        Args:
+        url (str): The URL to request.
+
+        Returns:
+        bytes: The response content as bytes.
+        """
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                response_content = await response.read()
+                logger.info(f"Received response from {url}")
+                return response_content
+
     async def get_random_cat(self) -> bytes:
         """
         Retrieve a random cat image.
@@ -16,9 +35,8 @@ class CataasAPI:
         Returns:
         bytes: The bytes of the cat image.
         """
-        async with aiohttp.ClientSession() as session:
-            async with session.get(self.base_url) as response:
-                return await response.read()
+        url = self.base_url
+        return await self._make_request(url)
 
     async def get_cat_by_tag(self, tag: str) -> bytes:
         """
@@ -30,10 +48,8 @@ class CataasAPI:
         Returns:
         bytes: The bytes of the cat image.
         """
-        url = f"{self.base_url}/tag/{tag}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                return await response.read()
+        url = f"{self.base_url}/{tag}"
+        return await self._make_request(url)
 
     async def get_cat_by_text(self, text: str) -> bytes:
         """
@@ -46,6 +62,4 @@ class CataasAPI:
         bytes: The bytes of the cat image.
         """
         url = f"{self.base_url}/says/{text}"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                return await response.read()
+        return await self._make_request(url)
