@@ -13,6 +13,10 @@ class Extension(Cog, name="fun commands"):
     async def hello(self, ctx: Context):
         await ctx.send("Hello!")
 
+    @commands.hybrid_command(name="panic")
+    async def panic(self, ctx: Context):
+        await ctx.reply("https://i.imgur.com/xAhgsgC.png")
+
     @commands.hybrid_command(name="ping")
     async def ping(self, ctx: Context):
         await Ping.ping(ctx)
