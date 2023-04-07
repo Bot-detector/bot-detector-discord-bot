@@ -29,12 +29,6 @@ class Extension(Cog, name="fun commands"):
     async def saycat(self, ctx, *, text: str):
         await Cat.saycat(ctx, text)
 
-    @saycat.error
-    @cat.error
-    async def cat_error(self, ctx: Context, error):
-        if isinstance(error, commands.CommandInvokeError):
-            await ctx.send("Sorry, I couldn't retrieve a cat image")
-
     @commands.hybrid_command(name="dog")
     async def dog(self, ctx: Context):
         await Shibe.dog_command(ctx)
@@ -42,3 +36,11 @@ class Extension(Cog, name="fun commands"):
     @commands.hybrid_command(name="bird")
     async def bird(self, ctx: Context):
         await Shibe.bird_command(ctx)
+
+    @saycat.error
+    @cat.error
+    @dog.error
+    @bird.error
+    async def cat_error(self, ctx: Context, error):
+        if isinstance(error, commands.CommandInvokeError):
+            await ctx.send("Sorry, I couldn't retrieve your image.")
