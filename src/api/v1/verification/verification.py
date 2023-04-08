@@ -37,8 +37,8 @@ async def create_discord_verification(
 
 @router.get("/")
 async def read_discord_verification(
-    verification_id: Annotated[int, Query()] = None,
-    player_id: Annotated[int, Query()] = None,
+    verification_id: Annotated[int | None, Query()],
+    player_id: Annotated[int | None, Query()],
     usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):
@@ -59,7 +59,7 @@ async def update_discord_verification(
 
 @router.delete("/")
 async def delete_discord_verification(
-    verification_id: Annotated[int, Query()],
+    verification_id: Annotated[int, Query(...)],
     usr: bool = Depends(authenticate_user),
     repo: DiscordVerificationRepository = Depends(get_discord_verification_repository),
 ):

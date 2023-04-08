@@ -18,8 +18,8 @@ async def get_discord_event_participant_repository(
 
 @router.get("/participants")
 async def get_discord_event_participants(
-    event_id: Annotated[int, Query()] = None,
-    participant_id: Annotated[int, Query()] = None,
+    event_id: Annotated[int | None, Query()],
+    participant_id: Annotated[int | None, Query()],
     usr: bool = Depends(authenticate_user),
     repo: DiscordEventParticipantRepository = Depends(
         get_discord_event_participant_repository

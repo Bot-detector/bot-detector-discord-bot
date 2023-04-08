@@ -19,8 +19,8 @@ router = APIRouter()
 
 @router.get("/")
 async def get_discord_event(
-    event_id: Annotated[int, Query()] = None,
-    event_name: Annotated[str, Query()] = None,
+    event_id: Annotated[int | None, Query()],
+    event_name: Annotated[str | None, Query()],
     usr: bool = Depends(authenticate_user),
     repo: DiscordEventRepository = Depends(get_discord_event_repository),
 ):

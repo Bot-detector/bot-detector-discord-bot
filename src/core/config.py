@@ -2,13 +2,7 @@ from pydantic import BaseSettings, Field
 import os
 
 
-# class BaseConfig(BaseSettings):
-#     class Config:
-#         case_sensitive = True
-
-
 class Config(BaseSettings):
-    TOKEN: str
     COMMAND_PREFIX: str
     API_TOKEN: str
     MYSQL_URL: str
@@ -20,7 +14,6 @@ class Config(BaseSettings):
 
     def __init__(self, **data):
         data["SECRETS"] = [
-            data["TOKEN"],
             data["API_TOKEN"],
             data["MYSQL_URL"],
             data["WEBHOOK"],
@@ -30,7 +23,6 @@ class Config(BaseSettings):
 
 
 CONFIG: Config = Config(
-    TOKEN=os.environ.get("TOKEN"),
     COMMAND_PREFIX=os.environ.get("COMMAND_PREFIX"),
     API_TOKEN=os.environ.get("API_TOKEN"),
     MYSQL_URL=os.environ.get("SQL_URI"),
