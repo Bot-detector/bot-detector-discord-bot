@@ -1,0 +1,1072 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "FastAPI",
+        "version": "0.1.0"
+    },
+    "servers": [
+        {
+            "url": "/api"
+        }
+    ],
+    "paths": {
+        "/v1/hiscore/": {
+            "get": {
+                "tags": [
+                    "Hiscore"
+                ],
+                "summary": "Get Player Hiscore Data",
+                "description": "Select daily scraped hiscore data, by player_id",
+                "operationId": "get_player_hiscore_data_v1_hiscore__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Player Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "player_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/hiscore/Latest": {
+            "get": {
+                "tags": [
+                    "Hiscore"
+                ],
+                "summary": "Get Latest Hiscore Data For An Account",
+                "description": "Select the latest hiscore of a player.",
+                "operationId": "get_latest_hiscore_data_for_an_account_v1_hiscore_Latest_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Player Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "player_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/hiscore/Latest/bulk": {
+            "get": {
+                "tags": [
+                    "Hiscore"
+                ],
+                "summary": "Get Latest Hiscore Data By Player Features",
+                "description": "Select the latest hiscore data of multiple players by filtering on the player features.",
+                "operationId": "get_latest_hiscore_data_by_player_features_v1_hiscore_Latest_bulk_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Possible Ban",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "possible_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Ban",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "confirmed_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Player",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "confirmed_player",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "label_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Jagex",
+                            "maximum": 5.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "label_jagex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/hiscore/XPChange": {
+            "get": {
+                "tags": [
+                    "Hiscore"
+                ],
+                "summary": "Get Account Hiscore Xp Change",
+                "description": "Select daily scraped differential in hiscore data by Player ID",
+                "operationId": "get_account_hiscore_xp_change_v1_hiscore_XPChange_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Player Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "player_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/player": {
+            "get": {
+                "tags": [
+                    "Player"
+                ],
+                "summary": "Get Player Information",
+                "description": "Select a player by name or id.",
+                "operationId": "get_player_information_v1_player_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Player Name",
+                            "type": "string"
+                        },
+                        "name": "player_name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Player Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "player_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/player/bulk": {
+            "get": {
+                "tags": [
+                    "Player"
+                ],
+                "summary": "Get Bulk Player Data From The Plugin Database",
+                "description": "Selects bulk player data from the plugin database.",
+                "operationId": "get_bulk_player_data_from_the_plugin_database_v1_player_bulk_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Possible Ban",
+                            "type": "integer"
+                        },
+                        "name": "possible_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Ban",
+                            "type": "integer"
+                        },
+                        "name": "confirmed_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Player",
+                            "type": "integer"
+                        },
+                        "name": "confirmed_player",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Id",
+                            "type": "integer"
+                        },
+                        "name": "label_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Jagex",
+                            "type": "integer"
+                        },
+                        "name": "label_jagex",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/prediction": {
+            "get": {
+                "tags": [
+                    "Prediction"
+                ],
+                "summary": "Get Account Prediction Result",
+                "description": "Parameters:\n    name: The name of the player to get the prediction for\n    breakdown: If True, always return breakdown, even if the prediction is Stats_Too_Low\n\nReturns:\n    A dict containing the prediction data for the player",
+                "operationId": "get_account_prediction_result_v1_prediction_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Breakdown",
+                            "type": "boolean",
+                            "default": false
+                        },
+                        "name": "breakdown",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/prediction/data": {
+            "get": {
+                "tags": [
+                    "Business"
+                ],
+                "summary": "Get Expired Predictions",
+                "description": "Select predictions where prediction data is not from today or null.\nBusiness service: ML",
+                "operationId": "get_expired_predictions_v1_prediction_data_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Limit",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 50000
+                        },
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/prediction/bulk": {
+            "get": {
+                "tags": [
+                    "Prediction"
+                ],
+                "summary": "Gets Predictions By Player Features",
+                "description": "Get predictions by player features",
+                "operationId": "gets_predictions_by_player_features_v1_prediction_bulk_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Possible Ban",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "possible_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Ban",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "confirmed_ban",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Confirmed Player",
+                            "maximum": 1.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "confirmed_player",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Id",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "label_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Label Jagex",
+                            "maximum": 5.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "label_jagex",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/feedback/": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get Feedback",
+                "description": "Get player feedback of a player",
+                "operationId": "get_feedback_v1_feedback__get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Row Count",
+                            "maximum": 100000.0,
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 100000
+                        },
+                        "name": "row_count",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Page",
+                            "minimum": 1.0,
+                            "type": "integer",
+                            "default": 1
+                        },
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/feedback/count": {
+            "get": {
+                "tags": [
+                    "Feedback"
+                ],
+                "summary": "Get Feedback",
+                "description": "Get the calculated player feedback of a player",
+                "operationId": "get_feedback_v1_feedback_count_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/report": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get Reports",
+                "description": "Select report data.",
+                "operationId": "get_reports_v1_report_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Reportedid",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "reportedID",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Reportingid",
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "reportingID",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Timestamp",
+                            "type": "string",
+                            "format": "date"
+                        },
+                        "name": "timestamp",
+                        "in": "query"
+                    },
+                    {
+                        "required": false,
+                        "schema": {
+                            "title": "Regionid",
+                            "maximum": 100000.0,
+                            "minimum": 0.0,
+                            "type": "integer"
+                        },
+                        "name": "regionID",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Update Reports",
+                "description": "Update the reports from one reporting user to another.",
+                "operationId": "update_reports_v1_report_put",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Old User Id",
+                            "type": "integer"
+                        },
+                        "name": "old_user_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "New User Id",
+                            "type": "integer"
+                        },
+                        "name": "new_user_id",
+                        "in": "query"
+                    },
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Token",
+                            "type": "string"
+                        },
+                        "name": "token",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/report/count": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get Report Count V1",
+                "operationId": "get_report_count_v1_v1_report_count_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/report/manual/count": {
+            "get": {
+                "tags": [
+                    "Report"
+                ],
+                "summary": "Get Report Manual Count V1",
+                "description": "Get the calculated player report count",
+                "operationId": "get_report_manual_count_v1_v1_report_manual_count_get",
+                "parameters": [
+                    {
+                        "required": true,
+                        "schema": {
+                            "title": "Name",
+                            "type": "string"
+                        },
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/HTTPValidationError"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
