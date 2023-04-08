@@ -4,3 +4,4 @@ SQLAlchemy==2.0.9
 uvicorn==0.21.1
 discord.py==2.2.2
 pre-commit==3.2.2
+black==23.3.0
