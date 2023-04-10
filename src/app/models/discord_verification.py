@@ -1,13 +1,5 @@
-from sqlalchemy import Column, Integer
+from sqlalchemy import Column, ForeignKeyConstraint, Index, Integer
 from sqlalchemy.dialects.mysql import TEXT, TINYINT
-from sqlalchemy import (
-    Column,
-    ForeignKeyConstraint,
-    Index,
-    Integer,
-)
-from sqlalchemy.dialects.mysql import TINYINT
-from sqlalchemy.orm import relationship
 
 from src.core.database.session import Base
 
