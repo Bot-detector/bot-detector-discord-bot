@@ -1,0 +1,8 @@
+aiohttp==3.8.4
+fastapi==0.95.0
+SQLAlchemy==2.0.9
+uvicorn==0.21.1
+pre-commit==3.2.2
+black==23.3.0
+asyncmy==0.2.7
+python-dotenv==1.0.0

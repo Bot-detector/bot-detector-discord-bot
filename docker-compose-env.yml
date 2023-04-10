@@ -1,21 +1,35 @@
 version: '3'
 services:
-  discord:
+  discord-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: src/Dockerfile
       target: base
       args:
         root_path: '/'
         api_port: 3000
-    command: uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
-    container_name: python-discord-bot
+    command: uvicorn src.core.server:app --host 0.0.0.0 --reload --reload-include src/*
+    container_name: discord-api
     volumes:
-      - ../Bot-Detector-Discord-Bot/src:/project/src:rw
+      - ./src:/project/src:rw
     env_file:
-      - .env
+      - src/.env
     ports:
       - 3000:3000
+    networks:
+      - botdetector-network
+
+  discord-bot:
+    build:
+      context: .
+      dockerfile: discord_bot/Dockerfile
+      target: base
+    command: python main.py
+    container_name: discord-bot
+    volumes:
+      - ./discord_bot:/project/discord_bot:rw
+    env_file:
+      - discord_bot/.env
     networks:
       - botdetector-network
 networks:

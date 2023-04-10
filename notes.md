@@ -19,3 +19,8 @@ powershell "(Get-Content requirements.txt) | ForEach-Object { $_ -replace '>=', 
 ```
 pre-commit run --all-files
 ```
+# running with docker
+make sure your `/dicord_bot/.env` & `/src/.env` is there
+```
+docker compose -f "docker-compose-env.yml" up --build
+```

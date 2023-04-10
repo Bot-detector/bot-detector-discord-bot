@@ -16,7 +16,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /project
 
 # install dependencies
-COPY ./requirements.txt /project
+COPY src/requirements.txt /project
 RUN pip install --no-cache-dir -r requirements.txt
 
 # copy the scripts to the folder
@@ -28,4 +28,4 @@ FROM base as production
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /project
 USER appuser
 
-CMD ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0"]
+CMD ["uvicorn", "src.core.server:app", "--proxy-headers", "--host", "0.0.0.0"]
