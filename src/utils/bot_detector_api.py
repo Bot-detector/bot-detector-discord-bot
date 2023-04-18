@@ -141,13 +141,13 @@ class Api:
         # handle response
         if response.status >= 500:
             if repeat >= max_repeat:
-                logger.error({"error": await response.text(), "debug": debug_text})
+                logger.error({"error": await response.text(), "debug": debug_text, "status": response.status})
                 return None
             repeat += 1
             data = await self._webrequest(url, params, json, type, debug, repeat)
             return data
         elif not response.ok:
-            logger.error({"error": await response.text(), "debug": debug_text})
+            logger.error({"error": await response.text(), "debug": debug_text, "status": response.status})
             return None
 
         # parse response
@@ -155,7 +155,7 @@ class Api:
             data = await response.json()
         except Exception as e:
             if type == "get":
-                logger.error({"error": str(e), "debug": debug_text})
+                logger.error({"error": str(e), "error-text": await response.text(), "debug": debug_text})
             return None
         logger.debug(data)
         return data
