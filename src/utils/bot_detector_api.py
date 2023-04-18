@@ -124,7 +124,7 @@ class Api:
             The JSON data returned by the web request, or None if an error occurred.
         """
         max_repeat = 3
-        debug_text = f"{type=}, url={self._sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}"
+        debug_text = f"{type=}, url={self._sanitize_url(url,[self.token])}, params={self._sanitize_params(params)}, json={json}"
         if debug:
             logger.debug(debug_text)
 
@@ -135,6 +135,7 @@ class Api:
             case "post":
                 response = await self.session.post(url, json=json, params=params)
             case _:
+                logger.error({"error": f"invalid type: received {type} expected (get, post)", "debug": debug_text})
                 return None
 
         # handle response
@@ -155,7 +156,8 @@ class Api:
         except Exception as e:
             if type == "get":
                 logger.error({"error": str(e), "debug": debug_text})
-            data = None
+            return None
+        logger.debug(data)
         return data
 
     async def create_player(self, name: str, debug: bool = False) -> None:
