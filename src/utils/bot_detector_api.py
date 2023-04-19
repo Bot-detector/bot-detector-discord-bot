@@ -135,19 +135,36 @@ class Api:
             case "post":
                 response = await self.session.post(url, json=json, params=params)
             case _:
-                logger.error({"error": f"invalid type: received {type} expected (get, post)", "debug": debug_text})
+                logger.error(
+                    {
+                        "error": f"invalid type: received {type} expected (get, post)",
+                        "debug": debug_text,
+                    }
+                )
                 return None
 
         # handle response
         if response.status >= 500:
             if repeat >= max_repeat:
-                logger.error({"error": await response.text(), "debug": debug_text, "status": response.status})
+                logger.error(
+                    {
+                        "error": await response.text(),
+                        "debug": debug_text,
+                        "status": response.status,
+                    }
+                )
                 return None
             repeat += 1
             data = await self._webrequest(url, params, json, type, debug, repeat)
             return data
         elif not response.ok:
-            logger.error({"error": await response.text(), "debug": debug_text, "status": response.status})
+            logger.error(
+                {
+                    "error": await response.text(),
+                    "debug": debug_text,
+                    "status": response.status,
+                }
+            )
             return None
 
         # parse response
@@ -155,7 +172,13 @@ class Api:
             data = await response.json()
         except Exception as e:
             if type == "get":
-                logger.error({"error": str(e), "error-text": await response.text(), "debug": debug_text})
+                logger.error(
+                    {
+                        "error": str(e),
+                        "error-text": await response.text(),
+                        "debug": debug_text,
+                    }
+                )
             return None
         logger.debug(data)
         return data
@@ -327,7 +350,7 @@ class Api:
             dict: The contribution data for the player(s), or an empty dictionary
                 if the player(s) were not found.
         """
-        url = self.url + "/stats/contributions"
+        url = self.url + "/stats/contributions/"
         params = dict()
         if patreon:
             params = {"token": self.token}
