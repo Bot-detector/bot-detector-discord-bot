@@ -3,13 +3,6 @@ import aiohttp
 
 class BotDetectorAPI:
     def __init__(self, base_url: str, api_key: str):
-        """
-        Initialize the BotDetectorAPI class.
-
-        Args:
-            base_url (str): The base URL of the API.
-            api_key (str): The API key for authentication.
-        """
         self.base_url = base_url
         self.api_key = api_key
         self.headers = {"Authorization": f"Bearer {self.api_key}"}  # future proof
