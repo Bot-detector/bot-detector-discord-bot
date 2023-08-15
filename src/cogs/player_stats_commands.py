@@ -377,7 +377,7 @@ class playerStatsCommands(Cog):
         logger.debug(bans)
 
         # search until you find the role he should have
-        role_dict = [r for r in bot_hunter_roles if r.get("max") > bans > r.get("min")]
+        role_dict = [r for r in bot_hunter_roles if r.get("max") > bans >= r.get("min")]
         if not role_dict:
             embed = discord.Embed(
                 description="You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
