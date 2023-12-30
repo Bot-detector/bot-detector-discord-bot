@@ -19,6 +19,20 @@ class rsnLinkingCommands(commands.Cog):
         for ndx in range(0, l, n):
             yield iterable[ndx : min(ndx + n, l)]
 
+    async def send_pm(self, ctx: discord.Context, *args, **kwargs):
+        """Handles sending a PM to a context author. Will tell user to check PMs, and reply with an error message
+        if failed due to disabled PMs.
+
+        :param ctx: Context to use
+        :param args: Passed to PM .send()
+        :param kwargs: Passed to PM .send()
+        """
+        try:
+            await ctx.author.send(*args, **kwargs)
+            await ctx.reply("Please check your PMs.")
+        except discord.Forbidden:
+            await ctx.reply("This command requires that your PMs be enabled. Please enable your PMs, then try again.")
+
     async def verified_msg(self, name: str) -> discord.Embed:
         embed = discord.Embed(title=f"{name}'s Status:", color=0x00FF00)
         embed.add_field(name="Verified:", value=f"{name} is Verified.", inline=False)
@@ -152,8 +166,7 @@ class rsnLinkingCommands(commands.Cog):
                 code = linked_user.get("Code")
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
-                await ctx.author.send(embed=embed)
-                await ctx.reply("Please check your pm")
+                await self.send_pm(ctx, embed=embed)
                 return
 
         # generate random code
@@ -166,8 +179,7 @@ class rsnLinkingCommands(commands.Cog):
 
         # send user via pm the random code
         embed = await self.link_msg(name, code)
-        await ctx.author.send(embed=embed)
-        await ctx.reply("Please check your pm")
+        await self.send_pm(ctx, embed=embed)
         return
 
     @commands.hybrid_command(name="verify")
@@ -206,8 +218,7 @@ class rsnLinkingCommands(commands.Cog):
                 code = linked_user.get("Code")
                 # send user via pm the random code
                 embed = await self.link_msg(name, code)
-                await ctx.author.send(embed=embed)
-                await ctx.reply("Please check your pm")
+                await self.send_pm(ctx, embed=embed)
                 return
         else:
             embed = await self.unverified_msg(name)
