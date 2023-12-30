@@ -19,7 +19,7 @@ class rsnLinkingCommands(commands.Cog):
         for ndx in range(0, l, n):
             yield iterable[ndx : min(ndx + n, l)]
 
-    async def send_pm(self, ctx: discord.Context, *args, **kwargs):
+    async def send_pm(self, ctx: Context, *args, **kwargs):
         """Handles sending a PM to a context author. Will tell user to check PMs, and reply with an error message
         if failed due to disabled PMs.
 
