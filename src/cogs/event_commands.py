@@ -3,7 +3,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from src import config
-from src.utils.checks import VERIFIED_PLAYER_ROLE, STAFF_ROLE, OWNER_ROLE
+from src.utils.checks import VERIFIED_PLAYER_ROLE, DISCORD_STAFF, OWNER_ROLE
 from typing import Literal
 from src.database.api import discordApi
 
@@ -79,7 +79,7 @@ class eventCommands(Cog):
                 await ctx.send("Successfully left the event.")
 
     @commands.hybrid_command()
-    @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
+    @commands.has_any_role(DISCORD_STAFF, OWNER_ROLE)
     async def create_event(self, ctx: Context, event_name: str):
         """
         Creates a new discord event.
@@ -99,7 +99,7 @@ class eventCommands(Cog):
         return
 
     @commands.hybrid_command(name="delete_event")
-    @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
+    @commands.has_any_role(DISCORD_STAFF, OWNER_ROLE)
     async def delete_event(self, ctx: Context, event_name: str):
         """
         Deletes a discord event.
