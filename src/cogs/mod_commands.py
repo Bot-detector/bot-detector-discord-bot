@@ -3,7 +3,7 @@ import logging
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
-from src.utils.checks import STAFF_ROLE, OWNER_ROLE
+from src.utils.checks import DISCORD_STAFF, OWNER_ROLE
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class modCommands(Cog):
         self.bot = bot
 
     @commands.hybrid_command()
-    @commands.has_any_role(STAFF_ROLE, OWNER_ROLE)
+    @commands.has_any_role(DISCORD_STAFF, OWNER_ROLE)
     async def warn(self, ctx: Context):
         """"""
         debug = {
