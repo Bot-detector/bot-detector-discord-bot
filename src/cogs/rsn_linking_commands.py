@@ -47,7 +47,7 @@ class rsnLinkingCommands(commands.Cog):
             name="Unverified:", value=f"{name} is Unverified.", inline=False
         )
         embed.add_field(
-            name="Next Steps:", value=f"Please type '!link {name}'", inline=False
+            name="Next Steps:", value=f"Please type '/link {name}'", inline=False
         )
         embed.set_thumbnail(
             url="https://user-images.githubusercontent.com/5789682/117239076-19bb4800-adfc-11eb-94c4-27ff7e1217cc.png"
@@ -63,7 +63,7 @@ class rsnLinkingCommands(commands.Cog):
         )
         embed.add_field(
             name="Next Steps:",
-            value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\nIf you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to !link your account.",
+            value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\nIf you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to /link your account.",
             inline=False,
         )
         embed.set_thumbnail(
@@ -94,9 +94,9 @@ class rsnLinkingCommands(commands.Cog):
                 2. Login as: '{name}'
                 3. Join the clan channel: 'Bot Detector'.
                 4. Verify that a Plugin Admin or Plugin Moderator is present in the channel.
-                5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #bot-detector-commands.
+                5. If a Plugin Admin or Plugin Moderator is not available, please leave a message in #detector-commands, or create a ticket in #support
                 6. Type into the Clan Chat: '!Code {code}'.
-                7. Type '!verify {name}' in #bot-detector-commands channel to confirm that you have been Verified.
+                7. Type '/verify {name}' in #detector-commands channel to confirm that you have been Verified.
                 8. Verification Process Complete.
             """
             ),
@@ -118,7 +118,7 @@ class rsnLinkingCommands(commands.Cog):
             value=cleandoc(
                 f"""
                 Do not delete this message.
-                1. If this RSN was submitted in error, please type '!link <Your Correct RSN>'.
+                1. If this RSN was submitted in error, please type '/link <Your Correct RSN>'.
                 2. This code will not expire, it is tied to your unique RSN:Discord Pair.
                 3. If you are unable to become 'Verified' through this process, please contact an administrator for assistance.
             """
@@ -129,11 +129,16 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.hybrid_command(name="link")
     async def link(self, ctx: Context, *, name: str):
+        """
+        Link an RSN (Runescape user name) to your Discord account. You must have PMs enabled on Discord.
+
+        :param name: RSN you'd wish to link
+        """
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting link, {name=}")
         # check if a name is given
         if not name:
             await ctx.reply(
-                "Please specify the RSN of the account you'd wish to link. !link <RSN>"
+                "Please specify the RSN of the account you'd wish to link. /link <RSN>"
             )
             return
         # check if the name is valid
@@ -184,6 +189,11 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.hybrid_command(name="verify")
     async def verify(self, ctx: Context, name: str):
+        """
+        Check if an RSN has been linked to a Discord user and verified in-game by a Plugin Admin or Plugin Moderator.
+
+        :param name: RSN you wish to check is verified
+        """
         logger.debug(
             f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}"
         )
@@ -227,12 +237,15 @@ class rsnLinkingCommands(commands.Cog):
 
     @commands.hybrid_command(name="linked")
     async def linked(self, ctx: Context):
+        """
+        Lists what RSNs are linked to your Discord account.
+        """
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting linked")
         links = await config.api.get_discord_links(ctx.author.id)
 
         if len(links) == 0:
             await ctx.send(
-                "You do not have any OSRS accounts linked to this Discord ID. Use the !link command in order to link an account."
+                "You do not have any OSRS accounts linked to this Discord ID. Use the /link command in order to link an account."
             )
 
         embeds = []
