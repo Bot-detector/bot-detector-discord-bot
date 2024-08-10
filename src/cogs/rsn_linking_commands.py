@@ -55,15 +55,15 @@ class rsnLinkingCommands(commands.Cog):
         return embed
 
     async def install_plugin_msg(self) -> discord.Embed:
-        embed = discord.Embed(title=f"User Not Found:", color=0xFF0000)
+        embed = discord.Embed(title="User Not Found:", color=0xFF0000)
         embed.add_field(
             name="Status:",
-            value=f"No reports exist from specified player.",
+            value="No reports exist from specified player.",
             inline=False,
         )
         embed.add_field(
             name="Next Steps:",
-            value=f"Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\nIf you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to /link your account.",
+            value="Please install the Bot-Detector Plugin on RuneLite if you have not done so.\n\nIf you have the plugin installed, you will need to disable Anonymous Reporting for us to be able to /link your account.",
             inline=False,
         )
         embed.set_thumbnail(
@@ -105,7 +105,7 @@ class rsnLinkingCommands(commands.Cog):
             name="INFO",
             inline=False,
             value=cleandoc(
-                f"""
+                """
                 You may link multiple Runescape accounts via this method.
                 1. If you change the name of your account(s) you must repeat this process with your new RSN(s).
                 2. In the event of a name change please allow some time for your data to be transferred over.
@@ -116,7 +116,7 @@ class rsnLinkingCommands(commands.Cog):
             name="NOTICE",
             inline=False,
             value=cleandoc(
-                f"""
+                """
                 Do not delete this message.
                 1. If this RSN was submitted in error, please type '/link <Your Correct RSN>'.
                 2. This code will not expire, it is tied to your unique RSN:Discord Pair.

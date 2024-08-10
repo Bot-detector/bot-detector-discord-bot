@@ -259,7 +259,7 @@ class playerStatsCommands(Cog):
         if not linked_accounts:
             embed = discord.Embed(
                 description=cleandoc(
-                    f"""
+                    """
                     Please use the !link command to pair an OSRS account.
                     You can use !verify to check if you are verified.
                 """
@@ -358,7 +358,7 @@ class playerStatsCommands(Cog):
         if not linked_accounts:
             embed = discord.Embed(
                 description=cleandoc(
-                    f"""
+                    """
                     Please use the !link command to pair an OSRS account.
                     You can use !verify to check if you are verified.
                 """

@@ -1,6 +1,5 @@
 import logging
 import random
-import subprocess
 
 import discord
 from discord.ext import commands
@@ -46,7 +45,7 @@ class funCommands(Cog):
         isServerUp = "Online" if ping is not None else "Uh-Oh"
 
         embed = discord.Embed(color=0x00FF)
-        embed.add_field(name="Teehee", value=f":3", inline=False)
+        embed.add_field(name="Teehee", value=":3", inline=False)
         embed.add_field(
             name="Discord Ping:", value=f"{self.bot.latency:.3f} ms", inline=False
         )

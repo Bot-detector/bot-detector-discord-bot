@@ -10,8 +10,6 @@ from sqlalchemy.sql import (
     select,
     insert,
     Insert,
-    delete,
-    Delete,
     Update,
     update,
     and_,

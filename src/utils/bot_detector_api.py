@@ -1,9 +1,7 @@
-import asyncio
 import logging
 from typing import List
 
 import aiohttp
-from src import config
 from src.utils.string_processing import to_jagex_name
 
 logger = logging.getLogger(__name__)

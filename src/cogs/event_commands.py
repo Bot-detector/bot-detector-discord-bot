@@ -2,7 +2,6 @@ import logging
 import discord
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
-from src import config
 from src.utils.checks import VERIFIED_PLAYER_ROLE, DISCORD_STAFF, OWNER_ROLE
 from typing import Literal
 from src.database.api import discordApi
