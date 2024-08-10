@@ -20,3 +20,6 @@ def plus_minus(var, compare):
         diff_control = "+"
 
     return diff_control
+
+def to_jagex_name(name: str) -> str:
+    return name.lower().replace("_", " ").replace("-", " ").strip()

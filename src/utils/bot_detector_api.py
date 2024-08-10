@@ -4,6 +4,7 @@ from typing import List
 
 import aiohttp
 from src import config
+from src.utils.string_processing import to_jagex_name
 
 logger = logging.getLogger(__name__)
 
@@ -198,6 +199,7 @@ class Api:
             None
         """
         url = self.url + "/v1/player"
+        name = to_jagex_name(name=name)
         data = await self._webrequest(
             url,
             type="post",
@@ -223,7 +225,7 @@ class Api:
         """
         url = self.url + "/v1/player"
         params = {
-            "player_name": name,
+            "player_name": to_jagex_name(name=name),
             "token": self.token,
             "row_count": 1,
             "page": 1,
@@ -234,7 +236,7 @@ class Api:
         return data
 
     # TODO: API design
-    async def get_discord_player(self, runescape_name: str) -> List[dict]:
+    async def get_discord_player(self, name: str) -> List[dict]:
         """
         Get a player's Discord account by their RuneScape name.
 
@@ -243,22 +245,23 @@ class Api:
         player's Discord account information.
 
         Args:
-            runescape_name (str): The RuneScape name of the player to get.
+            name (str): The RuneScape name of the player to get.
 
         Returns:
             List[dict]: A list of dictionaries containing the player's Discord
                 account information, or an empty list if the player was not found.
         """
+        name = to_jagex_name(name=name)
         url = (
             self.url
-            + f"/discord/verify/player_rsn_discord_account_status/{self.token}/{runescape_name}"
+            + f"/discord/verify/player_rsn_discord_account_status/{self.token}/{name}"
         )
         data = await self._webrequest(url, type="get")
         return data
 
     # TODO: API design
     async def post_discord_code(
-        self, discord_id: str, player_name: int, code: str
+        self, discord_id: str, name: int, code: str
     ) -> List[dict]:
         """
         Post a Discord verification code for a player.
@@ -274,8 +277,9 @@ class Api:
         Returns:
             None
         """
+        name = to_jagex_name(name=name)
         url = self.url + f"/discord/verify/insert_player_dpc/{self.token}"
-        data = {"discord_id": discord_id, "player_name": player_name, "code": code}
+        data = {"discord_id": discord_id, "player_name": name, "code": code}
         await self._webrequest(url, type="post", json=data)
 
     # TODO: API design
@@ -374,6 +378,7 @@ class Api:
                 player was not found.
         """
         url = self.url + "/v1/prediction"
+        player_name = to_jagex_name(name=player_name)
         params = {"name": player_name, "breakdown": int(breakdown)}
         data = await self._webrequest(url, type="get", params=params)
         return data
@@ -429,7 +434,7 @@ class Api:
                 if the player was not found.
         """
         url = self.url + f"/discord/get_latest_sighting/{self.token}"
-        params = {"player_name": name}
+        params = {"player_name": to_jagex_name(name=name)}
         data = await self._webrequest(url, type="post", json=params)
         return data
 
@@ -448,6 +453,6 @@ class Api:
                 if the player was not found.
         """
         url = self.url + f"/discord/get_xp_gains/{self.token}"
-        params = {"player_name": name}
+        params = {"player_name": to_jagex_name(name=name)}
         data = await self._webrequest(url, type="post", json=params)
         return data
