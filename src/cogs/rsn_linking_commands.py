@@ -179,7 +179,7 @@ class rsnLinkingCommands(commands.Cog):
 
         # register verification
         await config.api.post_discord_code(
-            discord_id=ctx.author.id, player_name=player.get("name"), code=code
+            discord_id=ctx.author.id, name=player.get("name"), code=code
         )
 
         # send user via pm the random code
