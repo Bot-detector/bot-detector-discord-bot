@@ -41,7 +41,7 @@ class funCommands(Cog):
             "msg": "requested a poke",
         }
         logger.debug(debug)
-        url = "https://www.osrsbotdetector.com/api"
+        url = "https://api.prd.osrsbotdetector.com"
         ping = await self.__web_request(url)
         isServerUp = "Online" if ping is not None else "Uh-Oh"
 
