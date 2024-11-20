@@ -211,7 +211,6 @@ class playerStatsCommands(Cog):
 
         # add the fields for the bosses
         for boss in bosses:
-
             if embed is None:
                 embed = discord.Embed(
                     title=player_name,
@@ -254,96 +253,102 @@ class playerStatsCommands(Cog):
         linked_accounts = await config.api.get_discord_links(
             discord_id=str(ctx.author.id)
         )
-        # logger.debug(f"{linked_accounts=}")
 
         if not linked_accounts:
             embed = discord.Embed(
                 description=cleandoc(
-                    f"""
+                    """
                     Please use the !link command to pair an OSRS account.
                     You can use !verify to check if you are verified.
-                """
+                    """
                 )
             )
             await ctx.reply(embed=embed)
             return
 
+        # Filter verified accounts
         linked_accounts = [
             {"name": acc.get("name"), "primary_rsn": acc.get("primary_rsn")}
             for acc in linked_accounts
             if acc.get("Verified_status") == 1
         ]
-        patreon = ctx.author.get_role(PATREON_ROLE)
 
-        data = await config.api.get_contributions(
-            players=linked_accounts, patreon=patreon
+        # patreon = ctx.author.get_role(PATREON_ROLE)
+        data = await config.api.get_player_report_score(
+            players=linked_accounts
         )
 
         if not data:
-            await ctx.reply("No data found, ")
+            await ctx.reply("No data found.")
             return
 
-        manual_reports = int(data["manual"]["reports"])
-        manual_bans = int(data["manual"]["bans"])
-        manual_incorrect = int(data["manual"]["incorrect_reports"])
+        # Initialize variables
+        reports_submitted = sum(d["count"] for d in data)
+        possible_bans = sum(d["count"] for d in data if d.get("possible_ban"))
+        confirmed_bans = sum(d["count"] for d in data if d.get("confirmed_ban"))
+        manual_flags = sum(d["count"] for d in data if d.get("manual_detect"))
 
-        total_reports = int(data["total"]["reports"])
-        total_bans = int(data["total"]["bans"])
-        total_possible_bans = int(data["total"]["possible_bans"])
+        manually_confirmed_bans = sum(
+            d["count"]
+            for d in data
+            if d.get("manual_detect") and d.get("confirmed_ban")
+        )
 
+        # Calculate manual flag accuracy
+        manual_flag_accuracy = (
+            (manually_confirmed_bans / manual_flags * 100) if manual_flags else 0
+        )
+
+        # Determine primary RSN
         primary_rsn = None
         for account in linked_accounts:
             if account.get("primary_rsn") == 1:
                 primary_rsn = account.get("name")
 
-        if not primary_rsn:
+        if not primary_rsn and linked_accounts:
             primary_rsn = linked_accounts[0].get("name")
 
+        # Build the embed
         embed = discord.Embed(title=f"{primary_rsn}'s Stats", color=0x00FF00)
-
-        if manual_reports == 0:
-            report_accuracy = None
-        elif manual_incorrect == 0:
-            report_accuracy = 100.00
-        else:
-            report_accuracy = round(
-                (manual_bans / (manual_bans + manual_incorrect)) * 100, 2
-            )
-
         embed.add_field(
-            name="Reports Submitted:", value=f"{total_reports:,d}", inline=False
+            name="Reports Submitted:", value=f"{reports_submitted:,}", inline=False
         )
+        embed.add_field(name="Possible Bans:", value=f"{possible_bans:,}", inline=False)
         embed.add_field(
-            name="Possible Bans:", value=f"{total_possible_bans:,d}", inline=False
+            name="Confirmed Bans:", value=f"{confirmed_bans:,}", inline=False
         )
-        embed.add_field(name="Confirmed Bans:", value=f"{total_bans:,d}", inline=False)
 
-        if report_accuracy is not None:
+        if manual_flags:
             embed.add_field(
-                name="Manual Flags:", value=f"{manual_reports:,d}", inline=False
+                name="Manual Flags:", value=f"{manual_flags:,}", inline=False
             )
             embed.add_field(
-                name="Manual Flag Accuracy:", value=f"{report_accuracy}%", inline=False
+                name="Manual Flag Accuracy:",
+                value=f"{manual_flag_accuracy:.2f}%",
+                inline=False,
             )
 
-        if patreon:
-            total_xp_removed = int(data["total"]["total_xp_removed"])
-            embed.add_field(
-                name="Total exp removed:", value=f"{total_xp_removed:,d}", inline=False
-            )
+        # TODO: the total_xp_removed won't be there, we should add an extra api endpoint on the private-api to query the exp
+        # if patreon and "total" in data:
+        #     total_xp_removed = int(data["total"].get("total_xp_removed", 0))
+        #     embed.add_field(
+        #         name="Total XP Removed:", value=f"{total_xp_removed:,}", inline=False
+        #     )
 
         embed.set_thumbnail(
             url="https://user-images.githubusercontent.com/5789682/117364618-212a3200-ae8c-11eb-8b42-9ef5e225930d.gif"
         )
 
-        if total_reports == 0:
+        if reports_submitted == 0:
             embed.set_footer(
-                text="If you have the plugin installed but are not seeing your KC increase\nyou may have to disable Anonymous Mode in your plugin settings.",
+                text=(
+                    "If you have the plugin installed but are not seeing your KC increase, "
+                    "you may have to disable Anonymous Mode in your plugin settings."
+                ),
                 icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png",
             )
 
         await ctx.reply(embed=embed)
-        return
 
     @commands.hybrid_command()
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)
@@ -358,7 +363,7 @@ class playerStatsCommands(Cog):
         if not linked_accounts:
             embed = discord.Embed(
                 description=cleandoc(
-                    f"""
+                    """
                     Please use the !link command to pair an OSRS account.
                     You can use !verify to check if you are verified.
                 """
@@ -372,12 +377,14 @@ class playerStatsCommands(Cog):
             for acc in linked_accounts
             if acc.get("Verified_status") == 1
         ]
-        data = await config.api.get_contributions(players=linked_accounts)
-        bans = data["total"]["bans"]
-        logger.debug(bans)
+        data = await config.api.get_player_report_score(
+            players=linked_accounts
+        )
+        confirmed_bans = sum(d["count"] for d in data if d.get("confirmed_ban"))
+        logger.debug(confirmed_bans)
 
         # search until you find the role he should have
-        role_dict = [r for r in bot_hunter_roles if r.get("max") > bans >= r.get("min")]
+        role_dict = [r for r in bot_hunter_roles if r.get("max") > confirmed_bans >= r.get("min")]
         if not role_dict:
             embed = discord.Embed(
                 description="You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
@@ -393,7 +400,7 @@ class playerStatsCommands(Cog):
 
         if ctx.author.get_role(role.get("role_id")):
             embed = discord.Embed(
-                description=f"You are not yet eligible for a new role. Only **{role.get('max') - bans}** more confirmed bans and you'll be there! :D",
+                description=f"You are not yet eligible for a new role. Only **{role.get('max') - confirmed_bans}** more confirmed bans and you'll be there! :D",
                 color=new_role.color,
             )
             await ctx.reply(embed=embed)

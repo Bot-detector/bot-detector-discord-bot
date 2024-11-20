@@ -456,3 +456,9 @@ class Api:
         params = {"player_name": to_jagex_name(name=name)}
         data = await self._webrequest(url, type="post", json=params)
         return data
+
+    async def get_player_report_score(self, names: list[str]) -> list[dict]:
+        url = "https://api-v2.prd.osrsbotdetector.com/v2/player/report/score"
+        params = {"name": names}
+        data = await self._webrequest(url, type="get", json=params)
+        return data
