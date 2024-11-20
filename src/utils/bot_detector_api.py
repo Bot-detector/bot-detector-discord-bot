@@ -460,5 +460,11 @@ class Api:
     async def get_player_report_score(self, names: list[str]) -> list[dict]:
         url = "https://api-v2.prd.osrsbotdetector.com/v2/player/report/score"
         params = {"name": names}
-        data = await self._webrequest(url, type="get", json=params)
+        data = await self._webrequest(url, type="get", params=params)
+        return data
+
+    async def get_player_feedback_score(self, names: list[str]) -> list[dict]:
+        url = "https://api-v2.prd.osrsbotdetector.com/v2/player/feedback/score"
+        params = {"name": names}
+        data = await self._webrequest(url, type="get", params=params)
         return data

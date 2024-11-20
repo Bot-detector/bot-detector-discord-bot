@@ -1,5 +1,7 @@
 from discord.ext.commands import Context
+import logging
 
+logger = logging.getLogger(__name__)
 
 OWNER_ROLE = 817917060796776469
 DISCORD_STAFF = 1008398916586311762
@@ -32,7 +34,6 @@ PREVILEGED_ROLES = (
     DISCORD_STAFF, 
     VERIFICATION_STAFF,
 )
-
 
 async def is_allowed_channel(ctx: Context):
     for role in PREVILEGED_ROLES:

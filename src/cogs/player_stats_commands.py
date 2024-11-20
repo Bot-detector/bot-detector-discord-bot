@@ -275,7 +275,10 @@ class playerStatsCommands(Cog):
 
         # patreon = ctx.author.get_role(PATREON_ROLE)
         data = await config.api.get_player_report_score(
-            players=linked_accounts
+            names=[n["name"] for n in linked_accounts]
+        )
+        feedback_data = await config.api.get_player_feedback_score(
+            names=[n["name"] for n in linked_accounts]
         )
 
         if not data:
@@ -286,18 +289,20 @@ class playerStatsCommands(Cog):
         reports_submitted = sum(d["count"] for d in data)
         possible_bans = sum(d["count"] for d in data if d.get("possible_ban"))
         confirmed_bans = sum(d["count"] for d in data if d.get("confirmed_ban"))
-        manual_flags = sum(d["count"] for d in data if d.get("manual_detect"))
+        
+        manual_flags = sum(d["count"] for d in feedback_data)
 
-        manually_confirmed_bans = sum(
+        manually_confirmed_player = sum(
             d["count"]
-            for d in data
-            if d.get("manual_detect") and d.get("confirmed_ban")
+            for d in feedback_data
+            if d.get("confirmed_player")
         )
 
         # Calculate manual flag accuracy
         manual_flag_accuracy = (
-            (manually_confirmed_bans / manual_flags * 100) if manual_flags else 0
+            (manual_flags - manually_confirmed_player) / manual_flags * 100 if manual_flags else 0
         )
+        logger.info(f"{manual_flags=}, {manually_confirmed_player=}")
 
         # Determine primary RSN
         primary_rsn = None
@@ -378,7 +383,7 @@ class playerStatsCommands(Cog):
             if acc.get("Verified_status") == 1
         ]
         data = await config.api.get_player_report_score(
-            players=linked_accounts
+            names=[n["name"] for n in linked_accounts]
         )
         confirmed_bans = sum(d["count"] for d in data if d.get("confirmed_ban"))
         logger.debug(confirmed_bans)
