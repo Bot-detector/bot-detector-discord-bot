@@ -1,41 +1,47 @@
-version: '3'
 services:
   mysql:
+    container_name: database
     build:
-      context: ../bot-detector-mysql
-      dockerfile: Dockerfile
-    image: bot-detector/bd-mysql:latest
+      context: ./mysql
+    image: mysql
     environment:
       - MYSQL_ROOT_PASSWORD=root_bot_buster
-      - MYSQL_USER=botssuck
-      - MYSQL_PASSWORD=botdetector
     volumes:
-      - '../bot-detector-mysql/mount:/var/lib/mysql'
-      - '../bot-detector-mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
+      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./mysql/conf.d:/etc/mysql/conf.d
+      # - ./mysql/mount:/var/lib/mysql # creates persistence
     ports:
-      - "3306:3306"
+      - 3307:3306
     networks:
       - botdetector-network
-  api:
-    build:
-      context: ../Bot-Detector-Core-Files
-      dockerfile: Dockerfile
-      args:
-        root_path: ''
-        api_port: 5000
-    image: bot-detector/bd-api:latest
-    environment:
-      - sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/playerdata_dev
-      - discord_sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/discord_dev
-      - token=verify_ban
-    volumes:
-      - '../Bot-Detector-Core-Files/api:/code/api'
-    ports:
-      - "5000:5000"
-    networks:
-      - botdetector-network
-    depends_on:
-      - mysql
+    healthcheck:
+      test: "mysqladmin ping -h localhost -u root -proot_bot_buster"
+      # during this period fails are not considered
+      start_period: 30s
+      # time between cmd
+      interval: 30s
+      # time given to the cmd
+      timeout: 5s
+  # api:
+  #   build:
+  #     context: ../Bot-Detector-Core-Files
+  #     dockerfile: Dockerfile
+  #     args:
+  #       root_path: ''
+  #       api_port: 5000
+  #   image: bot-detector/bd-api:latest
+  #   environment:
+  #     - sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/playerdata_dev
+  #     - discord_sql_uri=mysql+asyncmy://botssuck:botdetector@mysql:3306/discord_dev
+  #     - token=verify_ban
+  #   volumes:
+  #     - '../Bot-Detector-Core-Files/api:/code/api'
+  #   ports:
+  #     - "5000:5000"
+  #   networks:
+  #     - botdetector-network
+  #   depends_on:
+  #     - mysql
 
   discord:
     build:
@@ -45,12 +51,14 @@ services:
         root_path: ''
         api_port: 3000
     image: bot-detector/bd-discord:latest
+    env_file:
+      - .env
     environment:
-      - TOKEN=<YOUR TOKEN HERE>
+      # - TOKEN=<YOUR TOKEN HERE>
       - API_TOKEN=verify_ban
       - COMMAND_PREFIX=$
-      - WEBHOOK=
-      - API_URL=
+      # - WEBHOOK=
+      - API_URL=https://api.prd.osrsbotdetector.com
     ports:
       - "3000:3000"
     networks:
