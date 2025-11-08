@@ -377,7 +377,7 @@ class Api:
             dict: The player's skill predictions, or an empty dictionary if the
                 player was not found.
         """
-        url = self.url + "/v2/player/prediction"
+        url = "https://api-v2.prd.osrsbotdetector.com/v2/player/prediction"
         player_name = to_jagex_name(name=player_name)
         params = {"name": player_name, "breakdown": int(breakdown)}
         data = await self._webrequest(url, type="get", params=params)
