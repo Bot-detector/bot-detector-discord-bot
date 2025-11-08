@@ -436,38 +436,39 @@ class playerStatsCommands(Cog):
         if not data:
             await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
             return
+        
+        for player in data:
+            name = player["player_name"]
+            prediction = player["prediction_label"]
+            confidence = player["prediction_confidence"]
+            confidence = confidence if confidence else 0
+            secondaries: dict = player["predictions_breakdown"]
 
-        name = data["player_name"]
-        prediction = data["prediction_label"]
-        confidence = data["prediction_confidence"]
-        confidence = confidence if confidence else 0
-        secondaries: dict = data["predictions_breakdown"]
+            msg = cleandoc(
+                f"""```diff
+                + Name: {name}
+                {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
+                {string_processing.plus_minus(confidence, 0.75)} Confidence: {float(confidence) * 100:.2f}%
+                ============
+                Prediction Breakdown
+            """
+            )
 
-        msg = cleandoc(
-            f"""```diff
-            + Name: {name}
-            {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
-            {string_processing.plus_minus(confidence, 0.75)} Confidence: {float(confidence) * 100:.2f}%
-            ============
-            Prediction Breakdown
-        """
-        )
+            msg += "\n"
 
-        msg += "\n"
+            for key, value in secondaries.items():
+                if value > 0:
+                    msg += cleandoc(
+                        f"""
+                        {string_processing.plus_minus(key, 'Real_Player')} {key}: {float(value) * 100:.2f}%
+                    """
+                    )
 
-        for key, value in secondaries.items():
-            if value > 0:
-                msg += cleandoc(
-                    f"""
-                    {string_processing.plus_minus(key, 'Real_Player')} {key}: {float(value) * 100:.2f}%
-                """
-                )
+                    msg += "\n"
 
-                msg += "\n"
+            msg += "```"
 
-        msg += "```"
-
-        await ctx.reply(msg)
+            await ctx.reply(msg)
         return
 
     @commands.hybrid_command()

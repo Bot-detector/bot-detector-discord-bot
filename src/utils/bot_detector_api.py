@@ -361,7 +361,7 @@ class Api:
         data = await self._webrequest(url, json=players, type="post", params=params)
         return data
 
-    async def get_prediction(self, player_name: str, breakdown: bool = True) -> dict:
+    async def get_prediction(self, player_name: str, breakdown: bool = True) -> list[dict]:
         """
         Get a player's skill predictions.
 
