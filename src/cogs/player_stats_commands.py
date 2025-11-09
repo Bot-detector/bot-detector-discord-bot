@@ -3,6 +3,7 @@ from datetime import datetime
 from inspect import cleandoc
 
 import discord
+from discord import Color, Embed
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from osrsbox import items_api
@@ -429,47 +430,64 @@ class playerStatsCommands(Cog):
 
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
+        """Predict whether a player is real or not, with confidence breakdown."""
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
         await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
         if not data:
-            await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
+            await ctx.reply(f"I couldn't get a prediction for **{player_name}**.")
             return
-        
-        for player in data:
-            name = player["player_name"]
-            prediction = player["prediction_label"]
-            confidence = player["prediction_confidence"]
-            confidence = confidence if confidence else 0
-            secondaries: dict = player["predictions_breakdown"]
 
-            msg = cleandoc(
-                f"""```diff
-                + Name: {name}
-                {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
-                {string_processing.plus_minus(confidence, 0.75)} Confidence: {float(confidence) * 100:.2f}%
-                ============
-                Prediction Breakdown
-            """
+        for player in data:
+            name = player.get("player_name", "Unknown")
+            prediction = player.get("prediction_label", "N/A")
+            confidence = float(player.get("prediction_confidence") or 0)
+            breakdown: dict = player.get("predictions_breakdown", {})
+
+            # Color based on prediction type
+            color = Color.green() if prediction == "Real_Player" else Color.red()
+
+            # Create the embed
+            embed = Embed(
+                title=f"Prediction for {name}",
+                color=color,
+            )
+            embed.add_field(
+                name="Prediction",
+                value=f"{prediction}",
+                inline=True
+            )
+            embed.add_field(
+                name="Confidence",
+                value=f"{confidence * 100:.2f}%",
+                inline=True
+            )
+            embed.add_field(
+                name="\u200b",  # Empty spacer field
+                value="───────────────",
+                inline=False
             )
 
-            msg += "\n"
+            # Breakdown section
+            if breakdown:
+                breakdown_text = "\n".join(
+                    f"**{label}:** {value * 100:.2f}%"
+                    for label, value in breakdown.items()
+                    if value > 0
+                )
+            else:
+                breakdown_text = "No detailed breakdown available."
 
-            for key, value in secondaries.items():
-                if value > 0:
-                    msg += cleandoc(
-                        f"""
-                        {string_processing.plus_minus(key, 'Real_Player')} {key}: {float(value) * 100:.2f}%
-                    """
-                    )
+            embed.add_field(
+                name="Prediction Breakdown",
+                value=breakdown_text,
+                inline=False
+            )
 
-                    msg += "\n"
+            embed.set_footer(text="Powered by the prediction model")
 
-            msg += "```"
-
-            await ctx.reply(msg)
-        return
+            await ctx.reply(embed=embed)
 
     @commands.hybrid_command()
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)

@@ -17,14 +17,14 @@ distlib==0.3.6
 fastapi==0.95.1
 filelock==3.12.0
 fonttools==4.39.3
-frozenlist==1.3.3
+frozenlist>=1.3.3
 greenlet==2.0.2
 h11==0.14.0
 identify==2.5.22
 idna==3.4
 kiwisolver==1.4.4
 matplotlib==3.7.1
-multidict==6.0.4
+multidict>=6.0.4
 mypy-extensions==1.0.0
 nodeenv==1.7.0
 numpy==1.24.2
@@ -50,4 +50,4 @@ typing_extensions==4.5.0
 tzdata==2023.3
 uvicorn==0.21.1
 virtualenv==20.21.1
-yarl==1.8.2
+yarl>=1.8.2
