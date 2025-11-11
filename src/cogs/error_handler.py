@@ -28,7 +28,7 @@ class errorHandler(commands.Cog):
         """
 
         # This prevents any commands with local handlers being handled here in on_command_error.
-        print("error", error)
+        logger.error("error", error)
         if hasattr(ctx.command, "on_error"):
             return
 

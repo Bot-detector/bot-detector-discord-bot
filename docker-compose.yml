@@ -1,27 +1,27 @@
 services:
-  mysql:
-    container_name: database
-    build:
-      context: ./mysql
-    image: mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=root_bot_buster
-    volumes:
-      - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-      - ./mysql/conf.d:/etc/mysql/conf.d
-      # - ./mysql/mount:/var/lib/mysql # creates persistence
-    ports:
-      - 3307:3306
-    networks:
-      - botdetector-network
-    healthcheck:
-      test: "mysqladmin ping -h localhost -u root -proot_bot_buster"
-      # during this period fails are not considered
-      start_period: 30s
-      # time between cmd
-      interval: 30s
-      # time given to the cmd
-      timeout: 5s
+  # mysql:
+  #   container_name: database
+  #   build:
+  #     context: ./mysql
+  #   image: mysql
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root_bot_buster
+  #   volumes:
+  #     - ./mysql/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+  #     - ./mysql/conf.d:/etc/mysql/conf.d
+  #     # - ./mysql/mount:/var/lib/mysql # creates persistence
+  #   ports:
+  #     - 3307:3306
+  #   networks:
+  #     - botdetector-network
+  #   healthcheck:
+  #     test: "mysqladmin ping -h localhost -u root -proot_bot_buster"
+  #     # during this period fails are not considered
+  #     start_period: 30s
+  #     # time between cmd
+  #     interval: 30s
+  #     # time given to the cmd
+  #     timeout: 5s
   # api:
   #   build:
   #     context: ../Bot-Detector-Core-Files
@@ -45,12 +45,13 @@ services:
 
   discord:
     build:
-      context: ../bot-detector-discord-bot
+      context: .
       dockerfile: Dockerfile
       args:
         root_path: ''
         api_port: 3000
-    image: bot-detector/bd-discord:latest
+    image: bd/discord:latest
+    command: uv run uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
     env_file:
       - .env
     environment:
@@ -59,11 +60,23 @@ services:
       - COMMAND_PREFIX=$
       # - WEBHOOK=
       - API_URL=https://api.prd.osrsbotdetector.com
+    volumes:
+      - uv_cache:/root/.cache/uv
     ports:
       - "3000:3000"
     networks:
       - botdetector-network
-    depends_on:
-      - api
 networks:
   botdetector-network:
+
+# To create the docker volume for uv cache (run only once)
+# docker volume create uv_cache
+
+# To copy existing cache from host to docker volume (run only once)
+# docker run --rm \
+#   -v uv_cache:/data \
+#   -v ~/.cache/uv:/source \
+#   alpine sh -c "cp -r /source/* /data/"
+volumes:
+  uv_cache:
+    external: true

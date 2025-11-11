@@ -190,10 +190,8 @@ class rsnLinkingCommands(commands.Cog):
     @commands.hybrid_command(name="verify")
     async def verify(self, ctx: Context, name: str):
         """
-        Check if an RSN has been linked to a Discord user and verified in-game by a Plugin Admin or Plugin Moderator.
-
-        :param name: RSN you wish to check is verified
-        """
+        Verify if RSN has been linked to your Discord account.
+       """
         logger.debug(
             f"{ctx.author.name=}, {ctx.author.id=}, Requesting verify, {name=}"
         )

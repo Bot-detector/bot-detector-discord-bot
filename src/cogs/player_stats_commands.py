@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from inspect import cleandoc
 
 import discord
@@ -8,7 +8,6 @@ from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from osrsbox import items_api
 from src import config
-from src.utils import string_processing
 from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
 
 logger = logging.getLogger(__name__)
@@ -432,7 +431,7 @@ class playerStatsCommands(Cog):
     async def predict(self, ctx: Context, *, player_name: str):
         """Predict whether a player is real or not, with confidence breakdown."""
         logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
-        await ctx.typing()
+        await ctx.typing(ephemeral=True)
 
         data = await config.api.get_prediction(player_name)
         if not data:
@@ -441,17 +440,18 @@ class playerStatsCommands(Cog):
 
         for player in data:
             name = player.get("player_name", "Unknown")
-            prediction = player.get("prediction_label", "N/A")
+            prediction:str = player.get("prediction_label", "N/A")
             confidence = float(player.get("prediction_confidence") or 0)
             breakdown: dict = player.get("predictions_breakdown", {})
 
             # Color based on prediction type
-            color = Color.green() if prediction == "Real_Player" else Color.red()
+            color = Color.green() if prediction.lower() == "real_player" else Color.red()
 
             # Create the embed
             embed = Embed(
                 title=f"Prediction for {name}",
                 color=color,
+                timestamp=datetime.now(timezone.utc)
             )
             embed.add_field(
                 name="Prediction",
@@ -463,29 +463,26 @@ class playerStatsCommands(Cog):
                 value=f"{confidence * 100:.2f}%",
                 inline=True
             )
-            embed.add_field(
-                name="\u200b",  # Empty spacer field
-                value="───────────────",
-                inline=False
-            )
+
+            # breakline
+            embed.add_field(name="\u200b", value="\u200b", inline=False)
 
             # Breakdown section
             if breakdown:
-                breakdown_text = "\n".join(
-                    f"**{label}:** {value * 100:.2f}%"
-                    for label, value in breakdown.items()
-                    if value > 0
-                )
+                for label, value in breakdown.items():
+                    if value > 0:
+                        embed.add_field(
+                            name=label,
+                            value=f"{value * 100:.2f}%",
+                            inline=True
+                        )
             else:
                 breakdown_text = "No detailed breakdown available."
-
-            embed.add_field(
-                name="Prediction Breakdown",
-                value=breakdown_text,
-                inline=False
-            )
-
-            embed.set_footer(text="Powered by the prediction model")
+                embed.add_field(
+                    name="Prediction Breakdown",
+                    value=breakdown_text,
+                    inline=False
+                )
 
             await ctx.reply(embed=embed)
 
