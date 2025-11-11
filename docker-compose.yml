@@ -51,7 +51,7 @@ services:
         root_path: ''
         api_port: 3000
     image: bd/discord:latest
-    command: uv run uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
+    # command: uv run uvicorn src.main:app --host 0.0.0.0 --reload --reload-include src/*
     env_file:
       - .env
     environment:

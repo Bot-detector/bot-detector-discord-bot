@@ -33,4 +33,4 @@ FROM base AS production
 RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /project
 USER appuser
 
-CMD ["uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0"]
+CMD ["uv", "run", "uvicorn", "src.main:app", "--proxy-headers", "--host", "0.0.0.0"]
