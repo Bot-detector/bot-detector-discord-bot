@@ -1,14 +1,15 @@
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from inspect import cleandoc
 
 import discord
+from discord import Color, Embed
 from discord.ext import commands
 from discord.ext.commands import Cog, Context
 from osrsbox import items_api
 from src import config
-from src.utils import string_processing
 from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 ITEMS = items_api.load()
@@ -429,47 +430,68 @@ class playerStatsCommands(Cog):
 
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
+        """Predict whether a player is real or not, with confidence breakdown."""
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict: [{player_name}]")
         await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
         if not data:
-            await ctx.reply(f"I couldn't get a prediction for {player_name} :(")
+            await ctx.reply(f"I couldn't get a prediction for **{player_name}**.")
             return
-        
-        for player in data:
-            name = player["player_name"]
-            prediction = player["prediction_label"]
-            confidence = player["prediction_confidence"]
-            confidence = confidence if confidence else 0
-            secondaries: dict = player["predictions_breakdown"]
 
-            msg = cleandoc(
-                f"""```diff
-                + Name: {name}
-                {string_processing.plus_minus(prediction, 'Real_Player')} Prediction: {prediction}
-                {string_processing.plus_minus(confidence, 0.75)} Confidence: {float(confidence) * 100:.2f}%
-                ============
-                Prediction Breakdown
-            """
+        for player in data:
+            name = player.get("player_name", "Unknown")
+            prediction = player.get("prediction_label", "N/A")
+            confidence = float(player.get("prediction_confidence") or 0)
+            breakdown:dict = player.get("predictions_breakdown", {})
+
+            # sort by value desc
+            breakdown = dict(sorted(breakdown.items(), key=lambda x: x[1], reverse=True))
+
+            color = Color.green() if prediction.lower() == "real_player" else Color.red()
+
+            # Build summary (top section)
+            summary_text = (
+                f"**Name:** {name}\n"
+                f"**Prediction:** {prediction}\n"
+                f"**Confidence:** {confidence * 100:.2f}%\n"
+                "============"
             )
 
-            msg += "\n"
+            # Build breakdown section
+            breakdown_lines = []
+            for label, value in breakdown.items():
+                if value <= 0:
+                    continue
 
-            for key, value in secondaries.items():
-                if value > 0:
-                    msg += cleandoc(
-                        f"""
-                        {string_processing.plus_minus(key, 'Real_Player')} {key}: {float(value) * 100:.2f}%
-                    """
-                    )
 
-                    msg += "\n"
+                breakdown_lines.append(f"- **{label}:** {value * 100:.2f}%")
 
-            msg += "```"
+            breakdown_text = "\n".join(breakdown_lines) if breakdown_lines else "No breakdown available."
 
-            await ctx.reply(msg)
-        return
+            # Create embed
+            embed = Embed(
+                color=color,
+                timestamp=datetime.now(timezone.utc)
+            )
+
+            # Add main summary
+            embed.add_field(
+                name="Player Prediction",
+                value=summary_text,
+                inline=False
+            )
+
+            # Add breakdown section
+            embed.add_field(
+                name="Prediction Breakdown",
+                value=breakdown_text,
+                inline=False
+            )
+
+            embed.set_footer(text=f"Requested by {ctx.author.name}")
+
+            await ctx.reply(embed=embed)
 
     @commands.hybrid_command()
     @commands.has_any_role(VERIFIED_PLAYER_ROLE)
