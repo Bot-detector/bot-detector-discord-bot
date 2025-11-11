@@ -181,7 +181,7 @@ class Api:
                     }
                 )
             return None
-        logger.debug(data)
+        # logger.debug(data)
         return data
 
     async def create_player(self, name: str, debug: bool = False) -> None:

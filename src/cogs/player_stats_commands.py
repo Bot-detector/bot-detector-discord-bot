@@ -9,6 +9,7 @@ from discord.ext.commands import Cog, Context
 from osrsbox import items_api
 from src import config
 from src.utils.checks import PATREON_ROLE, VERIFIED_PLAYER_ROLE
+from collections import OrderedDict
 
 logger = logging.getLogger(__name__)
 ITEMS = items_api.load()
@@ -430,8 +431,8 @@ class playerStatsCommands(Cog):
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
         """Predict whether a player is real or not, with confidence breakdown."""
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict")
-        await ctx.typing(ephemeral=True)
+        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict: [{player_name}]")
+        await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
         if not data:
@@ -440,49 +441,55 @@ class playerStatsCommands(Cog):
 
         for player in data:
             name = player.get("player_name", "Unknown")
-            prediction:str = player.get("prediction_label", "N/A")
+            prediction = player.get("prediction_label", "N/A")
             confidence = float(player.get("prediction_confidence") or 0)
-            breakdown: dict = player.get("predictions_breakdown", {})
+            breakdown:dict = player.get("predictions_breakdown", {})
 
-            # Color based on prediction type
+            # sort by value desc
+            breakdown = dict(sorted(breakdown.items(), key=lambda x: x[1], reverse=True))
+
             color = Color.green() if prediction.lower() == "real_player" else Color.red()
 
-            # Create the embed
+            # Build summary (top section)
+            summary_text = (
+                f"**Name:** {name}\n"
+                f"**Prediction:** {prediction}\n"
+                f"**Confidence:** {confidence * 100:.2f}%\n"
+                "============"
+            )
+
+            # Build breakdown section
+            breakdown_lines = []
+            for label, value in breakdown.items():
+                if value <= 0:
+                    continue
+
+
+                breakdown_lines.append(f"- **{label}:** {value * 100:.2f}%")
+
+            breakdown_text = "\n".join(breakdown_lines) if breakdown_lines else "No breakdown available."
+
+            # Create embed
             embed = Embed(
-                title=f"Prediction for {name}",
                 color=color,
                 timestamp=datetime.now(timezone.utc)
             )
+
+            # Add main summary
             embed.add_field(
-                name="Prediction",
-                value=f"{prediction}",
-                inline=True
-            )
-            embed.add_field(
-                name="Confidence",
-                value=f"{confidence * 100:.2f}%",
-                inline=True
+                name="Player Prediction",
+                value=summary_text,
+                inline=False
             )
 
-            # breakline
-            embed.add_field(name="\u200b", value="\u200b", inline=False)
+            # Add breakdown section
+            embed.add_field(
+                name="Prediction Breakdown",
+                value=breakdown_text,
+                inline=False
+            )
 
-            # Breakdown section
-            if breakdown:
-                for label, value in breakdown.items():
-                    if value > 0:
-                        embed.add_field(
-                            name=label,
-                            value=f"{value * 100:.2f}%",
-                            inline=True
-                        )
-            else:
-                breakdown_text = "No detailed breakdown available."
-                embed.add_field(
-                    name="Prediction Breakdown",
-                    value=breakdown_text,
-                    inline=False
-                )
+            embed.set_footer(text=f"Requested by {ctx.author.name}")
 
             await ctx.reply(embed=embed)
 
