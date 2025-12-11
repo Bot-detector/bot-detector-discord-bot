@@ -278,33 +278,54 @@ class playerStatsCommands(Cog):
         data = await config.api.get_player_report_score(
             names=[n["name"] for n in linked_accounts]
         )
-        feedback_data = await config.api.get_player_feedback_score(
-            names=[n["name"] for n in linked_accounts]
-        )
+        # feedback_data = await config.api.get_player_feedback_score(
+        #     names=[n["name"] for n in linked_accounts]
+        # )
 
         if not data:
             await ctx.reply("No data found.")
             return
 
-        
         # Initialize variables
         reports_submitted = sum(d["count"] for d in data)
-        possible_bans = sum(d["count"] for d in data if d.get("possible_ban") and not d.get("confirmed_ban") and not d.get("manual_detect"))
-        confirmed_bans = sum(d["count"] for d in data if d.get("possible_ban") and d.get("confirmed_ban") and not d.get("manual_detect"))
-        
-        manual_flags = sum(d["count"] for d in feedback_data)
-
-        manually_confirmed_player = sum(
+        possible_bans = sum(
             d["count"]
-            for d in feedback_data
-            if d.get("confirmed_player")
+            for d in data
+            if not d.get("manual_detect")
+            and not d.get("confirmed_ban")
+            and d.get("possible_ban")
+        )
+        confirmed_bans = sum(
+            d["count"]
+            for d in data
+            if not d.get("manual_detect")
+            and d.get("confirmed_ban")
+            and d.get("possible_ban")
         )
 
+        manual_confirmed_ban = sum(
+            d["count"]
+            for d in data
+            if d.get("manual_detect") and d.get("confirmed_ban")
+        )
+        manual_confirmed_player = sum(
+            d["count"]
+            for d in data
+            if d.get("manual_detect")
+            and not d.get("confirmed_ban")
+            and d.get("confirmed_player")
+        )
+        manual_flags = sum(d["count"] for d in data if d.get("manual_detect"))
+        confirmed_manual_flags = manual_confirmed_ban + manual_confirmed_player
         # Calculate manual flag accuracy
         manual_flag_accuracy = (
-            (manual_flags - manually_confirmed_player) / manual_flags * 100 if manual_flags else 0
+            (manual_confirmed_ban / confirmed_manual_flags) * 100
+            if confirmed_manual_flags
+            else 0
         )
-        logger.info(f"{manual_flags=}, {manually_confirmed_player=}")
+        logger.info(
+            f"{manual_flags=}=, {confirmed_manual_flags=}, {manual_confirmed_ban=}, {manual_confirmed_player=}"
+        )
 
         # Determine primary RSN
         primary_rsn = None
@@ -391,7 +412,9 @@ class playerStatsCommands(Cog):
         logger.debug(confirmed_bans)
 
         # search until you find the role he should have
-        role_dict = [r for r in bot_hunter_roles if r.get("max") > confirmed_bans >= r.get("min")]
+        role_dict = [
+            r for r in bot_hunter_roles if r.get("max") > confirmed_bans >= r.get("min")
+        ]
         if not role_dict:
             embed = discord.Embed(
                 description="You currently have no confirmed bans. Keep hunting those bots, and you'll be there in no time! :)",
@@ -432,7 +455,9 @@ class playerStatsCommands(Cog):
     @commands.hybrid_command()
     async def predict(self, ctx: Context, *, player_name: str):
         """Predict whether a player is real or not, with confidence breakdown."""
-        logger.debug(f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict: [{player_name}]")
+        logger.debug(
+            f"{ctx.author.name=}, {ctx.author.id=}, Requesting predict: [{player_name}]"
+        )
         await ctx.typing()
 
         data = await config.api.get_prediction(player_name)
@@ -444,12 +469,16 @@ class playerStatsCommands(Cog):
             name = player.get("player_name", "Unknown")
             prediction = player.get("prediction_label", "N/A")
             confidence = float(player.get("prediction_confidence") or 0)
-            breakdown:dict = player.get("predictions_breakdown", {})
+            breakdown: dict = player.get("predictions_breakdown", {})
 
             # sort by value desc
-            breakdown = dict(sorted(breakdown.items(), key=lambda x: x[1], reverse=True))
+            breakdown = dict(
+                sorted(breakdown.items(), key=lambda x: x[1], reverse=True)
+            )
 
-            color = Color.green() if prediction.lower() == "real_player" else Color.red()
+            color = (
+                Color.green() if prediction.lower() == "real_player" else Color.red()
+            )
 
             # Build summary (top section)
             summary_text = (
@@ -465,29 +494,23 @@ class playerStatsCommands(Cog):
                 if value <= 0:
                     continue
 
-
                 breakdown_lines.append(f"- **{label}:** {value * 100:.2f}%")
 
-            breakdown_text = "\n".join(breakdown_lines) if breakdown_lines else "No breakdown available."
+            breakdown_text = (
+                "\n".join(breakdown_lines)
+                if breakdown_lines
+                else "No breakdown available."
+            )
 
             # Create embed
-            embed = Embed(
-                color=color,
-                timestamp=datetime.now(timezone.utc)
-            )
+            embed = Embed(color=color, timestamp=datetime.now(timezone.utc))
 
             # Add main summary
-            embed.add_field(
-                name="Player Prediction",
-                value=summary_text,
-                inline=False
-            )
+            embed.add_field(name="Player Prediction", value=summary_text, inline=False)
 
             # Add breakdown section
             embed.add_field(
-                name="Prediction Breakdown",
-                value=breakdown_text,
-                inline=False
+                name="Prediction Breakdown", value=breakdown_text, inline=False
             )
 
             embed.set_footer(text=f"Requested by {ctx.author.name}")

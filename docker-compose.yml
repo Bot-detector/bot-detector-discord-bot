@@ -56,7 +56,7 @@ services:
       - .env
     environment:
       # - TOKEN=<YOUR TOKEN HERE>
-      - API_TOKEN=verify_ban
+      # - API_TOKEN=verify_ban
       - COMMAND_PREFIX=$
       # - WEBHOOK=
       - API_URL=https://api.prd.osrsbotdetector.com
