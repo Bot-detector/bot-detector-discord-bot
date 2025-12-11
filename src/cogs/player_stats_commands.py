@@ -286,10 +286,11 @@ class playerStatsCommands(Cog):
             await ctx.reply("No data found.")
             return
 
+        
         # Initialize variables
         reports_submitted = sum(d["count"] for d in data)
-        possible_bans = sum(d["count"] for d in data if d.get("possible_ban"))
-        confirmed_bans = sum(d["count"] for d in data if d.get("confirmed_ban"))
+        possible_bans = sum(d["count"] for d in data if d.get("possible_ban") and not d.get("confirmed_ban") and not d.get("manual_detect"))
+        confirmed_bans = sum(d["count"] for d in data if d.get("possible_ban") and d.get("confirmed_ban") and not d.get("manual_detect"))
         
         manual_flags = sum(d["count"] for d in feedback_data)
 
