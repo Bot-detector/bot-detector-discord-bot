@@ -287,7 +287,7 @@ class playerStatsCommands(Cog):
             return
 
         # Initialize variables
-        reports_submitted = sum(d["count"] for d in data)
+        reports_submitted = sum(d["count"] for d in data if not d.get("manual_detect"))
         possible_bans = sum(
             d["count"]
             for d in data
@@ -339,11 +339,19 @@ class playerStatsCommands(Cog):
         # Build the embed
         embed = discord.Embed(title=f"{primary_rsn}'s Stats", color=0x00FF00)
         embed.add_field(
-            name="Reports Submitted:", value=f"{reports_submitted:,}", inline=False
+            name="Reports Submitted (Auto):",
+            value=f"{reports_submitted:,}",
+            inline=False,
         )
-        embed.add_field(name="Possible Bans:", value=f"{possible_bans:,}", inline=False)
         embed.add_field(
-            name="Confirmed Bans:", value=f"{confirmed_bans:,}", inline=False
+            name="Possible Bans (Auto):",
+            value=f"{possible_bans:,}",
+            inline=False,
+        )
+        embed.add_field(
+            name="Confirmed Bans (Auto):",
+            value=f"{confirmed_bans:,}",
+            inline=False,
         )
 
         if manual_flags:
@@ -375,7 +383,8 @@ class playerStatsCommands(Cog):
                 ),
                 icon_url="https://raw.githubusercontent.com/Bot-detector/bot-detector/master/src/main/resources/warning.png",
             )
-
+        if ctx.interaction is None:
+            await ctx.send("❗ Please use the **/kc** slash command.")
         await ctx.reply(embed=embed)
 
     @commands.hybrid_command()

@@ -65,7 +65,7 @@ async def setup_hook():
 async def on_ready():
     logger.info(f"We have logged in as {bot.user}")
     bot.Session = aiohttp.ClientSession()
-    await bot.tree.sync()
+    # await bot.tree.sync()
 
 
 @bot.event
